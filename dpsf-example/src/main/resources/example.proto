@@ -1,0 +1,23 @@
+package com.dianping.dpsf.example.protobuf;
+
+option java_package="com.dianping.dpsf.example.protobuf";
+option java_outer_classname="DPSFExample";
+
+message Parameter{
+
+	required string name = 1;
+	optional int32 age = 2;
+	
+	repeated string book = 3;
+
+}
+
+message ReturnValue{
+	required int32 money = 1;
+}
+
+service ExampleService{
+
+	rpc getMoney(Parameter) returns(ReturnValue);
+	rpc test(Parameter) returns(ReturnValue);
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="GBK"?>
+<beanconfs>
+	<!--beanconf>jmeter/jmeter-server.xml</beanconf-->
+	<beanconf>jmeter/jmeter-client.xml</beanconf>
+</beanconfs>

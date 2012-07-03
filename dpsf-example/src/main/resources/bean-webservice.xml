@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="byName">
+    <!-- 服务端配置 -->
+	<bean id="exampleService" class="com.dianping.dpsf.spring.ServiceRegistry" init-method="init" lazy-init="false">
+		<property name="services">
+			<map>
+				<entry key="http://service.dianping.com/itemName/javaExampleService" value-ref="exampleImplJava"/>
+			</map>
+		</property>
+		<!-- 比点评默认服务发布多一个配置 -->
+		<property name="serviceType" value="ws"/>
+	</bean>
+	
+	<bean id="exampleImplJava" class="com.dianping.dpsf.example.java.JavaExampleServiceImpl">
+	</bean>
+	
+	
+</beans>

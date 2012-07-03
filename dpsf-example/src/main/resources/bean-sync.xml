@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+xmlns:amq="http://activemq.apache.org/schema/core" xmlns:avatar="http://www.dianping.com/schema/avatar"
+xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+	<!-- 服务端配置 -->
+	<bean id="exampleService" class="com.dianping.dpsf.spring.ServiceRegistry" init-method="init" lazy-init="false">
+		<property name="services">
+			<map>
+				<entry key="http://service.dianping.com/itemName/exampleService_1.0.0" value-ref="exampleImpl"/>
+				<entry key="http://service.dianping.com/itemName/javaExampleService_1.0.0" value-ref="exampleImplJava"/>
+				<entry key="http://service.dianping.com/itemName/thriftExampleService_1.0.0" value-ref="exampleImplThrift"/>
+			</map>
+		</property>
+		<property name="port" value="20000"/>
+		<property name="corePoolSize" value="2"/>
+		<property name="maxPoolSize" value="3"/>
+		<property name="workQueueSize" value="1"/>
+	</bean>
+	<context:annotation-config />
+	<bean id="exampleImpl" class="com.dianping.dpsf.example.protobuf.ExampleServiceImpl"/>
+	<bean id="exampleImplJava" class="com.dianping.dpsf.example.java.JavaExampleServiceImpl"/>
+	<bean id="exampleImplThrift" class="com.dianping.dpsf.example.thrift.ExampleServiceImpl"/>
+ 	<bean id="ex" class = "com.dianping.dpsf.example.Example"/>
+    <!-- 客户端配置 -->
+	
+	<bean id="exampleSyncJava" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/itemName/javaExampleService_1.0.0"/>
+		<property name="iface" value="com.dianping.dpsf.example.java.JavaExampleService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<!-- sync async oneway future  default:sync -->
+		<property name="callMethod" value="sync"/>
+		<!-- 单位毫秒 default:2000 -->
+		<property name="timeout" value="2000"/>
+		<property name="hosts" value="127.0.0.1:20000,127.0.0.1:20000"/>
+		<!-- 默认1：1：1... 单个权重数字不能大于10
+		<property name="weight" value="1,9"/>-->
+	</bean>
+	
+	
+</beans>

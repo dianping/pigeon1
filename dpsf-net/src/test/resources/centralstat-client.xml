@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+xmlns:amq="http://activemq.apache.org/schema/core" xmlns:avatar="http://www.dianping.com/schema/avatar"
+xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+	<bean id="centralStatTestServiceSync" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/centralStatTestService/centralStatTestService_1.0.0"/>
+		<property name="iface" value="com.dianping.dpsf.centralstat.test.CentralStatTestService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<property name="callMethod" value="sync"/>
+		<property name="timeout" value="1000"/>
+		<property name="isTest" value="true"/>
+		<property name="hosts" value="127.0.0.1:20100"/>
+		<property name="weight" value="1"/>
+	</bean>
+	<bean id="centralStatTestServiceSyncError" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/centralStatTestService/centralStatTestService_1.0.1"/>
+		<property name="iface" value="com.dianping.dpsf.centralstat.test.CentralStatTestService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<property name="callMethod" value="sync"/>
+		<property name="timeout" value="1000"/>
+		<property name="isTest" value="true"/>
+		<property name="hosts" value="127.0.0.1:20100"/>
+		<property name="weight" value="1"/>
+	</bean>
+	<bean id="centralStatTestServiceOneWay" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/centralStatTestService/centralStatTestService_1.0.0"/>
+		<property name="iface" value="com.dianping.dpsf.centralstat.test.CentralStatTestService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<property name="callMethod" value="oneway"/>
+		<property name="timeout" value="1000"/>
+		<property name="isTest" value="true"/>
+		<property name="hosts" value="127.0.0.1:20100"/>
+		<property name="weight" value="1"/>
+	</bean>
+	
+	<bean id="centralStatTestServiceOneWayError" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/centralStatTestService/centralStatTestService_1.0.1"/>
+		<property name="iface" value="com.dianping.dpsf.centralstat.test.CentralStatTestService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<property name="callMethod" value="oneway"/>
+		<property name="timeout" value="1000"/>
+		<property name="isTest" value="true"/>
+		<property name="hosts" value="127.0.0.1:20100"/>
+		<property name="weight" value="1"/>
+	</bean>
+	
+	<bean id="centralStatTestServiceFuture" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/centralStatTestService/centralStatTestService_1.0.0"/>
+		<property name="iface" value="com.dianping.dpsf.centralstat.test.CentralStatTestService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<property name="callMethod" value="future"/>
+		<property name="timeout" value="1000"/>
+		<property name="isTest" value="true"/>
+		<property name="hosts" value="127.0.0.1:20100"/>
+		<property name="weight" value="1"/>
+	</bean>
+	
+	<bean id="centralStatTestServiceFutureError" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/centralStatTestService/centralStatTestService_1.0.1"/>
+		<property name="iface" value="com.dianping.dpsf.centralstat.test.CentralStatTestService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<property name="callMethod" value="future"/>
+		<property name="timeout" value="1000"/>
+		<property name="isTest" value="true"/>
+		<property name="hosts" value="127.0.0.1:20100"/>
+		<property name="weight" value="1"/>
+	</bean>
+	
+	<bean id="centralStatTestServiceCallBack" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/centralStatTestService/centralStatTestService_1.0.0"/>
+		<property name="iface" value="com.dianping.dpsf.centralstat.test.CentralStatTestService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<property name="callMethod" value="callback"/>
+		<property name="callback" ref="callBack"/>
+		<property name="timeout" value="3000"/>
+		<property name="isTest" value="true"/>
+		<property name="hosts" value="127.0.0.1:20100"/>
+		<property name="weight" value="1"/>
+	</bean>
+	
+	<bean id="centralStatTestServiceCallBackError" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/centralStatTestService/centralStatTestService_1.0.1"/>
+		<property name="iface" value="com.dianping.dpsf.centralstat.test.CentralStatTestService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<property name="callMethod" value="callback"/>
+		<property name="callback" ref="callBack"/>
+		<property name="timeout" value="3000"/>
+		<property name="isTest" value="true"/>
+		<property name="hosts" value="127.0.0.1:20100"/>
+		<property name="weight" value="1"/>
+	</bean>
+	
+	<bean id="callBack" class="com.dianping.dpsf.centralstat.test.CentralStatTestCallBack"/>
+</beans>

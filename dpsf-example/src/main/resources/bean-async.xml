@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="byName">
+	
+	<!-- 服务端配置 -->
+	<bean id="exampleService" class="com.dianping.dpsf.spring.ServiceRegistry" init-method="init" lazy-init="false">
+		<property name="services">
+			<map>
+				<entry key="http://service.dianping.com/itemName/exampleService_1.0.0" value-ref="exampleImpl"/>
+				<entry key="http://service.dianping.com/itemName/javaExampleService_1.0.0" value-ref="exampleImplJava"/>
+				<entry key="http://service.dianping.com/itemName/thriftExampleService_1.0.0" value-ref="exampleImplThrift"/>
+			</map>
+		</property>
+	</bean>
+	<!-- 服务端配置 -->
+	<bean id="exampleService1" class="com.dianping.dpsf.spring.ServiceRegistry" init-method="init" lazy-init="false">
+		<property name="services">
+			<map>
+				<entry key="http://service.dianping.com/itemName/exampleService_1.0.0" value-ref="exampleImpl"/>
+				<entry key="http://service.dianping.com/itemName/javaExampleService_1.0.0" value-ref="exampleImplJava"/>
+				<entry key="http://service.dianping.com/itemName/thriftExampleService_1.0.0" value-ref="exampleImplThrift"/>
+			</map>
+		</property>
+		<property name="port" value="20001"/>
+	</bean>
+	
+	<bean id="exampleImpl" class="com.dianping.dpsf.example.protobuf.ExampleServiceImpl"/>
+	<bean id="exampleImplJava" class="com.dianping.dpsf.example.java.JavaExampleServiceImpl"/>
+	<bean id="exampleImplThrift" class="com.dianping.dpsf.example.thrift.ExampleServiceImpl"/>
+ 
+   
+	
+	<bean id="exampleFutureJava" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/itemName/javaExampleService_1.0.0"/>
+		<property name="iface" value="com.dianping.dpsf.example.java.JavaExampleService"/>
+		<!-- default:pb -->
+		<property name="serialize" value="java"/>
+		<!-- sync async oneway future  default:sync -->
+		<property name="callMethod" value="future"/>
+		<!-- 单位毫秒 default:2000 -->
+		<property name="timeout" value="2000"/>
+		<property name="hosts" value="127.0.1.1:20,127.0.1.1:200"/>
+		<!-- 默认1：1：1... -->
+		<property name="weight" value="1,9"/>
+	</bean>
+</beans>
