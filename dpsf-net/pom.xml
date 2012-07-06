@@ -52,47 +52,6 @@
 					<forkMode>pertest</forkMode>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-clover2-plugin</artifactId>
-				<configuration>
-					<!--includesTestSourceRoots>false</includesTestSourceRoots -->
-					<targetPercentage>1%</targetPercentage>
-					<!-- Verify that we can specify the JDK version for Clover's instrumentation -->
-					<jdk>1.6</jdk>
-					<encoding>utf-8</encoding>
-					<!-- 暂时性的exclude，有些需要确认是否仍然有用，有些是不可测试的非核心功能 -->
-					<excludes>
-						<exclude>org/codehaus/**/*.java</exclude>
-						<exclude>**/xfire/**/*.java</exclude>
-						<exclude>**/telnet/**/*.java</exclude>
-						<exclude>**/jmx/**/*.java</exclude>
-						<exclude>**/*Exception.java</exclude>
-						<exclude>com/dianping/dpsf/net/channel/netty/NettyClientChannelGroup.java
-						</exclude>
-						<exclude>com/dianping/dpsf/channel/thrift/ByteBufferTTransport.java
-						</exclude>
-					</excludes>
-					<licenseLocation>${clover.licenseLocation}</licenseLocation>
-				</configuration>
-				<executions>
-					<execution>
-						<id>main</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>instrument</goal>
-							<goal>check</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>site</id>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>instrument</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 
