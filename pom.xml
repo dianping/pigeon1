@@ -18,7 +18,7 @@
   </organization>
   <inceptionYear>2010.08</inceptionYear>
   <properties>
-    <dpsf-all.version>1.6.0</dpsf-all.version>
+    <dpsf-all.version>1.7.0</dpsf-all.version>
     <dpsf-net.aid>dpsf-net</dpsf-net.aid>
     <dpsf-net.version>${dpsf-all.version}</dpsf-net.version>
     <dpsf-net.name>dpsf-net v${dpsf-all.version}</dpsf-net.name>
@@ -28,9 +28,9 @@
     <dpsf-tserver.aid>dpsf-tserver</dpsf-tserver.aid>
     <dpsf-tserver.version>${dpsf-all.version}</dpsf-tserver.version>
     <dpsf-tserver.name>dpsf-tserver v${dpsf-all.version}</dpsf-tserver.name>
-    <dpsf-site.aid>dpsf-site</dpsf-site.aid>
-    <dpsf-site.version>${dpsf-all.version}</dpsf-site.version>
-    <dpsf-site.name>dpsf-site v${dpsf-all.version}</dpsf-site.name>
+    <pigeon-engine.aid>pigeon-engine</pigeon-engine.aid>
+    <pigeon-engine.version>${dpsf-all.version}</pigeon-engine.version>
+    <pigeon-engine.name>pigeon-engine v${dpsf-all.version}</pigeon-engine.name>
     <dpsf-tool.aid>dpsf-tool</dpsf-tool.aid>
     <dpsf-tool.version>${dpsf-all.version}</dpsf-tool.version>
     <dpsf-tool.name>dpsf-tool v${dpsf-all.version}</dpsf-tool.name>
@@ -40,6 +40,7 @@
     <module>dpsf-example</module>
     <module>dpsf-tserver</module>
     <module>dpsf-tool</module>
+    <module>pigeon-engine</module>
   </modules>
   <description>dpsf</description>
   <developers>
@@ -58,6 +59,11 @@
 		<groupId>${pom.groupId}</groupId>
 		<artifactId>${dpsf-net.aid}</artifactId>
 		<version>${dpsf-net.version}</version>
+	</dependency>
+        <dependency>
+		<groupId>${pom.groupId}</groupId>
+		<artifactId>${pigeon-engine.aid}</artifactId>
+		<version>${pigeon-engine.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>${pom.groupId}</groupId>

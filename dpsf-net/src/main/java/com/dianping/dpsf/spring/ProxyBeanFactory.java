@@ -22,7 +22,7 @@ import com.dianping.dpsf.net.channel.manager.LoadBalanceManager;
 
 public class ProxyBeanFactory implements FactoryBean{
 	
-	private static Logger logger = DPSFLog.getLogger();
+	private static final Logger logger = DPSFLog.getLogger();
 	
 	private static AtomicInteger groupId = new AtomicInteger(0);
 
@@ -44,13 +44,13 @@ public class ProxyBeanFactory implements FactoryBean{
 	
 	private String stubName;
 	
-	private Class channelClass;
+	private Class<?> channelClass;
 	
 	private Object channel;
 	
 	private Object obj;
 	
-	private Class objType;
+	private Class<?> objType;
 	
 	private ServiceCallback callback;
 	
@@ -69,7 +69,7 @@ public class ProxyBeanFactory implements FactoryBean{
 	 */
 	private boolean writeBufferLimit = PigeonConfig.getDefaultWriteBufferLimit();
 	
-	private void init()throws Exception{
+	public void init()throws Exception{
 		
 		if(this.group == null){
 			this.group = this.iface+"_"+groupId.incrementAndGet();
@@ -169,7 +169,7 @@ public class ProxyBeanFactory implements FactoryBean{
 		}
 		
 		this.objType = Class.forName(this.stubName);
-		Constructor constructor = this.objType.getDeclaredConstructor(this.channelClass);
+		Constructor<?> constructor = this.objType.getDeclaredConstructor(this.channelClass);
 		constructor.setAccessible(true);
 		this.obj = constructor.newInstance(this.channel);
 	}
@@ -181,44 +181,8 @@ public class ProxyBeanFactory implements FactoryBean{
 						this.timeout,this.callMethod,this.serialize,this.callback,this.group, this.writeBufferLimit)));
 	}
 	
-//	private void initWS() throws Exception{
-//		this.objType = Class.forName(this.iface);
-//		String serviceURL = "";
-//		if(this.hosts != null && this.hosts.length() > 0){
-//			if(!this.hosts.endsWith("/") && !this.serviceName.startsWith("/")){
-//				serviceURL = this.hosts+"/"+this.serviceName;
-//			}else{
-//				serviceURL = this.hosts + this.serviceName;
-//			}
-//		}
-//		if(!serviceURL.startsWith("http")){
-//			serviceURL = "http://"+serviceURL;
-//		}
-////		Service serviceModel = new ObjectServiceFactory(
-////				new AegisBindingProvider(new JaxbTypeRegistry())).create(this.objType); 
-////        XFireProxyFactory serviceFactory = new XFireProxyFactory();
-//		Service serviceModel = new JaxbServiceFactory().create(this.objType);
-//        XFire xfire = XFireFactory.newInstance().getXFire();
-//       
-//        XFireProxyFactory factory = new XFireProxyFactory(xfire); 
-//        this.obj = factory.create(serviceModel, serviceURL);
-//        Client client = Client.getInstance(this.obj);
-////        client.addOutHandler(new OutHeaderHandler());
-//        client.setProperty(CommonsHttpMessageSender.HTTP_TIMEOUT, this.timeout+"");
-//	}
-	
 	private void initWS() throws Exception{
 		this.objType = Class.forName(this.iface);
-//		String serviceURL = "";
-//		if(this.hosts != null && this.hosts.length() > 0){
-//			if(!this.hosts.endsWith("/") && !this.serviceName.startsWith("/")){
-//				serviceURL = this.hosts+"/"+this.serviceName;
-//			}else{
-//				serviceURL = this.hosts + this.serviceName;
-//			}
-//		}else{
-//			serviceURL = this.serviceName;
-//		}
 		if(!this.serviceName.startsWith("http")){
 			if(this.serviceName.startsWith("//")){
 				this.serviceName = "http:"+this.serviceName;
@@ -250,7 +214,7 @@ public class ProxyBeanFactory implements FactoryBean{
 		return this.obj;
 	}
 
-	public Class getObjectType() {
+	public Class<?> getObjectType() {
 		return this.objType;
 	}
 

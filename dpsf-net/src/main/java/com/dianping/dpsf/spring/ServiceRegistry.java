@@ -19,7 +19,6 @@ import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.exception.ServiceException;
 import com.dianping.dpsf.net.channel.netty.server.NettyServer;
 import com.dianping.dpsf.repository.ServiceRepository;
-import com.dianping.dpsf.zookeeper.ZooKeeperManager;
 
 
 /**    
@@ -101,7 +100,6 @@ public class ServiceRegistry
 			for(String serviceName : this.services.keySet()){
 				this.sr.registerService(serviceName, this.services.get(serviceName));
 			}
-			ZooKeeperManager.getInstance().publish();
 		}
 	}
 	

@@ -46,7 +46,7 @@ import com.site.helper.Splitters;
  */
 public class RequestExecutor implements Runnable {
 
-	private static Logger logger = DPSFLog.getLogger();
+	private final static Logger logger = DPSFLog.getLogger();
 
 	public static ServiceStat requestStat = new ServiceStat();
 
