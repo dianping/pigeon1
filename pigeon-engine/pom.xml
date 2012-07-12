@@ -58,37 +58,20 @@
 	<reporting>
 		<excludeDefaults>true</excludeDefaults>
 		<plugins>
-			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-clover2-plugin</artifactId>
-				<configuration>
-					<!-- Verify that we can modify the location of the Clover database and 
-						that the directory is created if it doesn't exist. Note: we're putting the 
-						configuration here and not in the build section because the build section 
-						inherits from the reporting section but not the other way around... -->
-					<!--cloverDatabase>${project.build.directory}/customclover/myclover.db</cloverDatabase -->
 
-					<!-- Verify that we can generate all types of Clover reports -->
-					<generateHtml>true</generateHtml>
-					<!-- <generatePdf>true</generatePdf> <generateXml>true</generateXml> -->
-
-					<!-- We ask the Clover plugin to generate a historical report but we 
-						don't have any historical data saved. This is to verify it doesn't error 
-						out when this is the case. -->
-					<generateHistorical>true</generateHistorical>
-					<licenseLocation>${clover.licenseLocation}</licenseLocation>
-					<!--useFullyQualifiedJavaLang>false</useFullyQualifiedJavaLang -->
-				</configuration>
-			</plugin>
 
 		</plugins>
 	</reporting>
 
 	<dependencies>
-            <dependency>
-              <groupId>aspectj</groupId>
-              <artifactId>aspectjrt</artifactId>
-             </dependency>		
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>${dpsf-net.aid}</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
