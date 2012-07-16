@@ -91,7 +91,7 @@ public class ContextUtil {
 	}
 	
 	public static void setContext(Object context) throws NetException{
-		if(flag && context != null){
+		if(flag ){
 			try {
 				setContextMethod.invoke(null, new Object[]{context});
 			} catch (Exception e) {
