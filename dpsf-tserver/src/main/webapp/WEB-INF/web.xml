@@ -7,7 +7,7 @@
    <description>Hawk</description>
     
     <listener>
-        <listener-class>com.dianping.hawk.listener.HawkInitListener</listener-class>
+        <listener-class>com.dianping.dpsf.tserver.DPSFTestInit</listener-class>
     </listener>
    
 </web-app>
