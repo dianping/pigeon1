@@ -14,8 +14,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.dianping.dpsf.example.BeansConfParser;
-
 /**    
  * <p>    
  * Title: DPSFExampleInit.java   

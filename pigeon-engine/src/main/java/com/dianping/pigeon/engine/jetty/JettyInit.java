@@ -3,8 +3,11 @@
  */
 package com.dianping.pigeon.engine.jetty;
 
+import java.net.URL;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -17,8 +20,9 @@ import com.dianping.pigeon.engine.servlet.ServiceServlet;
  * @since Jul 16, 2012
  */
 public class JettyInit {
+	private static final Log log = LogFactory.getLog(JettyInit.class);
 
-	public void init(Map<String, Object> services, int pigeonPort, int enginePort) throws Exception {
+	public static void init(Map<String, Object> services, int pigeonPort, int enginePort) throws Exception {
 		Server server = new Server(enginePort);
 
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -28,10 +32,16 @@ public class JettyInit {
 		context.addServlet(new ServletHolder(new ServiceServlet(services, pigeonPort)), "/services");
 
 		ServletHolder holder = new ServletHolder(new DefaultServlet());
-		String staticsDir = DefaultServlet.class.getClassLoader().getResource("com/dianping/pigeon/engine/").toExternalForm();
+		URL url = JettyInit.class.getClassLoader().getResource("com/dianping/pigeon/engine/statics");
+		if(url == null) {
+			log.error("can't find static files!");
+			return;
+		}
+		String staticsDir = url.toExternalForm();
 		holder.setInitParameter("resourceBase", staticsDir);
 		holder.setInitParameter("gzip", "false");
-		context.addServlet(holder, "/statics/*");
+		context.addServlet(holder, "/jquery/*");
+		context.addServlet(holder, "/ztree/*");
 
 		server.start();
 		server.join();

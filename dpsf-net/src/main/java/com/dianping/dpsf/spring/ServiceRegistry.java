@@ -66,6 +66,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 		} else if ("ws".equals(this.serviceType.trim().toLowerCase())) {
 			initWSService();
 		} else if ("engine".equals(this.serviceType.trim().toLowerCase())) {
+			initDPService();
 			initEngine();
 		} else {
 			throw new RuntimeException("serviceType is error:" + this.serviceType);
@@ -109,7 +110,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 		Method[] ms = wsClazz.getDeclaredMethods();
 		for (Method m : ms) {
 			if (m.getName().equals("init")) {
-				m.invoke(null, new Object[] { this.services, this.port, 8080 });
+				m.invoke(null, new Object[] { this.services, this.port, 8181 });
 				logger.info("PigeonEngine starting......");
 				break;
 			}

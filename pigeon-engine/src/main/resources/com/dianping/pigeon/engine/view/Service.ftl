@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <link href="/statics/ztree/ztree.css" rel="stylesheet" type="text/css"/>
-  <script src="/statics/jquery-1.7.2.min.js"></script>
-  <script src="/statics/ztree/jquery.ztree.core-3.3.min.js"></script>
+  <link href="/ztree/ztree.css" rel="stylesheet" type="text/css"/>
+  <script src="/jquery/jquery-1.7.2.min.js"></script>
+  <script src="/ztree/jquery.ztree.core-3.3.min.js"></script>
 	<SCRIPT type="text/javascript">
 		<!--
 		var setting = {
