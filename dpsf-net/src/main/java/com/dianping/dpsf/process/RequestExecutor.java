@@ -136,6 +136,7 @@ public class RequestExecutor implements Runnable {
 					}
 					// 传递上下文
 					response.setContext(ContextUtil.getContext());
+					ContextUtil.clearContext();
 				} else if (messageType == Constants.MESSAGE_TYPE_HEART) {
 					response = doHeart();
 				}
