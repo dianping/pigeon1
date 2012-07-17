@@ -56,6 +56,8 @@ public class ServiceRegistry implements ApplicationContextAware {
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 300;
 
+	private boolean enableEngine = false;
+
 	public ServiceRegistry() {
 
 	}
@@ -63,11 +65,15 @@ public class ServiceRegistry implements ApplicationContextAware {
 	public void init() throws Exception {
 		if ("dp".equals(this.serviceType.trim().toLowerCase())) {
 			initDPService();
+			if (enableEngine) {
+				try {
+					initEngine();
+				} catch (ClassNotFoundException e) {
+					logger.warn("can't init pigeon-engine:" + e.toString());
+				}
+			}
 		} else if ("ws".equals(this.serviceType.trim().toLowerCase())) {
 			initWSService();
-		} else if ("engine".equals(this.serviceType.trim().toLowerCase())) {
-			initDPService();
-			initEngine();
 		} else {
 			throw new RuntimeException("serviceType is error:" + this.serviceType);
 		}
@@ -248,6 +254,14 @@ public class ServiceRegistry implements ApplicationContextAware {
 	 */
 	public void setWorkQueueSize(int workQueueSize) {
 		this.workQueueSize = workQueueSize;
+	}
+
+	public boolean isEnableEngine() {
+		return enableEngine;
+	}
+
+	public void setEnableEngine(boolean enableEngine) {
+		this.enableEngine = enableEngine;
 	}
 
 }

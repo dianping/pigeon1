@@ -9,11 +9,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.dianping.pigeon.engine.servlet.ServiceServlet;
+import com.dianping.pigeon.engine.servlet.StaticsServlet;
 
 /**
  * @author sean.wang
@@ -31,14 +31,15 @@ public class JettyInit {
 
 		context.addServlet(new ServletHolder(new ServiceServlet(services, pigeonPort)), "/services");
 
-		ServletHolder holder = new ServletHolder(new DefaultServlet());
+		ServletHolder holder = new ServletHolder(new StaticsServlet());
 		URL url = JettyInit.class.getClassLoader().getResource("com/dianping/pigeon/engine/statics");
-		if(url == null) {
+		if (url == null) {
 			log.error("can't find static files!");
 			return;
 		}
 		String staticsDir = url.toExternalForm();
 		holder.setInitParameter("resourceBase", staticsDir);
+		log.info("set resourceBase:" + staticsDir);
 		holder.setInitParameter("gzip", "false");
 		context.addServlet(holder, "/jquery/*");
 		context.addServlet(holder, "/ztree/*");

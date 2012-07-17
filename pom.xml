@@ -56,103 +56,108 @@
   <dependencyManagement>
     <dependencies>
 	<dependency>
-		<groupId>${pom.groupId}</groupId>
+		<groupId>${project.groupId}</groupId>
 		<artifactId>${dpsf-net.aid}</artifactId>
 		<version>${dpsf-net.version}</version>
 	</dependency>
         <dependency>
-		<groupId>${pom.groupId}</groupId>
+		<groupId>${project.groupId}</groupId>
 		<artifactId>${pigeon-engine.aid}</artifactId>
 		<version>${pigeon-engine.version}</version>
 	</dependency>
 	<dependency>
-		<groupId>${pom.groupId}</groupId>
+		<groupId>${project.groupId}</groupId>
 		<artifactId>${dpsf-example.aid}</artifactId>
 		<version>${dpsf-example.version}</version>
 	</dependency>
-       <dependency>
-             <groupId>com.dianping.hawk</groupId>
-             <artifactId>hawk-client</artifactId>
-             <version>0.6.5</version>
-             <scope>provided</scope>
-       </dependency>
-        <dependency>
-            <groupId>com.dianping.cat</groupId>
-            <artifactId>cat-core</artifactId>
-            <version>0.3.2</version>
-            <scope>compile</scope>
-        </dependency>
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring</artifactId>
-		<version>2.5.6</version>
-	</dependency>
-	<dependency>
-                <groupId>cglib</groupId>
-        	<artifactId>cglib</artifactId>
-        	<version>2.2</version>
-      	</dependency>
-      	<dependency>
-		<groupId>commons-beanutils</groupId>
-		<artifactId>commons-beanutils</artifactId>
-		<version>1.6.1</version>
-	</dependency>		 			
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>4.4</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>commons-lang</groupId>
-		<artifactId>commons-lang</artifactId>
-		<version>2.3</version>
-	</dependency>
-	<dependency>
-		<groupId>commons-collections</groupId>
-		<artifactId>commons-collections</artifactId>
-		<version>3.2</version>
-	</dependency>
-	<dependency>
-		<groupId>commons-logging</groupId>
-		<artifactId>commons-logging</artifactId>
-		<version>1.1.1</version>
-	</dependency>
-	<dependency>
-		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-		<version>1.2.14</version>
-	</dependency>
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-log4j12</artifactId>
-		<version>1.4.3</version>
-	</dependency>
-	<dependency>
-		<groupId>dom4j</groupId>
-		<artifactId>dom4j</artifactId>
-		<version>1.6.1</version>
-	</dependency>
-	<dependency>
-    		<groupId>com.google.protobuf</groupId>
-    		<artifactId>protobuf-java</artifactId>
-   	 	<version>2.3.0</version>
+    <dependency>
+      <groupId>com.dianping.hawk</groupId>
+      <artifactId>hawk-client</artifactId>
+      <version>0.6.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.dianping.cat</groupId>
+      <artifactId>cat-core</artifactId>
+      <version>0.3.2</version>
+      <scope>compile</scope>
+    </dependency>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring</artifactId>
+  		<version>2.5.6</version>
   	</dependency>
-	<dependency>
-    		<groupId>org.jboss.netty</groupId>
-		<artifactId>netty</artifactId>
-		<version>3.2.1.Final</version>
+  	<dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>2.2</version>
+      </dependency>
+    <dependency>
+  		<groupId>commons-beanutils</groupId>
+  		<artifactId>commons-beanutils</artifactId>
+  		<version>1.6.1</version>
+  	</dependency>		 			
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.4</version>
+  		<scope>test</scope>
   	</dependency>
-	<dependency>
-    		<groupId>com.caucho</groupId>
-    		<artifactId>hessian</artifactId>
-    		<version>3.1.5</version>
-	</dependency>
-	<dependency>
-    		<groupId>org.apache</groupId>
-    		<artifactId>libthrift</artifactId>
-    		<version>0.4.0</version>
-	</dependency>
+  	<dependency>
+  		<groupId>commons-lang</groupId>
+  		<artifactId>commons-lang</artifactId>
+  		<version>2.3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-collections</groupId>
+  		<artifactId>commons-collections</artifactId>
+  		<version>3.2</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-logging</groupId>
+  		<artifactId>commons-logging</artifactId>
+  		<version>1.1.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>log4j</groupId>
+  		<artifactId>log4j</artifactId>
+  		<version>1.2.14</version>
+  	</dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.6.6</version>
+    </dependency>    
+  	<dependency>
+  		<groupId>dom4j</groupId>
+  		<artifactId>dom4j</artifactId>
+  		<version>1.6.1</version>
+  	</dependency>
+  	<dependency>
+      	<groupId>com.google.protobuf</groupId>
+      	<artifactId>protobuf-java</artifactId>
+     	 	<version>2.3.0</version>
+    </dependency>
+  	<dependency>
+      		<groupId>org.jboss.netty</groupId>
+  		    <artifactId>netty</artifactId>
+  		    <version>3.2.1.Final</version>
+    </dependency>
+  	<dependency>
+      		<groupId>com.caucho</groupId>
+      		<artifactId>hessian</artifactId>
+      		<version>3.1.5</version>
+  	</dependency>
+  	<dependency>
+      		<groupId>org.apache</groupId>
+      		<artifactId>libthrift</artifactId>
+      		<version>0.4.0</version>
+  	</dependency>
   </dependencies>
   </dependencyManagement>
   <build>
@@ -166,25 +171,24 @@
             <additionalConfig>
               <file>
                 <name>.settings/org.eclipse.jdt.core.prefs</name>
-                <content><![CDATA[org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
-eclipse.preferences.version=1
-org.eclipse.jdt.core.compiler.source=1.6
-org.eclipse.jdt.core.compiler.compliance=1.6]]></content>
+                <content>
+                  <![CDATA[org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
+                  eclipse.preferences.version=1
+                  org.eclipse.jdt.core.compiler.source=1.6
+                  org.eclipse.jdt.core.compiler.compliance=1.6]]></content>
               </file>
-                        <file>
-                            <name>.settings/org.eclipse.core.resources.prefs</name>
-                            <content>
-                                <![CDATA[
-                                eclipse.preferences.version=1
-                                encoding/<project>=UTF-8
-                                ]]>
-                            </content>
-                        </file>
-                    </additionalConfig>
-                </configuration>
-            </plugin>      
-   
-     
+              <file>
+                  <name>.settings/org.eclipse.core.resources.prefs</name>
+                  <content>
+                      <![CDATA[
+                      eclipse.preferences.version=1
+                      encoding/<project>=UTF-8
+                      ]]>
+                  </content>
+              </file>
+            </additionalConfig>
+          </configuration>
+      </plugin>      
     </plugins>
     <resources>
       <resource>

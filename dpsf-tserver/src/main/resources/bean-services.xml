@@ -5,7 +5,7 @@
 
 	<bean id="exampleService" class="com.dianping.dpsf.spring.ServiceRegistry"
 		init-method="init" lazy-init="false">
-		<property name="serviceType" value="engine" />
+		<property name="enableEngine" value="true" />
 		<property name="services">
 			<map>
 				<entry key="http://service.dianping.com/itemName/exampleService_1.0.0"
