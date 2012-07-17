@@ -12,6 +12,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import com.dianping.pigeon.engine.servlet.ServiceJsonServlet;
 import com.dianping.pigeon.engine.servlet.ServiceServlet;
 import com.dianping.pigeon.engine.servlet.StaticsServlet;
 
@@ -30,6 +31,7 @@ public class JettyInit {
 		server.setHandler(context);
 
 		context.addServlet(new ServletHolder(new ServiceServlet(services, pigeonPort)), "/services");
+		context.addServlet(new ServletHolder(new ServiceJsonServlet(services, pigeonPort)), "/services.json");
 
 		ServletHolder holder = new ServletHolder(new StaticsServlet());
 		URL url = JettyInit.class.getClassLoader().getResource("com/dianping/pigeon/engine/statics");

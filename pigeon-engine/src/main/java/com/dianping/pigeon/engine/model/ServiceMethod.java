@@ -2,6 +2,7 @@ package com.dianping.pigeon.engine.model;
 
 public class ServiceMethod {
 	private String name;
+	
 	private Class<?>[] parameterTypes;
 
 	public ServiceMethod(String name, Class<?>[] parameterTypes) {

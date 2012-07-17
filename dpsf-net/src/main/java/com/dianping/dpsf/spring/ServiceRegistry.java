@@ -39,6 +39,8 @@ public class ServiceRegistry implements ApplicationContextAware {
 	private Map<String, Object> services;
 
 	private int port = 21111;
+	
+	private int enginePort = 21115;
 
 	private ServiceRepository sr;
 
@@ -116,7 +118,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 		Method[] ms = wsClazz.getDeclaredMethods();
 		for (Method m : ms) {
 			if (m.getName().equals("init")) {
-				m.invoke(null, new Object[] { this.services, this.port, 8181 });
+				m.invoke(null, new Object[] { this.services, this.port, this.getEnginePort() });
 				logger.info("PigeonEngine starting......");
 				break;
 			}
@@ -262,6 +264,14 @@ public class ServiceRegistry implements ApplicationContextAware {
 
 	public void setEnableEngine(boolean enableEngine) {
 		this.enableEngine = enableEngine;
+	}
+
+	public int getEnginePort() {
+		return enginePort;
+	}
+
+	public void setEnginePort(int enginePort) {
+		this.enginePort = enginePort;
 	}
 
 }

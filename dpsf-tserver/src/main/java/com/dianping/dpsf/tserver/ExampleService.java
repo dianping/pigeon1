@@ -18,8 +18,10 @@ import java.util.List;
  */
 public interface ExampleService {
 	
-	public List<ReturnVal> testService(int id,String name,ParameterVal parameter) throws ExampleException;
-	public ReturnVal testService(String name,ParameterVal parameter);
-	public void testService();
+	public List<ReturnVal> service(int id,String name,ParameterVal parameter) throws ExampleException;
+	
+	public ReturnVal service(String name,ParameterVal parameter);
+	
+	public void longTimeService();
 
 }

@@ -34,19 +34,29 @@ import freemarker.template.TemplateException;
  * @since Jul 16, 2012
  */
 public class ServiceServlet extends HttpServlet {
-	private ServicePage model;
+	private static final Log log = LogFactory.getLog(ServiceServlet.class);
 
-	private String view;
+	private static final long serialVersionUID = -2703014417332812558L;
 
-	private Set<String> ingoreMethods = new HashSet<String>();
+	private static Set<String> ingoreMethods = new HashSet<String>();
 
-	{
+	static {
 		Method[] objectMethodArray = Object.class.getMethods();
 		for (Method method : objectMethodArray) {
-			this.ingoreMethods.add(method.getName() + ":" + Arrays.toString(method.getParameterTypes()));
+			ingoreMethods.add(method.getName() + ":" + Arrays.toString(method.getParameterTypes()));
 		}
 
 	}
+
+	private static final Configuration cfg = new Configuration();
+
+	static {
+		cfg.setObjectWrapper(new DefaultObjectWrapper());
+		ClassTemplateLoader templateLoader = new ClassTemplateLoader(ServiceServlet.class, "/com/dianping/pigeon/engine/view");
+		cfg.setTemplateLoader(templateLoader);
+	}
+
+	private ServicePage model;
 
 	public ServiceServlet(Map<String, Object> services, int pigeonPort) {
 		ServicePage page = new ServicePage();
@@ -58,35 +68,31 @@ public class ServiceServlet extends HttpServlet {
 			s.setName(serviceName);
 			s.setClassName(service.getClass().getCanonicalName());
 			Method[] methods = service.getClass().getMethods();
-			for(Method method : methods) {
+			for (Method method : methods) {
 				String key = method.getName() + ":" + Arrays.toString(method.getParameterTypes());
-				if(!this.ingoreMethods.contains(key)) {
-				s.addMethod(new ServiceMethod(method.getName(), method.getParameterTypes()));
+				if (!ingoreMethods.contains(key)) {
+					s.addMethod(new ServiceMethod(method.getName(), method.getParameterTypes()));
 				}
 			}
 			page.addService(s);
 		}
-		
+
 		this.model = page;
-		this.view = "Service.ftl";
 	}
 
-	private static final Log log = LogFactory.getLog(ServiceServlet.class);
+	public String getView() {
+		return "Service.ftl";
+	}
 
-	private static final long serialVersionUID = -2703014417332812558L;
-
-	private final Configuration cfg = new Configuration();
-	{
-		cfg.setObjectWrapper(new DefaultObjectWrapper());
-		ClassTemplateLoader templateLoader = new ClassTemplateLoader(ServiceServlet.class, "/com/dianping/pigeon/engine/view");
-		cfg.setTemplateLoader(templateLoader);
+	public String getContentType() {
+		return "text/html; charset=UTF-8";
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html; charset=UTF-8");
+		response.setContentType(getContentType());
 		response.setStatus(HttpServletResponse.SC_OK);
 
-		Template temp = cfg.getTemplate(this.view);
+		Template temp = cfg.getTemplate(getView());
 		try {
 			temp.process(this.model, response.getWriter());
 		} catch (TemplateException e) {
