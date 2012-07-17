@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dianping.dpsf.spring;
+package com.dianping.dpsf.soap.spring;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

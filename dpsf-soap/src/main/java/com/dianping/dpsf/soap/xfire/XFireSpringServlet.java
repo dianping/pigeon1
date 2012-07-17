@@ -1,4 +1,4 @@
-package com.dianping.dpsf.xfire;
+package com.dianping.dpsf.soap.xfire;
 
 
 

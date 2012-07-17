@@ -1,11 +1,10 @@
 /**
  * 
  */
-package com.dianping.dpsf.spring;
+package com.dianping.dpsf.soap.xfire;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

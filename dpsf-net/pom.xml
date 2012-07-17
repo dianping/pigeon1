@@ -55,35 +55,6 @@
 		</plugins>
 	</build>
 
-	<reporting>
-		<excludeDefaults>true</excludeDefaults>
-		<plugins>
-			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-clover2-plugin</artifactId>
-				<configuration>
-					<!-- Verify that we can modify the location of the Clover database and 
-						that the directory is created if it doesn't exist. Note: we're putting the 
-						configuration here and not in the build section because the build section 
-						inherits from the reporting section but not the other way around... -->
-					<!--cloverDatabase>${project.build.directory}/customclover/myclover.db</cloverDatabase -->
-
-					<!-- Verify that we can generate all types of Clover reports -->
-					<generateHtml>true</generateHtml>
-					<!-- <generatePdf>true</generatePdf> <generateXml>true</generateXml> -->
-
-					<!-- We ask the Clover plugin to generate a historical report but we 
-						don't have any historical data saved. This is to verify it doesn't error 
-						out when this is the case. -->
-					<generateHistorical>true</generateHistorical>
-					<licenseLocation>${clover.licenseLocation}</licenseLocation>
-					<!--useFullyQualifiedJavaLang>false</useFullyQualifiedJavaLang -->
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</reporting>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.dianping.hawk</groupId>
@@ -96,7 +67,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -106,19 +76,16 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>2.5.6</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>2.5.6</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>2.5.6</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -132,58 +99,32 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>2.3.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.netty</groupId>
 			<artifactId>netty</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.caucho</groupId>
 			<artifactId>hessian</artifactId>
-			<version>3.1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache</groupId>
 			<artifactId>libthrift</artifactId>
-			<version>0.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>zookeeper</groupId>
-			<artifactId>zookeeper</artifactId>
-			<version>3.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>org.codehaus.xfire</groupId>
-			<artifactId>xfire-aegis</artifactId>
-			<version>1.2.6</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty</artifactId>
-			<version>6.1.6</version>
-			<optional>true</optional>
-		</dependency>
-
 		<dependency>
 			<groupId>com.dianping.lion</groupId>
 			<artifactId>lion-client</artifactId>
-			<version>0.2.2</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.dianping</groupId>
 			<artifactId>avatar-tracker</artifactId>
-			<version>2.1.9</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

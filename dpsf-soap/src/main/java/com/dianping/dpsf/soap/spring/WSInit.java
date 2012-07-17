@@ -1,21 +1,21 @@
 /**
  * 
  */
-package com.dianping.dpsf.spring;
+package com.dianping.dpsf.soap.spring;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.handler.HandlerList;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.thread.BoundedThreadPool;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHandler;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.dianping.dpsf.xfire.ServiceBean;
-import com.dianping.dpsf.xfire.XFireSpringServlet;
+import com.dianping.dpsf.soap.xfire.ServiceBean;
+import com.dianping.dpsf.soap.xfire.XFireSpringServlet;
 
 /**    
  * <p>    
@@ -49,7 +49,7 @@ public class WSInit {
 			ServiceBean sb = new ServiceBean();
 			sb.setApplicationContext(applicationContext);
 			sb.setName(key.substring(itemName.length()+1));
-			Class[] its = srv.getValue().getClass().getInterfaces();
+			Class<?>[] its = srv.getValue().getClass().getInterfaces();
 			if(its.length == 0){
 				throw new RuntimeException("bean class:"+srv.getValue().getClass().getName()+" must implement interface");
 			}
@@ -59,19 +59,14 @@ public class WSInit {
 		}
 		
 		System.setProperty("org.mortbay.util.URI.charset", "utf-8");
-		org.mortbay.jetty.Server server = new org.mortbay.jetty.Server() ;
-		BoundedThreadPool btp=new BoundedThreadPool();
-		btp.setName("Server-Request-WS");
-		btp.setMinThreads(1);
-		btp.setMaxThreads(10);
-		server.setThreadPool(btp);
+		Server server = new Server() ;
         final Connector connector = new SelectChannelConnector();
         
         connector.setPort(Integer.getInteger("jetty.port",port).intValue());
 
         server.setConnectors(new Connector[]{connector});
 
-        final Context root = new Context(server,"/", Context.SESSIONS);
+        final ServletContextHandler root = new ServletContextHandler(server,"/", ServletContextHandler.SESSIONS);
 
         final ServletHandler servlet_handler = new ServletHandler();
         XFireSpringServlet.setXFire((org.codehaus.xfire.XFire)applicationContext.getBean("xfire"));

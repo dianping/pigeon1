@@ -1,6 +1,7 @@
 package com.dianping.dpsf.spring;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,86 +21,86 @@ import com.dianping.dpsf.net.channel.cluster.LoadBalance;
 import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
 import com.dianping.dpsf.net.channel.manager.LoadBalanceManager;
 
-public class ProxyBeanFactory implements FactoryBean{
-	
+public class ProxyBeanFactory implements FactoryBean {
+
 	private static final Logger logger = DPSFLog.getLogger();
-	
+
 	private static AtomicInteger groupId = new AtomicInteger(0);
 
 	private String serviceName;
-	
+
 	private String iface;
-	
+
 	private String serialize = Constants.SERIALIZE_HESSIAN;
-	
+
 	private String callMethod = Constants.CALL_SYNC;
-	
+
 	private String hosts;
-	
+
 	private String weight;
-	
+
 	private int timeout = 2000;
-	
+
 	private String interfaceName;
-	
+
 	private String stubName;
-	
+
 	private Class<?> channelClass;
-	
+
 	private Object channel;
-	
+
 	private Object obj;
-	
+
 	private Class<?> objType;
-	
+
 	private ServiceCallback callback;
-	
+
 	private String group;
-	
+
 	private String loadBalance;
-	
+
 	private Class<? extends LoadBalance> loadBalanceClass;
-	
+
 	private LoadBalance loadBalanceObj;
-	
+
 	private boolean isTest = false;
-	
+
 	/**
 	 * 是否对写Buffer限制大小(对于channel使用到的queue buffer的大小限制, 避免OutOfMemoryError)
 	 */
 	private boolean writeBufferLimit = PigeonConfig.getDefaultWriteBufferLimit();
-	
-	public void init()throws Exception{
-		
-		if(this.group == null){
-			this.group = this.iface+"_"+groupId.incrementAndGet();
+
+	public void init() throws Exception {
+
+		if (this.group == null) {
+			this.group = this.iface + "_" + groupId.incrementAndGet();
 		}
-		
-		if(Constants.SERIALIZE_PB.equalsIgnoreCase(this.serialize)){
+
+		if (Constants.SERIALIZE_PB.equalsIgnoreCase(this.serialize)) {
 			initPB();
-		}else if(Constants.SERIALIZE_JAVA.equalsIgnoreCase(this.serialize)){
+		} else if (Constants.SERIALIZE_JAVA.equalsIgnoreCase(this.serialize)) {
 			initJavaAndHessian();
-		}else if(Constants.SERIALIZE_HESSIAN.equalsIgnoreCase(this.serialize)){
+		} else if (Constants.SERIALIZE_HESSIAN.equalsIgnoreCase(this.serialize)) {
 			initJavaAndHessian();
-		}else if(Constants.SERIALIZE_THRIFT.equalsIgnoreCase(this.serialize)){
+		} else if (Constants.SERIALIZE_THRIFT.equalsIgnoreCase(this.serialize)) {
 			initThrift();
-		}else if(Constants.SERIALIZE_WS.equals(this.serialize)){
+		} else if (Constants.SERIALIZE_WS.equals(this.serialize)) {
 			initWS();
 			return;
 		}
-		
-		if(!ServiceRegistry.isInit){
+
+		if (!ServiceRegistry.isInit) {
 			ServiceRegistry.defaultInit();
 		}
-		
+
 		configLoadBalance();
-		
-		if(!this.isTest){
-			hosts = null;  //disallow set hosts
+
+		if (!this.isTest) {
+			hosts = null; // disallow set hosts
 		}
-		
-		if(hosts != null) {
-			//static client list
+
+		if (hosts != null) {
+			// static client list
 			logger.info("host list is set manually, use static host list");
 			String[] hostArray = StringUtils.isNotBlank(this.hosts) ? this.hosts.split(",") : new String[0];
 			int[] weightArray = new int[hostArray.length];
@@ -111,8 +112,7 @@ public class ProxyBeanFactory implements FactoryBean{
 				for (int i = 0; i < weightArray.length; i++) {
 					weightArray[i] = Integer.parseInt(weightStrArray[i]);
 					if (weightArray[i] > 10 || weightArray[i] < 0) {
-						throw new NetException("weight number can not be greater than 10 and less than 1:"
-								+ this.weight);
+						throw new NetException("weight number can not be greater than 10 and less than 1:" + this.weight);
 					}
 				}
 			} else {
@@ -123,20 +123,19 @@ public class ProxyBeanFactory implements FactoryBean{
 
 			for (int i = 0; i < hostArray.length; i++) {
 				try {
-					ClientManagerFactory.getClientManager().registeClient(this.serviceName, this.group, hostArray[i],
-							weightArray[i]);
+					ClientManagerFactory.getClientManager().registeClient(this.serviceName, this.group, hostArray[i], weightArray[i]);
 				} catch (NetException e) {
 					logger.error(e.getMessage(), e);
 				}
 			}
 		} else {
-			//dynamic client list
+			// dynamic client list
 			logger.info("host list is not set, try to fetch from ZK");
 			ClientManagerFactory.getClientManager().findAndRegisterClientFor(serviceName, group);
 		}
-		
+
 	}
-	
+
 	private void configLoadBalance() {
 		Object loadBalanceToSet = loadBalanceObj != null ? loadBalanceObj : (loadBalanceClass != null ? loadBalanceClass : (loadBalance != null ? loadBalance : null));
 		if (loadBalanceToSet != null) {
@@ -144,70 +143,67 @@ public class ProxyBeanFactory implements FactoryBean{
 		}
 	}
 
-	private void initPB() throws Exception{
-		if(this.callMethod.equalsIgnoreCase(Constants.CALL_CALLBACK)){
-			if(this.iface.endsWith("$Interface")){
-				this.interfaceName = this.iface;
-				this.iface = this.iface.substring(0,this.iface.lastIndexOf("$Interface"));
-			}else{
-				this.interfaceName = this.iface+"$Interface";
+	private void initPB() throws Exception {
+		if (this.callMethod.equalsIgnoreCase(Constants.CALL_CALLBACK)) {
+			if (this.iface.endsWith("$Interface")) {
+				this.setInterfaceName(this.iface);
+				this.iface = this.iface.substring(0, this.iface.lastIndexOf("$Interface"));
+			} else {
+				this.setInterfaceName(this.iface + "$Interface");
 			}
-			this.stubName = this.iface+"$Stub";
+			this.stubName = this.iface + "$Stub";
 			this.channelClass = com.google.protobuf.RpcChannel.class;
-			this.channel = new DPSFRpcChannel(new DPSFMetaData(this.serviceName,this.timeout,this.group, this.writeBufferLimit));
-		}else if(this.callMethod.equalsIgnoreCase(Constants.CALL_SYNC)){
-			if(this.iface.endsWith("$BlockingInterface")){
-				this.interfaceName = this.iface;
-				this.iface = this.iface.substring(0,this.iface.lastIndexOf("$BlockingInterface"));
-			}else{
-				this.interfaceName = this.iface+"$BlockingInterface";
+			this.channel = new DPSFRpcChannel(new DPSFMetaData(this.serviceName, this.timeout, this.group, this.writeBufferLimit));
+		} else if (this.callMethod.equalsIgnoreCase(Constants.CALL_SYNC)) {
+			if (this.iface.endsWith("$BlockingInterface")) {
+				this.setInterfaceName(this.iface);
+				this.iface = this.iface.substring(0, this.iface.lastIndexOf("$BlockingInterface"));
+			} else {
+				this.setInterfaceName(this.iface + "$BlockingInterface");
 			}
-			
-			this.stubName = this.iface+"$BlockingStub";
+
+			this.stubName = this.iface + "$BlockingStub";
 			this.channelClass = com.google.protobuf.BlockingRpcChannel.class;
-			this.channel = new DPSFBlockingRpcChannel(new DPSFMetaData(this.serviceName,this.timeout,this.group, this.writeBufferLimit));
+			this.channel = new DPSFBlockingRpcChannel(new DPSFMetaData(this.serviceName, this.timeout, this.group, this.writeBufferLimit));
 		}
-		
+
 		this.objType = Class.forName(this.stubName);
 		Constructor<?> constructor = this.objType.getDeclaredConstructor(this.channelClass);
 		constructor.setAccessible(true);
 		this.obj = constructor.newInstance(this.channel);
 	}
-	
-	private void initJavaAndHessian() throws Exception{
+
+	private void initJavaAndHessian() throws Exception {
 		this.objType = Class.forName(this.iface);
-		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), 
-				new Class[]{this.objType}, new ProxyInvoker(new DPSFMetaData(this.serviceName,
-						this.timeout,this.callMethod,this.serialize,this.callback,this.group, this.writeBufferLimit)));
+		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType }, new ProxyInvoker(new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize, this.callback, this.group, this.writeBufferLimit)));
 	}
-	
-	private void initWS() throws Exception{
+
+	private void initWS() throws Exception {
 		this.objType = Class.forName(this.iface);
-		if(!this.serviceName.startsWith("http")){
-			if(this.serviceName.startsWith("//")){
-				this.serviceName = "http:"+this.serviceName;
-			}else if(this.serviceName.startsWith("/")){
-				this.serviceName = "http:/"+this.serviceName;
-			}else{
-				this.serviceName = "http://"+this.serviceName;
+		if (!this.serviceName.startsWith("http")) {
+			if (this.serviceName.startsWith("//")) {
+				this.serviceName = "http:" + this.serviceName;
+			} else if (this.serviceName.startsWith("/")) {
+				this.serviceName = "http:/" + this.serviceName;
+			} else {
+				this.serviceName = "http://" + this.serviceName;
 			}
 		}
 		this.serviceName = this.serviceName.toLowerCase();
-		if(!this.serviceName.endsWith("?wsdl")){
+		if (!this.serviceName.endsWith("?wsdl")) {
 			throw new NetException("serviceName must be endWith \"?wsdl\"");
 		}
-		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), 
-				new Class[]{this.objType}, new WSProxyInvoker(this.objType,this.serviceName,this.timeout));
+		Class<?> wsClazz = Class.forName("com.dianping.dpsf.soap.xfire.WSProxyInvoker");
+		InvocationHandler wsHandler = (InvocationHandler) wsClazz.getDeclaredConstructors()[0].newInstance(this.objType, this.serviceName, this.timeout);
+		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType }, wsHandler);
 	}
-	
-	private void initThrift() throws Exception{
-		if(!this.iface.endsWith("$Iface")){
+
+	private void initThrift() throws Exception {
+		if (!this.iface.endsWith("$Iface")) {
 			this.iface += "$Iface";
 		}
 		this.objType = Class.forName(this.iface);
-		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), 
-				new Class[]{this.objType}, new ThriftProxyInvoker(this.iface,
-						new DPSFMetaData(this.serviceName,this.timeout,this.callMethod,this.serialize,this.callback,this.group, this.writeBufferLimit)));
+		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType }, new ThriftProxyInvoker(this.iface, new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize, this.callback, this.group, this.writeBufferLimit)));
 	}
 
 	public Object getObject() throws Exception {
@@ -223,43 +219,48 @@ public class ProxyBeanFactory implements FactoryBean{
 	}
 
 	/**
-	 * @param serviceName the serviceName to set
+	 * @param serviceName
+	 *            the serviceName to set
 	 */
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
 	}
 
 	/**
-	 * @param callMethod the callMethod to set
+	 * @param callMethod
+	 *            the callMethod to set
 	 */
 	public void setCallMethod(String callMethod) {
 		this.callMethod = callMethod;
 	}
 
 	/**
-	 * @param hosts the hosts to set
+	 * @param hosts
+	 *            the hosts to set
 	 */
 	public void setHosts(String hosts) {
 		this.hosts = hosts;
 	}
 
 	/**
-	 * @param timeout the timeout to set
+	 * @param timeout
+	 *            the timeout to set
 	 */
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
 
-
 	/**
-	 * @param iface the iface to set
+	 * @param iface
+	 *            the iface to set
 	 */
 	public void setIface(String iface) {
 		this.iface = iface;
 	}
 
 	/**
-	 * @param serialize the serialize to set
+	 * @param serialize
+	 *            the serialize to set
 	 */
 	public void setSerialize(String serialize) {
 		this.serialize = serialize;
@@ -273,7 +274,8 @@ public class ProxyBeanFactory implements FactoryBean{
 	}
 
 	/**
-	 * @param weight the weight to set
+	 * @param weight
+	 *            the weight to set
 	 */
 	public void setWeight(String weight) {
 		this.weight = weight;
@@ -287,14 +289,16 @@ public class ProxyBeanFactory implements FactoryBean{
 	}
 
 	/**
-	 * @param callback the callback to set
+	 * @param callback
+	 *            the callback to set
 	 */
 	public void setCallback(ServiceCallback callback) {
 		this.callback = callback;
 	}
 
 	/**
-	 * @param group the group to set
+	 * @param group
+	 *            the group to set
 	 */
 	public void setGroup(String group) {
 		this.group = group;
@@ -323,5 +327,13 @@ public class ProxyBeanFactory implements FactoryBean{
 	public void setWriteBufferLimit(boolean writeBufferLimit) {
 		this.writeBufferLimit = writeBufferLimit;
 	}
-	
+
+	public String getInterfaceName() {
+		return interfaceName;
+	}
+
+	public void setInterfaceName(String interfaceName) {
+		this.interfaceName = interfaceName;
+	}
+
 }
