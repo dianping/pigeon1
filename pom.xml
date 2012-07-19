@@ -10,7 +10,7 @@
   <groupId>com.dianping.dpsf</groupId>
   <artifactId>dpsf-all</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.2</version>
+  <version>1.7.0</version>
   <name>dianping dpsf v${project.version}</name>
   <organization>
     <name>dianping</name>
