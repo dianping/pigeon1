@@ -180,8 +180,6 @@
 		<dependency>
 			<groupId>com.dianping.lion</groupId>
 			<artifactId>lion-client</artifactId>
-			<version>0.2.2</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.dianping</groupId>
