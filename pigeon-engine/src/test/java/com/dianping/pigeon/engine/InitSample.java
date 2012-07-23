@@ -22,9 +22,8 @@ public class InitSample {
 	@Test
 	public void test() throws Exception {
 		Map<String, Object> maps = new HashMap<String, Object>();
-		maps.put("http://service.dianping.com/prj/itemService_1.0.0", new ItemService());
-		maps.put("http://service.dianping.com/prj/userService_1.0.0", new UserService());
-		new JettyInit().init(maps, 2121, 8080);
+		maps.put("http://service.dianping.com/prj/userService_1.0.0", new UserServiceImpl());
+		JettyInit.init(maps, 2121, 8080);
 	}
 
 }
@@ -32,15 +31,5 @@ public class InitSample {
 class ItemService {
 	public void updateItem(String id) {
 
-	}
-}
-
-class UserService {
-	public String selectUsernameById(String id) {
-		return null;
-	}
-	
-	public String selectEmailById(String id, String[] ids) {
-		return null;
 	}
 }

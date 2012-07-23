@@ -19,6 +19,4 @@
 
 	<bean id="exampleImpl" class="com.dianping.dpsf.tserver.ExampleServiceImpl" />
 
-
-
 </beans>

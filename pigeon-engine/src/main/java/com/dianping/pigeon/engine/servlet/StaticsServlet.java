@@ -646,7 +646,7 @@ public class StaticsServlet extends HttpServlet implements ResourceFactory
 
          if ((_welcomeServlets || _welcomeExactServlets) && welcome_servlet==null)
          {
-             Map.Entry entry=_servletHandler.getHolderEntry(welcome_in_context);
+             Map.Entry<?,?> entry=_servletHandler.getHolderEntry(welcome_in_context);
              if (entry!=null && entry.getValue()!=_defaultHolder &&
                      (_welcomeServlets || (_welcomeExactServlets && entry.getKey().equals(welcome_in_context))))
                  welcome_servlet=welcome_in_context;

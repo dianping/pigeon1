@@ -16,12 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.dianping.pigeon.engine.model.Service;
 import com.dianping.pigeon.engine.model.ServiceMethod;
-import com.dianping.pigeon.engine.model.ServicePage;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
@@ -34,11 +30,9 @@ import freemarker.template.TemplateException;
  * @since Jul 16, 2012
  */
 public class ServiceServlet extends HttpServlet {
-	private static final Log log = LogFactory.getLog(ServiceServlet.class);
-
 	private static final long serialVersionUID = -2703014417332812558L;
 
-	private static Set<String> ingoreMethods = new HashSet<String>();
+	protected static Set<String> ingoreMethods = new HashSet<String>();
 
 	static {
 		Method[] objectMethodArray = Object.class.getMethods();
@@ -57,6 +51,10 @@ public class ServiceServlet extends HttpServlet {
 	}
 
 	private ServicePage model;
+
+	public ServiceServlet() {
+
+	}
 
 	public ServiceServlet(Map<String, Object> services, int pigeonPort) {
 		ServicePage page = new ServicePage();
@@ -92,11 +90,20 @@ public class ServiceServlet extends HttpServlet {
 		response.setContentType(getContentType());
 		response.setStatus(HttpServletResponse.SC_OK);
 
+		generateView(request, response);
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+
+	protected void generateView(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		Template temp = cfg.getTemplate(getView());
 		try {
 			temp.process(this.model, response.getWriter());
 		} catch (TemplateException e) {
-			log.error("template:", e);
+			throw new ServletException(e);
 		}
 	}
 

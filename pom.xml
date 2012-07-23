@@ -59,26 +59,26 @@
   </developers>
   <dependencyManagement>
   <dependencies>
-	<dependency>
-		<groupId>${project.groupId}</groupId>
-		<artifactId>${dpsf-net.aid}</artifactId>
-		<version>${dpsf-net.version}</version>
-	</dependency>
+  <dependency>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${dpsf-net.aid}</artifactId>
+    <version>${dpsf-net.version}</version>
+  </dependency>
   <dependency>
     <groupId>${project.groupId}</groupId>
     <artifactId>${dpsf-soap.aid}</artifactId>
     <version>${dpsf-soap.version}</version>
   </dependency>  
   <dependency>
-		<groupId>${project.groupId}</groupId>
-		<artifactId>${pigeon-engine.aid}</artifactId>
-		<version>${pigeon-engine.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>${project.groupId}</groupId>
-		<artifactId>${dpsf-example.aid}</artifactId>
-		<version>${dpsf-example.version}</version>
-	</dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${pigeon-engine.aid}</artifactId>
+        <version>${pigeon-engine.version}</version>
+  </dependency>
+    <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${dpsf-example.aid}</artifactId>
+        <version>${dpsf-example.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.dianping.hawk</groupId>
       <artifactId>hawk-client</artifactId>
@@ -102,6 +102,11 @@
       <artifactId>cat-core</artifactId>
       <version>0.3.2</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.2.2</version>
     </dependency>
     <dependency>
        <groupId>org.springframework</groupId>
