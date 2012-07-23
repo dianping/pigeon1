@@ -6,12 +6,12 @@ package com.dianping.dpsf.soap.spring;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.handler.HandlerList;
+import org.mortbay.jetty.nio.SelectChannelConnector;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.ServletHandler;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.dianping.dpsf.soap.xfire.ServiceBean;
@@ -66,7 +66,7 @@ public class WSInit {
 
         server.setConnectors(new Connector[]{connector});
 
-        final ServletContextHandler root = new ServletContextHandler(server,"/", ServletContextHandler.SESSIONS);
+        final Context root = new Context(server,"/", Context.SESSIONS);
 
         final ServletHandler servlet_handler = new ServletHandler();
         XFireSpringServlet.setXFire((org.codehaus.xfire.XFire)applicationContext.getBean("xfire"));

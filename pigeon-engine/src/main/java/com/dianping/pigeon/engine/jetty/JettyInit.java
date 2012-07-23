@@ -8,14 +8,14 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.DefaultServlet;
+import org.mortbay.jetty.servlet.ServletHolder;
 
 import com.dianping.pigeon.engine.servlet.InvokeServlet;
 import com.dianping.pigeon.engine.servlet.ServiceJsonServlet;
 import com.dianping.pigeon.engine.servlet.ServiceServlet;
-import com.dianping.pigeon.engine.servlet.StaticsServlet;
 
 /**
  * @author sean.wang
@@ -27,7 +27,7 @@ public class JettyInit {
 	public static void init(Map<String, Object> services, int pigeonPort, int enginePort) throws Exception {
 		Server server = new Server(enginePort);
 
-		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		Context context = new Context(Context.SESSIONS);
 		context.setContextPath("/");
 		server.setHandler(context);
 
@@ -35,7 +35,7 @@ public class JettyInit {
 		context.addServlet(new ServletHolder(new ServiceJsonServlet(services, pigeonPort)), "/services.json");
 		context.addServlet(new ServletHolder(new InvokeServlet(services, pigeonPort)), "/invoke.json");
 
-		ServletHolder holder = new ServletHolder(new StaticsServlet());
+		ServletHolder holder = new ServletHolder(new DefaultServlet());
 		URL url = JettyInit.class.getClassLoader().getResource("com/dianping/pigeon/engine/statics");
 		if (url == null) {
 			log.error("can't find static files!");
