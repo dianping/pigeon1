@@ -159,7 +159,7 @@ public class DefaultInvoker implements Invoker{
 		RpcStatsPool.flowIn(request, client.getAddress());
 		try {
 			client.write(request, callback);
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			RpcStatsPool.flowOut(request, client.getAddress());
 		}
 		
