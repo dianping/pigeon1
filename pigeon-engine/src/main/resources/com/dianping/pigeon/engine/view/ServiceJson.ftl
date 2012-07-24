@@ -2,16 +2,17 @@
 <#list services as x>
 	{
 		"name": "${x.name}", 
-		"className": "${x.className}",
+		"type": "${x.type.canonicalName}",
 		"methods": [
 		<#list x.methods as m>
 			{ 
 				"name":"${m.name}",
 				"parameterTypes": [
 				<#list m.parameterTypes as p>
-					"${p.name}"<#if p_has_next>,</#if>
+					"${p.canonicalName}"<#if p_has_next>,</#if>
 				</#list>
-				]
+				],
+				"returnType": "${m.returnType.canonicalName}"
 			}<#if m_has_next>,</#if>
 		</#list>	
 		]	

@@ -13,9 +13,9 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import com.dianping.pigeon.engine.servlet.InvokeServlet;
-import com.dianping.pigeon.engine.servlet.ServiceJsonServlet;
 import com.dianping.pigeon.engine.servlet.ServiceServlet;
+import com.dianping.pigeon.engine.servlet.json.InvokeJsonServlet;
+import com.dianping.pigeon.engine.servlet.json.ServiceJsonServlet;
 
 /**
  * @author sean.wang
@@ -33,7 +33,7 @@ public class JettyInit {
 
 		context.addServlet(new ServletHolder(new ServiceServlet(services, pigeonPort)), "/services");
 		context.addServlet(new ServletHolder(new ServiceJsonServlet(services, pigeonPort)), "/services.json");
-		context.addServlet(new ServletHolder(new InvokeServlet(services, pigeonPort)), "/invoke.json");
+		context.addServlet(new ServletHolder(new InvokeJsonServlet(services, pigeonPort)), "/invoke.json");
 
 		ServletHolder holder = new ServletHolder(new DefaultServlet());
 		URL url = JettyInit.class.getClassLoader().getResource("com/dianping/pigeon/engine/statics");

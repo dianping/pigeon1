@@ -64,12 +64,12 @@ public class ServiceServlet extends HttpServlet {
 			Object service = entry.getValue();
 			Service s = new Service();
 			s.setName(serviceName);
-			s.setClassName(service.getClass().getCanonicalName());
+			s.setType(service.getClass());
 			Method[] methods = service.getClass().getMethods();
 			for (Method method : methods) {
 				String key = method.getName() + ":" + Arrays.toString(method.getParameterTypes());
 				if (!ingoreMethods.contains(key)) {
-					s.addMethod(new ServiceMethod(method.getName(), method.getParameterTypes()));
+					s.addMethod(new ServiceMethod(method.getName(), method.getParameterTypes(), method.getReturnType()));
 				}
 			}
 			page.addService(s);

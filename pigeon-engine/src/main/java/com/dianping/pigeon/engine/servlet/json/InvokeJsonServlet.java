@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dianping.pigeon.engine.servlet;
+package com.dianping.pigeon.engine.servlet.json;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -11,17 +11,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dianping.pigeon.engine.servlet.ServiceServlet;
 import com.google.gson.Gson;
 
 /**
  * @author sean.wang
  * @since Jul 22, 2012
  */
-public class InvokeServlet extends ServiceServlet {
+public class InvokeJsonServlet extends ServiceServlet {
 
 	private Map<String, Object> services;
 
-	public InvokeServlet(Map<String, Object> services, int pigeonPort) {
+	public InvokeJsonServlet(Map<String, Object> services, int pigeonPort) {
 		this.services = services;
 	}
 

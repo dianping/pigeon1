@@ -1,9 +1,11 @@
 /**
  * 
  */
-package com.dianping.pigeon.engine.servlet;
+package com.dianping.pigeon.engine.servlet.json;
 
 import java.util.Map;
+
+import com.dianping.pigeon.engine.servlet.ServiceServlet;
 
 /**
  * @author sean.wang

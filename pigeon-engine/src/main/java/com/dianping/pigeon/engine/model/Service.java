@@ -6,7 +6,7 @@ import java.util.List;
 public class Service {
 	private String name;
 
-	private String className;
+	private Class<?> type;
 
 	private List<ServiceMethod> methods;
 
@@ -16,14 +16,6 @@ public class Service {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String clzName) {
-		this.className = clzName;
 	}
 
 	public List<ServiceMethod> getMethods() {
@@ -39,6 +31,14 @@ public class Service {
 			this.methods = new ArrayList<ServiceMethod>();
 		}
 		this.methods.add(serviceMethod);
+	}
+
+	public Class<?> getType() {
+		return type;
+	}
+
+	public void setType(Class<?> type) {
+		this.type = type;
 	}
 
 }

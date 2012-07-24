@@ -17,9 +17,9 @@
 
 		var zNodes =[
 			<#list services as x>
-			{ id:${x_index + 1}, pId:0, name:"${x.name}-${x.className}", isParent:true}<#if (x.methods?size>0) >,<#elseif x_has_next>,</#if>
+			{ id:${x_index + 1}, pId:0, name:"${x.name}-${x.type.canonicalName}", isParent:true}<#if (x.methods?size>0) >,<#elseif x_has_next>,</#if>
 				<#list x.methods as m>
-			{ id:${x_index + 1}${m_index + 1}, pId:${x_index + 1}, name:"${m.name}(<#list m.parameterTypes as p>${p.name}<#if p_has_next>,</#if></#list>)"}<#if m_has_next>,<#elseif x_has_next>,</#if>
+			{ id:${x_index + 1}${m_index + 1}, pId:${x_index + 1}, name:"${m.name}(<#list m.parameterTypes as p>${p.canonicalName}<#if p_has_next>,</#if></#list>)"}<#if m_has_next>,<#elseif x_has_next>,</#if>
 				</#list>
 			</#list> 
 		];
