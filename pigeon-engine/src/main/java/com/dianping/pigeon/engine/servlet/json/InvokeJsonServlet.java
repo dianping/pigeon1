@@ -5,6 +5,7 @@ package com.dianping.pigeon.engine.servlet.json;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -30,6 +31,20 @@ public class InvokeJsonServlet extends ServiceServlet {
 
 	private static final long serialVersionUID = -4886018160888366456L;
 
+	private static Map<String, Class<?>> builtInMap = new HashMap<String, Class<?>>();
+
+	static {
+		builtInMap.put("int", Integer.TYPE);
+		builtInMap.put("long", Long.TYPE);
+		builtInMap.put("double", Double.TYPE);
+		builtInMap.put("float", Float.TYPE);
+		builtInMap.put("boolean", Boolean.TYPE);
+		builtInMap.put("char", Character.TYPE);
+		builtInMap.put("byte", Byte.TYPE);
+		builtInMap.put("void", Void.TYPE);
+		builtInMap.put("short", Short.TYPE);
+	}
+
 	protected void generateView(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String serviceName = request.getParameter("serviceName");
 		String methodName = request.getParameter("methodName");
@@ -46,7 +61,11 @@ public class InvokeJsonServlet extends ServiceServlet {
 			for (int i = 0; i < types.length; i++) {
 				try {
 					String className = types[i];
-					typesClz[i] = Class.forName(className);
+					if (builtInMap.containsKey(className)) {
+						typesClz[i] = builtInMap.get(className);
+					} else {
+						typesClz[i] = Class.forName(className);
+					}
 				} catch (ClassNotFoundException e) {
 					throw new ServletException(e);
 				}
