@@ -3,13 +3,15 @@
  */
 package com.dianping.dpsf.jmetertest;
 
-import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.dom4j.DocumentException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.dianping.dpsf.example.BeansConfParser;
 
 /**    
  * <p>    
@@ -22,9 +24,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 1.0    
  * @created 2010-10-12 下午03:58:15   
  */
-public class MainTest {
+public class MainSample {
 	
-	private final static String BEAN_SERVICES_NAME = "jmeter-client.xml";
+	private final static String BEAN_SERVICES_NAME = "jmeter/jmeter-beans.xml";
 	
 	private static JmeterTestJavaIFace hessianBean;
 	
@@ -35,13 +37,14 @@ public class MainTest {
 	static{
 		ApplicationContext beanFactory = null;
 		try {
-			String path = new File(BEAN_SERVICES_NAME).getAbsolutePath();
-			System.out.println(path);
-			beanFactory = new ClassPathXmlApplicationContext(BEAN_SERVICES_NAME);
+			beanFactory = new ClassPathXmlApplicationContext(BeansConfParser.classPathParse(BEAN_SERVICES_NAME));
 		} catch (BeansException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		hessianBean = (JmeterTestJavaIFace)beanFactory.getBean("jmeterClient");
 		

@@ -20,7 +20,7 @@ import com.dianping.dpsf.jmetertest.JmeterTestJavaIFace;
  * @version 1.0
  * @created 2012-3-18 下午03:58:15
  */
-public class PigeonCatPerformanceWithSleepTest {
+public class PigeonCatPerformanceWithSleepSample {
 
 	private final static String BEAN_SERVICES_NAME = "jmeter-client.xml";
 

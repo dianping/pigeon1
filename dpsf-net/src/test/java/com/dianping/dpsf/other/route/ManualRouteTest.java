@@ -133,4 +133,9 @@ public class ManualRouteTest {
 		
 	}
 	
+	@Test
+	public void test() {
+		
+	}
+	
 }

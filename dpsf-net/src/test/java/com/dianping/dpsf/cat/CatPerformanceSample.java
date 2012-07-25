@@ -16,7 +16,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.dianping.cat.Cat;
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
-import com.dianping.cat.message.spi.internal.DefaultMessageTree;
 import com.dianping.dpsf.jmetertest.JmeterTestJavaIFace;
 
 /**
@@ -24,7 +23,7 @@ import com.dianping.dpsf.jmetertest.JmeterTestJavaIFace;
  * @version 1.0
  * @created 2012-3-18 下午03:58:15
  */
-public class CatPerformanceTest {
+public class CatPerformanceSample {
 
 	private final static String BEAN_SERVICES_NAME = "jmeter-client.xml";
 
