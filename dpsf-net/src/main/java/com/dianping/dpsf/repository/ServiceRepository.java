@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.dianping.dpsf.exception.ServiceException;
-import com.dianping.dpsf.zookeeper.ZooKeeperManager;
 
 
 /**    
@@ -33,8 +32,6 @@ public class ServiceRepository {
 	
 	private Map<String,Object> services = new ConcurrentHashMap<String,Object>();
 	
-	private final static String CONNECTOR = "_";
-	
 	public ServiceRepository(){
 		Method[] objectMethodArray = Object.class.getMethods();
 		for(Method method : objectMethodArray){
@@ -50,7 +47,6 @@ public class ServiceRepository {
 	
 	public void registerService(String serviceName,Object service) throws ClassNotFoundException{
 		this.services.put(serviceName, service);
-		ZooKeeperManager.getInstance().register(serviceName);
 	}
 	
 	public Object getService(String serviceName){

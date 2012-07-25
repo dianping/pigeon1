@@ -5,666 +5,661 @@
  */
 package com.dianping.dpsf.protocol.thrift;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.EnumMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.EnumSet;
-import java.util.Collections;
-import java.util.BitSet;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.thrift.*;
-import org.apache.thrift.async.*;
-import org.apache.thrift.meta_data.*;
-import org.apache.thrift.transport.*;
-import org.apache.thrift.protocol.*;
+import org.apache.thrift.TBase;
+import org.apache.thrift.TBaseHelper;
+import org.apache.thrift.TException;
+import org.apache.thrift.TFieldIdEnum;
+import org.apache.thrift.TFieldRequirementType;
+import org.apache.thrift.meta_data.FieldMetaData;
+import org.apache.thrift.meta_data.FieldValueMetaData;
+import org.apache.thrift.protocol.TField;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.protocol.TProtocolException;
+import org.apache.thrift.protocol.TProtocolUtil;
+import org.apache.thrift.protocol.TStruct;
+import org.apache.thrift.protocol.TType;
 
 public class Response implements TBase<Response, Response._Fields>, java.io.Serializable, Cloneable {
-  private static final TStruct STRUCT_DESC = new TStruct("Response");
-
-  private static final TField MESSAGE_TYPE_FIELD_DESC = new TField("messageType", TType.I32, (short)1);
-  private static final TField TRANSFER_ID_FIELD_DESC = new TField("transferId", TType.I64, (short)2);
-  private static final TField RPC_VERSION_FIELD_DESC = new TField("rpcVersion", TType.STRING, (short)3);
-  private static final TField RETURN_VAL_FIELD_DESC = new TField("returnVal", TType.STRING, (short)4);
-  private static final TField CAUSE_FIELD_DESC = new TField("cause", TType.STRING, (short)5);
-
-  public int messageType;
-  public long transferId;
-  public String rpcVersion;
-  public ByteBuffer returnVal;
-  public String cause;
-
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-  public enum _Fields implements TFieldIdEnum {
-    MESSAGE_TYPE((short)1, "messageType"),
-    TRANSFER_ID((short)2, "transferId"),
-    RPC_VERSION((short)3, "rpcVersion"),
-    RETURN_VAL((short)4, "returnVal"),
-    CAUSE((short)5, "cause");
-
-    private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-    static {
-      for (_Fields field : EnumSet.allOf(_Fields.class)) {
-        byName.put(field.getFieldName(), field);
-      }
-    }
-
-    /**
-     * Find the _Fields constant that matches fieldId, or null if its not found.
-     */
-    public static _Fields findByThriftId(int fieldId) {
-      switch(fieldId) {
-        case 1: // MESSAGE_TYPE
-          return MESSAGE_TYPE;
-        case 2: // TRANSFER_ID
-          return TRANSFER_ID;
-        case 3: // RPC_VERSION
-          return RPC_VERSION;
-        case 4: // RETURN_VAL
-          return RETURN_VAL;
-        case 5: // CAUSE
-          return CAUSE;
-        default:
-          return null;
-      }
-    }
-
-    /**
-     * Find the _Fields constant that matches fieldId, throwing an exception
-     * if it is not found.
-     */
-    public static _Fields findByThriftIdOrThrow(int fieldId) {
-      _Fields fields = findByThriftId(fieldId);
-      if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-      return fields;
-    }
-
-    /**
-     * Find the _Fields constant that matches name, or null if its not found.
-     */
-    public static _Fields findByName(String name) {
-      return byName.get(name);
-    }
-
-    private final short _thriftId;
-    private final String _fieldName;
-
-    _Fields(short thriftId, String fieldName) {
-      _thriftId = thriftId;
-      _fieldName = fieldName;
-    }
-
-    public short getThriftFieldId() {
-      return _thriftId;
-    }
-
-    public String getFieldName() {
-      return _fieldName;
-    }
-  }
-
-  // isset id assignments
-  private static final int __MESSAGETYPE_ISSET_ID = 0;
-  private static final int __TRANSFERID_ISSET_ID = 1;
-  private BitSet __isset_bit_vector = new BitSet(2);
-
-  public static final Map<_Fields, FieldMetaData> metaDataMap;
-  static {
-    Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.MESSAGE_TYPE, new FieldMetaData("messageType", TFieldRequirementType.REQUIRED, 
-        new FieldValueMetaData(TType.I32)));
-    tmpMap.put(_Fields.TRANSFER_ID, new FieldMetaData("transferId", TFieldRequirementType.REQUIRED, 
-        new FieldValueMetaData(TType.I64)));
-    tmpMap.put(_Fields.RPC_VERSION, new FieldMetaData("rpcVersion", TFieldRequirementType.DEFAULT, 
-        new FieldValueMetaData(TType.STRING)));
-    tmpMap.put(_Fields.RETURN_VAL, new FieldMetaData("returnVal", TFieldRequirementType.DEFAULT, 
-        new FieldValueMetaData(TType.STRING)));
-    tmpMap.put(_Fields.CAUSE, new FieldMetaData("cause", TFieldRequirementType.DEFAULT, 
-        new FieldValueMetaData(TType.STRING)));
-    metaDataMap = Collections.unmodifiableMap(tmpMap);
-    FieldMetaData.addStructMetaDataMap(Response.class, metaDataMap);
-  }
-
-  public Response() {
-  }
-
-  public Response(
-    int messageType,
-    long transferId,
-    String rpcVersion,
-    ByteBuffer returnVal,
-    String cause)
-  {
-    this();
-    this.messageType = messageType;
-    setMessageTypeIsSet(true);
-    this.transferId = transferId;
-    setTransferIdIsSet(true);
-    this.rpcVersion = rpcVersion;
-    this.returnVal = returnVal;
-    this.cause = cause;
-  }
-
-  /**
-   * Performs a deep copy on <i>other</i>.
-   */
-  public Response(Response other) {
-    __isset_bit_vector.clear();
-    __isset_bit_vector.or(other.__isset_bit_vector);
-    this.messageType = other.messageType;
-    this.transferId = other.transferId;
-    if (other.isSetRpcVersion()) {
-      this.rpcVersion = other.rpcVersion;
-    }
-    if (other.isSetReturnVal()) {
-      this.returnVal = ByteBuffer.wrap(new byte[other.returnVal.limit() - other.returnVal.arrayOffset()]);
-      System.arraycopy(other.returnVal.array(), other.returnVal.arrayOffset(), returnVal.array(), 0, other.returnVal.limit() - other.returnVal.arrayOffset());
-    }
-    if (other.isSetCause()) {
-      this.cause = other.cause;
-    }
-  }
-
-  public Response deepCopy() {
-    return new Response(this);
-  }
-
-  @Deprecated
-  public Response clone() {
-    return new Response(this);
-  }
-
-  public void clear() {
-    setMessageTypeIsSet(false);
-    this.messageType = 0;
-    setTransferIdIsSet(false);
-    this.transferId = 0;
-    this.rpcVersion = null;
-    this.returnVal = null;
-    this.cause = null;
-  }
-
-  public int getMessageType() {
-    return this.messageType;
-  }
-
-  public Response setMessageType(int messageType) {
-    this.messageType = messageType;
-    setMessageTypeIsSet(true);
-    return this;
-  }
-
-  public void unsetMessageType() {
-    __isset_bit_vector.clear(__MESSAGETYPE_ISSET_ID);
-  }
-
-  /** Returns true if field messageType is set (has been asigned a value) and false otherwise */
-  public boolean isSetMessageType() {
-    return __isset_bit_vector.get(__MESSAGETYPE_ISSET_ID);
-  }
-
-  public void setMessageTypeIsSet(boolean value) {
-    __isset_bit_vector.set(__MESSAGETYPE_ISSET_ID, value);
-  }
-
-  public long getTransferId() {
-    return this.transferId;
-  }
-
-  public Response setTransferId(long transferId) {
-    this.transferId = transferId;
-    setTransferIdIsSet(true);
-    return this;
-  }
-
-  public void unsetTransferId() {
-    __isset_bit_vector.clear(__TRANSFERID_ISSET_ID);
-  }
-
-  /** Returns true if field transferId is set (has been asigned a value) and false otherwise */
-  public boolean isSetTransferId() {
-    return __isset_bit_vector.get(__TRANSFERID_ISSET_ID);
-  }
-
-  public void setTransferIdIsSet(boolean value) {
-    __isset_bit_vector.set(__TRANSFERID_ISSET_ID, value);
-  }
-
-  public String getRpcVersion() {
-    return this.rpcVersion;
-  }
-
-  public Response setRpcVersion(String rpcVersion) {
-    this.rpcVersion = rpcVersion;
-    return this;
-  }
-
-  public void unsetRpcVersion() {
-    this.rpcVersion = null;
-  }
-
-  /** Returns true if field rpcVersion is set (has been asigned a value) and false otherwise */
-  public boolean isSetRpcVersion() {
-    return this.rpcVersion != null;
-  }
-
-  public void setRpcVersionIsSet(boolean value) {
-    if (!value) {
-      this.rpcVersion = null;
-    }
-  }
-
-  public ByteBuffer getReturnVal() {
-    return this.returnVal;
-  }
-
-  public Response setReturnVal(ByteBuffer returnVal) {
-    this.returnVal = returnVal;
-    return this;
-  }
-
-  public void unsetReturnVal() {
-    this.returnVal = null;
-  }
-
-  /** Returns true if field returnVal is set (has been asigned a value) and false otherwise */
-  public boolean isSetReturnVal() {
-    return this.returnVal != null;
-  }
-
-  public void setReturnValIsSet(boolean value) {
-    if (!value) {
-      this.returnVal = null;
-    }
-  }
-
-  public String getCause() {
-    return this.cause;
-  }
-
-  public Response setCause(String cause) {
-    this.cause = cause;
-    return this;
-  }
-
-  public void unsetCause() {
-    this.cause = null;
-  }
-
-  /** Returns true if field cause is set (has been asigned a value) and false otherwise */
-  public boolean isSetCause() {
-    return this.cause != null;
-  }
-
-  public void setCauseIsSet(boolean value) {
-    if (!value) {
-      this.cause = null;
-    }
-  }
-
-  public void setFieldValue(_Fields field, Object value) {
-    switch (field) {
-    case MESSAGE_TYPE:
-      if (value == null) {
-        unsetMessageType();
-      } else {
-        setMessageType((Integer)value);
-      }
-      break;
-
-    case TRANSFER_ID:
-      if (value == null) {
-        unsetTransferId();
-      } else {
-        setTransferId((Long)value);
-      }
-      break;
-
-    case RPC_VERSION:
-      if (value == null) {
-        unsetRpcVersion();
-      } else {
-        setRpcVersion((String)value);
-      }
-      break;
-
-    case RETURN_VAL:
-      if (value == null) {
-        unsetReturnVal();
-      } else {
-        setReturnVal((ByteBuffer)value);
-      }
-      break;
-
-    case CAUSE:
-      if (value == null) {
-        unsetCause();
-      } else {
-        setCause((String)value);
-      }
-      break;
-
-    }
-  }
-
-  public void setFieldValue(int fieldID, Object value) {
-    setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
-  }
-
-  public Object getFieldValue(_Fields field) {
-    switch (field) {
-    case MESSAGE_TYPE:
-      return new Integer(getMessageType());
-
-    case TRANSFER_ID:
-      return new Long(getTransferId());
-
-    case RPC_VERSION:
-      return getRpcVersion();
-
-    case RETURN_VAL:
-      return getReturnVal();
-
-    case CAUSE:
-      return getCause();
-
-    }
-    throw new IllegalStateException();
-  }
-
-  public Object getFieldValue(int fieldId) {
-    return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
-  }
-
-  /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
-  public boolean isSet(_Fields field) {
-    switch (field) {
-    case MESSAGE_TYPE:
-      return isSetMessageType();
-    case TRANSFER_ID:
-      return isSetTransferId();
-    case RPC_VERSION:
-      return isSetRpcVersion();
-    case RETURN_VAL:
-      return isSetReturnVal();
-    case CAUSE:
-      return isSetCause();
-    }
-    throw new IllegalStateException();
-  }
-
-  public boolean isSet(int fieldID) {
-    return isSet(_Fields.findByThriftIdOrThrow(fieldID));
-  }
-
-  @Override
-  public boolean equals(Object that) {
-    if (that == null)
-      return false;
-    if (that instanceof Response)
-      return this.equals((Response)that);
-    return false;
-  }
-
-  public boolean equals(Response that) {
-    if (that == null)
-      return false;
-
-    boolean this_present_messageType = true;
-    boolean that_present_messageType = true;
-    if (this_present_messageType || that_present_messageType) {
-      if (!(this_present_messageType && that_present_messageType))
-        return false;
-      if (this.messageType != that.messageType)
-        return false;
-    }
-
-    boolean this_present_transferId = true;
-    boolean that_present_transferId = true;
-    if (this_present_transferId || that_present_transferId) {
-      if (!(this_present_transferId && that_present_transferId))
-        return false;
-      if (this.transferId != that.transferId)
-        return false;
-    }
-
-    boolean this_present_rpcVersion = true && this.isSetRpcVersion();
-    boolean that_present_rpcVersion = true && that.isSetRpcVersion();
-    if (this_present_rpcVersion || that_present_rpcVersion) {
-      if (!(this_present_rpcVersion && that_present_rpcVersion))
-        return false;
-      if (!this.rpcVersion.equals(that.rpcVersion))
-        return false;
-    }
-
-    boolean this_present_returnVal = true && this.isSetReturnVal();
-    boolean that_present_returnVal = true && that.isSetReturnVal();
-    if (this_present_returnVal || that_present_returnVal) {
-      if (!(this_present_returnVal && that_present_returnVal))
-        return false;
-      if (!this.returnVal.equals(that.returnVal))
-        return false;
-    }
-
-    boolean this_present_cause = true && this.isSetCause();
-    boolean that_present_cause = true && that.isSetCause();
-    if (this_present_cause || that_present_cause) {
-      if (!(this_present_cause && that_present_cause))
-        return false;
-      if (!this.cause.equals(that.cause))
-        return false;
-    }
-
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    return 0;
-  }
-
-  public int compareTo(Response other) {
-    if (!getClass().equals(other.getClass())) {
-      return getClass().getName().compareTo(other.getClass().getName());
-    }
-
-    int lastComparison = 0;
-    Response typedOther = (Response)other;
-
-    lastComparison = Boolean.valueOf(isSetMessageType()).compareTo(typedOther.isSetMessageType());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetMessageType()) {      lastComparison = TBaseHelper.compareTo(this.messageType, typedOther.messageType);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetTransferId()).compareTo(typedOther.isSetTransferId());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetTransferId()) {      lastComparison = TBaseHelper.compareTo(this.transferId, typedOther.transferId);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetRpcVersion()).compareTo(typedOther.isSetRpcVersion());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetRpcVersion()) {      lastComparison = TBaseHelper.compareTo(this.rpcVersion, typedOther.rpcVersion);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetReturnVal()).compareTo(typedOther.isSetReturnVal());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetReturnVal()) {      lastComparison = TBaseHelper.compareTo(this.returnVal, typedOther.returnVal);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetCause()).compareTo(typedOther.isSetCause());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetCause()) {      lastComparison = TBaseHelper.compareTo(this.cause, typedOther.cause);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    return 0;
-  }
-
-  public void read(TProtocol iprot) throws TException {
-    TField field;
-    iprot.readStructBegin();
-    while (true)
-    {
-      field = iprot.readFieldBegin();
-      if (field.type == TType.STOP) { 
-        break;
-      }
-      switch (field.id) {
-        case 1: // MESSAGE_TYPE
-          if (field.type == TType.I32) {
-            this.messageType = iprot.readI32();
-            setMessageTypeIsSet(true);
-          } else { 
-            TProtocolUtil.skip(iprot, field.type);
-          }
-          break;
-        case 2: // TRANSFER_ID
-          if (field.type == TType.I64) {
-            this.transferId = iprot.readI64();
-            setTransferIdIsSet(true);
-          } else { 
-            TProtocolUtil.skip(iprot, field.type);
-          }
-          break;
-        case 3: // RPC_VERSION
-          if (field.type == TType.STRING) {
-            this.rpcVersion = iprot.readString();
-          } else { 
-            TProtocolUtil.skip(iprot, field.type);
-          }
-          break;
-        case 4: // RETURN_VAL
-          if (field.type == TType.STRING) {
-            this.returnVal = iprot.readBinary();
-          } else { 
-            TProtocolUtil.skip(iprot, field.type);
-          }
-          break;
-        case 5: // CAUSE
-          if (field.type == TType.STRING) {
-            this.cause = iprot.readString();
-          } else { 
-            TProtocolUtil.skip(iprot, field.type);
-          }
-          break;
-        default:
-          TProtocolUtil.skip(iprot, field.type);
-      }
-      iprot.readFieldEnd();
-    }
-    iprot.readStructEnd();
-
-    // check for required fields of primitive type, which can't be checked in the validate method
-    if (!isSetMessageType()) {
-      throw new TProtocolException("Required field 'messageType' was not found in serialized data! Struct: " + toString());
-    }
-    if (!isSetTransferId()) {
-      throw new TProtocolException("Required field 'transferId' was not found in serialized data! Struct: " + toString());
-    }
-    validate();
-  }
-
-  public void write(TProtocol oprot) throws TException {
-    validate();
-
-    oprot.writeStructBegin(STRUCT_DESC);
-    oprot.writeFieldBegin(MESSAGE_TYPE_FIELD_DESC);
-    oprot.writeI32(this.messageType);
-    oprot.writeFieldEnd();
-    oprot.writeFieldBegin(TRANSFER_ID_FIELD_DESC);
-    oprot.writeI64(this.transferId);
-    oprot.writeFieldEnd();
-    if (this.rpcVersion != null) {
-      oprot.writeFieldBegin(RPC_VERSION_FIELD_DESC);
-      oprot.writeString(this.rpcVersion);
-      oprot.writeFieldEnd();
-    }
-    if (this.returnVal != null) {
-      oprot.writeFieldBegin(RETURN_VAL_FIELD_DESC);
-      oprot.writeBinary(this.returnVal);
-      oprot.writeFieldEnd();
-    }
-    if (this.cause != null) {
-      oprot.writeFieldBegin(CAUSE_FIELD_DESC);
-      oprot.writeString(this.cause);
-      oprot.writeFieldEnd();
-    }
-    oprot.writeFieldStop();
-    oprot.writeStructEnd();
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder("Response(");
-    boolean first = true;
-
-    sb.append("messageType:");
-    sb.append(this.messageType);
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("transferId:");
-    sb.append(this.transferId);
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("rpcVersion:");
-    if (this.rpcVersion == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.rpcVersion);
-    }
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("returnVal:");
-    if (this.returnVal == null) {
-      sb.append("null");
-    } else {
-      TBaseHelper.toString(this.returnVal, sb);
-    }
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("cause:");
-    if (this.cause == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.cause);
-    }
-    first = false;
-    sb.append(")");
-    return sb.toString();
-  }
-
-  public void validate() throws TException {
-    // check for required fields
-    // alas, we cannot check 'messageType' because it's a primitive and you chose the non-beans generator.
-    // alas, we cannot check 'transferId' because it's a primitive and you chose the non-beans generator.
-  }
+	private static final long serialVersionUID = -6094988410905306871L;
+
+	private static final TStruct STRUCT_DESC = new TStruct("Response");
+
+	private static final TField MESSAGE_TYPE_FIELD_DESC = new TField("messageType", TType.I32, (short) 1);
+	private static final TField TRANSFER_ID_FIELD_DESC = new TField("transferId", TType.I64, (short) 2);
+	private static final TField RPC_VERSION_FIELD_DESC = new TField("rpcVersion", TType.STRING, (short) 3);
+	private static final TField RETURN_VAL_FIELD_DESC = new TField("returnVal", TType.STRING, (short) 4);
+	private static final TField CAUSE_FIELD_DESC = new TField("cause", TType.STRING, (short) 5);
+
+	public int messageType;
+	public long transferId;
+	public String rpcVersion;
+	public ByteBuffer returnVal;
+	public String cause;
+
+	/** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+	public enum _Fields implements TFieldIdEnum {
+		MESSAGE_TYPE((short) 1, "messageType"), TRANSFER_ID((short) 2, "transferId"), RPC_VERSION((short) 3, "rpcVersion"), RETURN_VAL((short) 4, "returnVal"), CAUSE((short) 5, "cause");
+
+		private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+		static {
+			for (_Fields field : EnumSet.allOf(_Fields.class)) {
+				byName.put(field.getFieldName(), field);
+			}
+		}
+
+		/**
+		 * Find the _Fields constant that matches fieldId, or null if its not found.
+		 */
+		public static _Fields findByThriftId(int fieldId) {
+			switch (fieldId) {
+			case 1: // MESSAGE_TYPE
+				return MESSAGE_TYPE;
+			case 2: // TRANSFER_ID
+				return TRANSFER_ID;
+			case 3: // RPC_VERSION
+				return RPC_VERSION;
+			case 4: // RETURN_VAL
+				return RETURN_VAL;
+			case 5: // CAUSE
+				return CAUSE;
+			default:
+				return null;
+			}
+		}
+
+		/**
+		 * Find the _Fields constant that matches fieldId, throwing an exception if it is not found.
+		 */
+		public static _Fields findByThriftIdOrThrow(int fieldId) {
+			_Fields fields = findByThriftId(fieldId);
+			if (fields == null)
+				throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+			return fields;
+		}
+
+		/**
+		 * Find the _Fields constant that matches name, or null if its not found.
+		 */
+		public static _Fields findByName(String name) {
+			return byName.get(name);
+		}
+
+		private final short _thriftId;
+		private final String _fieldName;
+
+		_Fields(short thriftId, String fieldName) {
+			_thriftId = thriftId;
+			_fieldName = fieldName;
+		}
+
+		public short getThriftFieldId() {
+			return _thriftId;
+		}
+
+		public String getFieldName() {
+			return _fieldName;
+		}
+	}
+
+	// isset id assignments
+	private static final int __MESSAGETYPE_ISSET_ID = 0;
+	private static final int __TRANSFERID_ISSET_ID = 1;
+	private BitSet __isset_bit_vector = new BitSet(2);
+
+	public static final Map<_Fields, FieldMetaData> metaDataMap;
+	static {
+		Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+		tmpMap.put(_Fields.MESSAGE_TYPE, new FieldMetaData("messageType", TFieldRequirementType.REQUIRED, new FieldValueMetaData(TType.I32)));
+		tmpMap.put(_Fields.TRANSFER_ID, new FieldMetaData("transferId", TFieldRequirementType.REQUIRED, new FieldValueMetaData(TType.I64)));
+		tmpMap.put(_Fields.RPC_VERSION, new FieldMetaData("rpcVersion", TFieldRequirementType.DEFAULT, new FieldValueMetaData(TType.STRING)));
+		tmpMap.put(_Fields.RETURN_VAL, new FieldMetaData("returnVal", TFieldRequirementType.DEFAULT, new FieldValueMetaData(TType.STRING)));
+		tmpMap.put(_Fields.CAUSE, new FieldMetaData("cause", TFieldRequirementType.DEFAULT, new FieldValueMetaData(TType.STRING)));
+		metaDataMap = Collections.unmodifiableMap(tmpMap);
+		FieldMetaData.addStructMetaDataMap(Response.class, metaDataMap);
+	}
+
+	public Response() {
+	}
+
+	public Response(int messageType, long transferId, String rpcVersion, ByteBuffer returnVal, String cause) {
+		this();
+		this.messageType = messageType;
+		setMessageTypeIsSet(true);
+		this.transferId = transferId;
+		setTransferIdIsSet(true);
+		this.rpcVersion = rpcVersion;
+		this.returnVal = returnVal;
+		this.cause = cause;
+	}
+
+	/**
+	 * Performs a deep copy on <i>other</i>.
+	 */
+	public Response(Response other) {
+		__isset_bit_vector.clear();
+		__isset_bit_vector.or(other.__isset_bit_vector);
+		this.messageType = other.messageType;
+		this.transferId = other.transferId;
+		if (other.isSetRpcVersion()) {
+			this.rpcVersion = other.rpcVersion;
+		}
+		if (other.isSetReturnVal()) {
+			this.returnVal = ByteBuffer.wrap(new byte[other.returnVal.limit() - other.returnVal.arrayOffset()]);
+			System.arraycopy(other.returnVal.array(), other.returnVal.arrayOffset(), returnVal.array(), 0, other.returnVal.limit() - other.returnVal.arrayOffset());
+		}
+		if (other.isSetCause()) {
+			this.cause = other.cause;
+		}
+	}
+
+	public Response deepCopy() {
+		return new Response(this);
+	}
+
+	@Deprecated
+	public Response clone() {
+		return new Response(this);
+	}
+
+	public void clear() {
+		setMessageTypeIsSet(false);
+		this.messageType = 0;
+		setTransferIdIsSet(false);
+		this.transferId = 0;
+		this.rpcVersion = null;
+		this.returnVal = null;
+		this.cause = null;
+	}
+
+	public int getMessageType() {
+		return this.messageType;
+	}
+
+	public Response setMessageType(int messageType) {
+		this.messageType = messageType;
+		setMessageTypeIsSet(true);
+		return this;
+	}
+
+	public void unsetMessageType() {
+		__isset_bit_vector.clear(__MESSAGETYPE_ISSET_ID);
+	}
+
+	/** Returns true if field messageType is set (has been asigned a value) and false otherwise */
+	public boolean isSetMessageType() {
+		return __isset_bit_vector.get(__MESSAGETYPE_ISSET_ID);
+	}
+
+	public void setMessageTypeIsSet(boolean value) {
+		__isset_bit_vector.set(__MESSAGETYPE_ISSET_ID, value);
+	}
+
+	public long getTransferId() {
+		return this.transferId;
+	}
+
+	public Response setTransferId(long transferId) {
+		this.transferId = transferId;
+		setTransferIdIsSet(true);
+		return this;
+	}
+
+	public void unsetTransferId() {
+		__isset_bit_vector.clear(__TRANSFERID_ISSET_ID);
+	}
+
+	/** Returns true if field transferId is set (has been asigned a value) and false otherwise */
+	public boolean isSetTransferId() {
+		return __isset_bit_vector.get(__TRANSFERID_ISSET_ID);
+	}
+
+	public void setTransferIdIsSet(boolean value) {
+		__isset_bit_vector.set(__TRANSFERID_ISSET_ID, value);
+	}
+
+	public String getRpcVersion() {
+		return this.rpcVersion;
+	}
+
+	public Response setRpcVersion(String rpcVersion) {
+		this.rpcVersion = rpcVersion;
+		return this;
+	}
+
+	public void unsetRpcVersion() {
+		this.rpcVersion = null;
+	}
+
+	/** Returns true if field rpcVersion is set (has been asigned a value) and false otherwise */
+	public boolean isSetRpcVersion() {
+		return this.rpcVersion != null;
+	}
+
+	public void setRpcVersionIsSet(boolean value) {
+		if (!value) {
+			this.rpcVersion = null;
+		}
+	}
+
+	public ByteBuffer getReturnVal() {
+		return this.returnVal;
+	}
+
+	public Response setReturnVal(ByteBuffer returnVal) {
+		this.returnVal = returnVal;
+		return this;
+	}
+
+	public void unsetReturnVal() {
+		this.returnVal = null;
+	}
+
+	/** Returns true if field returnVal is set (has been asigned a value) and false otherwise */
+	public boolean isSetReturnVal() {
+		return this.returnVal != null;
+	}
+
+	public void setReturnValIsSet(boolean value) {
+		if (!value) {
+			this.returnVal = null;
+		}
+	}
+
+	public String getCause() {
+		return this.cause;
+	}
+
+	public Response setCause(String cause) {
+		this.cause = cause;
+		return this;
+	}
+
+	public void unsetCause() {
+		this.cause = null;
+	}
+
+	/** Returns true if field cause is set (has been asigned a value) and false otherwise */
+	public boolean isSetCause() {
+		return this.cause != null;
+	}
+
+	public void setCauseIsSet(boolean value) {
+		if (!value) {
+			this.cause = null;
+		}
+	}
+
+	public void setFieldValue(_Fields field, Object value) {
+		switch (field) {
+		case MESSAGE_TYPE:
+			if (value == null) {
+				unsetMessageType();
+			} else {
+				setMessageType((Integer) value);
+			}
+			break;
+
+		case TRANSFER_ID:
+			if (value == null) {
+				unsetTransferId();
+			} else {
+				setTransferId((Long) value);
+			}
+			break;
+
+		case RPC_VERSION:
+			if (value == null) {
+				unsetRpcVersion();
+			} else {
+				setRpcVersion((String) value);
+			}
+			break;
+
+		case RETURN_VAL:
+			if (value == null) {
+				unsetReturnVal();
+			} else {
+				setReturnVal((ByteBuffer) value);
+			}
+			break;
+
+		case CAUSE:
+			if (value == null) {
+				unsetCause();
+			} else {
+				setCause((String) value);
+			}
+			break;
+
+		}
+	}
+
+	public void setFieldValue(int fieldID, Object value) {
+		setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+	}
+
+	public Object getFieldValue(_Fields field) {
+		switch (field) {
+		case MESSAGE_TYPE:
+			return new Integer(getMessageType());
+
+		case TRANSFER_ID:
+			return new Long(getTransferId());
+
+		case RPC_VERSION:
+			return getRpcVersion();
+
+		case RETURN_VAL:
+			return getReturnVal();
+
+		case CAUSE:
+			return getCause();
+
+		}
+		throw new IllegalStateException();
+	}
+
+	public Object getFieldValue(int fieldId) {
+		return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+	}
+
+	/** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+	public boolean isSet(_Fields field) {
+		switch (field) {
+		case MESSAGE_TYPE:
+			return isSetMessageType();
+		case TRANSFER_ID:
+			return isSetTransferId();
+		case RPC_VERSION:
+			return isSetRpcVersion();
+		case RETURN_VAL:
+			return isSetReturnVal();
+		case CAUSE:
+			return isSetCause();
+		}
+		throw new IllegalStateException();
+	}
+
+	public boolean isSet(int fieldID) {
+		return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+		if (that instanceof Response)
+			return this.equals((Response) that);
+		return false;
+	}
+
+	private boolean equals(Response that) {
+		if (that == null)
+			return false;
+
+		boolean this_present_messageType = true;
+		boolean that_present_messageType = true;
+		if (this_present_messageType || that_present_messageType) {
+			if (!(this_present_messageType && that_present_messageType))
+				return false;
+			if (this.messageType != that.messageType)
+				return false;
+		}
+
+		boolean this_present_transferId = true;
+		boolean that_present_transferId = true;
+		if (this_present_transferId || that_present_transferId) {
+			if (!(this_present_transferId && that_present_transferId))
+				return false;
+			if (this.transferId != that.transferId)
+				return false;
+		}
+
+		boolean this_present_rpcVersion = true && this.isSetRpcVersion();
+		boolean that_present_rpcVersion = true && that.isSetRpcVersion();
+		if (this_present_rpcVersion || that_present_rpcVersion) {
+			if (!(this_present_rpcVersion && that_present_rpcVersion))
+				return false;
+			if (!this.rpcVersion.equals(that.rpcVersion))
+				return false;
+		}
+
+		boolean this_present_returnVal = true && this.isSetReturnVal();
+		boolean that_present_returnVal = true && that.isSetReturnVal();
+		if (this_present_returnVal || that_present_returnVal) {
+			if (!(this_present_returnVal && that_present_returnVal))
+				return false;
+			if (!this.returnVal.equals(that.returnVal))
+				return false;
+		}
+
+		boolean this_present_cause = true && this.isSetCause();
+		boolean that_present_cause = true && that.isSetCause();
+		if (this_present_cause || that_present_cause) {
+			if (!(this_present_cause && that_present_cause))
+				return false;
+			if (!this.cause.equals(that.cause))
+				return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	public int compareTo(Response other) {
+		if (!getClass().equals(other.getClass())) {
+			return getClass().getName().compareTo(other.getClass().getName());
+		}
+
+		int lastComparison = 0;
+		Response typedOther = (Response) other;
+
+		lastComparison = Boolean.valueOf(isSetMessageType()).compareTo(typedOther.isSetMessageType());
+		if (lastComparison != 0) {
+			return lastComparison;
+		}
+		if (isSetMessageType()) {
+			lastComparison = TBaseHelper.compareTo(this.messageType, typedOther.messageType);
+			if (lastComparison != 0) {
+				return lastComparison;
+			}
+		}
+		lastComparison = Boolean.valueOf(isSetTransferId()).compareTo(typedOther.isSetTransferId());
+		if (lastComparison != 0) {
+			return lastComparison;
+		}
+		if (isSetTransferId()) {
+			lastComparison = TBaseHelper.compareTo(this.transferId, typedOther.transferId);
+			if (lastComparison != 0) {
+				return lastComparison;
+			}
+		}
+		lastComparison = Boolean.valueOf(isSetRpcVersion()).compareTo(typedOther.isSetRpcVersion());
+		if (lastComparison != 0) {
+			return lastComparison;
+		}
+		if (isSetRpcVersion()) {
+			lastComparison = TBaseHelper.compareTo(this.rpcVersion, typedOther.rpcVersion);
+			if (lastComparison != 0) {
+				return lastComparison;
+			}
+		}
+		lastComparison = Boolean.valueOf(isSetReturnVal()).compareTo(typedOther.isSetReturnVal());
+		if (lastComparison != 0) {
+			return lastComparison;
+		}
+		if (isSetReturnVal()) {
+			lastComparison = TBaseHelper.compareTo(this.returnVal, typedOther.returnVal);
+			if (lastComparison != 0) {
+				return lastComparison;
+			}
+		}
+		lastComparison = Boolean.valueOf(isSetCause()).compareTo(typedOther.isSetCause());
+		if (lastComparison != 0) {
+			return lastComparison;
+		}
+		if (isSetCause()) {
+			lastComparison = TBaseHelper.compareTo(this.cause, typedOther.cause);
+			if (lastComparison != 0) {
+				return lastComparison;
+			}
+		}
+		return 0;
+	}
+
+	public void read(TProtocol iprot) throws TException {
+		TField field;
+		iprot.readStructBegin();
+		while (true) {
+			field = iprot.readFieldBegin();
+			if (field.type == TType.STOP) {
+				break;
+			}
+			switch (field.id) {
+			case 1: // MESSAGE_TYPE
+				if (field.type == TType.I32) {
+					this.messageType = iprot.readI32();
+					setMessageTypeIsSet(true);
+				} else {
+					TProtocolUtil.skip(iprot, field.type);
+				}
+				break;
+			case 2: // TRANSFER_ID
+				if (field.type == TType.I64) {
+					this.transferId = iprot.readI64();
+					setTransferIdIsSet(true);
+				} else {
+					TProtocolUtil.skip(iprot, field.type);
+				}
+				break;
+			case 3: // RPC_VERSION
+				if (field.type == TType.STRING) {
+					this.rpcVersion = iprot.readString();
+				} else {
+					TProtocolUtil.skip(iprot, field.type);
+				}
+				break;
+			case 4: // RETURN_VAL
+				if (field.type == TType.STRING) {
+					this.returnVal = iprot.readBinary();
+				} else {
+					TProtocolUtil.skip(iprot, field.type);
+				}
+				break;
+			case 5: // CAUSE
+				if (field.type == TType.STRING) {
+					this.cause = iprot.readString();
+				} else {
+					TProtocolUtil.skip(iprot, field.type);
+				}
+				break;
+			default:
+				TProtocolUtil.skip(iprot, field.type);
+			}
+			iprot.readFieldEnd();
+		}
+		iprot.readStructEnd();
+
+		// check for required fields of primitive type, which can't be checked in the validate method
+		if (!isSetMessageType()) {
+			throw new TProtocolException("Required field 'messageType' was not found in serialized data! Struct: " + toString());
+		}
+		if (!isSetTransferId()) {
+			throw new TProtocolException("Required field 'transferId' was not found in serialized data! Struct: " + toString());
+		}
+		validate();
+	}
+
+	public void write(TProtocol oprot) throws TException {
+		validate();
+
+		oprot.writeStructBegin(STRUCT_DESC);
+		oprot.writeFieldBegin(MESSAGE_TYPE_FIELD_DESC);
+		oprot.writeI32(this.messageType);
+		oprot.writeFieldEnd();
+		oprot.writeFieldBegin(TRANSFER_ID_FIELD_DESC);
+		oprot.writeI64(this.transferId);
+		oprot.writeFieldEnd();
+		if (this.rpcVersion != null) {
+			oprot.writeFieldBegin(RPC_VERSION_FIELD_DESC);
+			oprot.writeString(this.rpcVersion);
+			oprot.writeFieldEnd();
+		}
+		if (this.returnVal != null) {
+			oprot.writeFieldBegin(RETURN_VAL_FIELD_DESC);
+			oprot.writeBinary(this.returnVal);
+			oprot.writeFieldEnd();
+		}
+		if (this.cause != null) {
+			oprot.writeFieldBegin(CAUSE_FIELD_DESC);
+			oprot.writeString(this.cause);
+			oprot.writeFieldEnd();
+		}
+		oprot.writeFieldStop();
+		oprot.writeStructEnd();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("Response(");
+		boolean first = true;
+
+		sb.append("messageType:");
+		sb.append(this.messageType);
+		first = false;
+		if (!first)
+			sb.append(", ");
+		sb.append("transferId:");
+		sb.append(this.transferId);
+		first = false;
+		if (!first)
+			sb.append(", ");
+		sb.append("rpcVersion:");
+		if (this.rpcVersion == null) {
+			sb.append("null");
+		} else {
+			sb.append(this.rpcVersion);
+		}
+		first = false;
+		if (!first)
+			sb.append(", ");
+		sb.append("returnVal:");
+		if (this.returnVal == null) {
+			sb.append("null");
+		} else {
+			TBaseHelper.toString(this.returnVal, sb);
+		}
+		first = false;
+		if (!first)
+			sb.append(", ");
+		sb.append("cause:");
+		if (this.cause == null) {
+			sb.append("null");
+		} else {
+			sb.append(this.cause);
+		}
+		first = false;
+		sb.append(")");
+		return sb.toString();
+	}
+
+	public void validate() throws TException {
+		// check for required fields
+		// alas, we cannot check 'messageType' because it's a primitive and you chose the non-beans generator.
+		// alas, we cannot check 'transferId' because it's a primitive and you chose the non-beans generator.
+	}
 
 }
-

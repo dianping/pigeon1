@@ -28,6 +28,7 @@ public class ContextUtil {
 	
 	static Method createContextMethod = null;
 	static Method setContextMethod = null;
+	static Method clearContextMethod = null;
 	static Method getContextMethod = null;
 	static Method addSuccessContextMethod = null;
 	static Method addFailedContextMethod = null;
@@ -52,6 +53,9 @@ public class ContextUtil {
 			
 			getContextMethod = contextHolderClass.getDeclaredMethod("getTrackerContext", new Class[]{});
 			getContextMethod.setAccessible(true);
+			
+			clearContextMethod = contextHolderClass.getDeclaredMethod("clearContext", new Class[]{});
+			clearContextMethod.setAccessible(true);
 			
 			addSuccessContextMethod = contextHolderClass.getDeclaredMethod("addSucceedRemoteTrackerContext", new Class[]{contextClass});
 			addSuccessContextMethod.setAccessible(true);
@@ -182,5 +186,10 @@ public class ContextUtil {
 			}
 		}
 		return null;
+	}
+
+	public static void clearContext() {
+		// TODO Auto-generated method stub
+		
 	}
 }

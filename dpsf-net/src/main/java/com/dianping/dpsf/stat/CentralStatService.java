@@ -70,7 +70,7 @@ public class CentralStatService {
 							context.getReturnCode().code, context.getDuration());
 				}
 			}
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			logger.warn("Notify Stat center failed.");
 		}
 	}

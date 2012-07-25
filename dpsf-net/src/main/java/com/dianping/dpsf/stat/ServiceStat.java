@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author saber miao   
  * @version 1.0    
  * @created 2011-4-27 下午05:40:58
- * @deprecated   
  */
 public class ServiceStat {
 	

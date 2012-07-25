@@ -150,7 +150,7 @@ public class DPSFLog {
 		if (PigeonConfig.isHawkApiValid()) {
 			try {
 				Hawk.log(key1, key2, key3, key4, value, cacheSpan);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				if (centralLogFactor++ < 10) {
 					getLogger().warn("Log to log center failed, detail[" + e.getMessage() + "].");
 				} else if (centralLogFactor >= 500) {

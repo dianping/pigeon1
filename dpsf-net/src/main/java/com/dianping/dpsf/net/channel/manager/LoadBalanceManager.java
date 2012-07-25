@@ -45,7 +45,7 @@ public class LoadBalanceManager {
 	private static volatile int errorLogSeed = 0;
 	
 	public static LoadBalance getLoadBalance(String serviceName, String group, int callType) {
-		if (!PigeonConfig.isPigeon150Enabled() || callType == Constants.CALLTYPE_NOREPLY) {
+		if (callType == Constants.CALLTYPE_NOREPLY) {
 			return RandomLoadBalance.instance;
 		}
 		String serviceId = serviceName + ":" + group;

@@ -53,9 +53,8 @@ public class RpcStatsPool {
 		new ServiceBarrelExpiredRequestChecker().start();
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void flowIn(DPSFRequest request, String toServer) {
-		if (PigeonConfig.isPigeon150Enabled() && checkRequestNeedStat(request)) {
+		if (checkRequestNeedStat(request)) {
 			ServiceBarrel barrel = getServerBarrel(toServer);
 			if (barrel != null) {
 				barrel.flowIn(request);
@@ -65,9 +64,8 @@ public class RpcStatsPool {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void flowOut(DPSFRequest request, String fromServer) {
-		if (PigeonConfig.isPigeon150Enabled() && checkRequestNeedStat(request)) {
+		if (checkRequestNeedStat(request)) {
 			ServiceBarrel barrel = getServerBarrel(fromServer);
 			if (barrel != null) {
 				barrel.flowOut(request);
@@ -249,11 +247,11 @@ public class RpcStatsPool {
 								for (Entry<Long, Float> expiredEntry : expiredRequests.entrySet()) {
 									barrel.flowOut(expiredEntry.getKey(), expiredEntry.getValue());
 								}
-							} catch (Throwable e) {
+							} catch (Exception e) {
 								logger.error("Check expired request in service barrel failed, detail[" + e.getMessage() + "].");
 							}
 						}
-					} catch (Throwable e) {
+					} catch (Exception e) {
 						logger.error("Check expired request in service barrel failed, detail[" + e.getMessage() + "].");
 					}
 				}

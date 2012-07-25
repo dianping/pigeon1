@@ -10,7 +10,7 @@
   <groupId>com.dianping.dpsf</groupId>
   <artifactId>dpsf-all</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.2</version>
+  <version>1.7.0</version>
   <name>arch-pigeon</name>
   <organization>
     <name>dianping</name>
@@ -18,21 +18,29 @@
   </organization>
   <inceptionYear>2010.08</inceptionYear>
   <properties>
-    <dpsf-all.version>1.6.1</dpsf-all.version>
+    <dpsf-all.version>1.7.0-SNAPSHOT</dpsf-all.version>
     <dpsf-net.aid>dpsf-net</dpsf-net.aid>
     <dpsf-net.version>${dpsf-all.version}</dpsf-net.version>
     <dpsf-net.name>dpsf-net v${dpsf-all.version}</dpsf-net.name>
+    <dpsf-soap.aid>dpsf-soap</dpsf-soap.aid>
+    <dpsf-soap.version>${dpsf-all.version}</dpsf-soap.version>
+    <dpsf-soap.name>dpsf-soap v${dpsf-all.version}</dpsf-soap.name>    
+    <dpsf-tool.aid>dpsf-tool</dpsf-tool.aid>
+    <dpsf-tool.version>${dpsf-all.version}</dpsf-tool.version>
+    <dpsf-tool.name>dpsf-tool v${dpsf-all.version}</dpsf-tool.name> 
     <dpsf-example.aid>dpsf-example</dpsf-example.aid>
     <dpsf-example.version>${dpsf-all.version}</dpsf-example.version>
     <dpsf-example.name>dpsf-example v${dpsf-all.version}</dpsf-example.name>
-    <dpsf-tool.aid>dpsf-tool</dpsf-tool.aid>
-    <dpsf-tool.version>${dpsf-all.version}</dpsf-tool.version>
-    <dpsf-tool.name>dpsf-tool v${dpsf-all.version}</dpsf-tool.name>
+    <pigeon-engine.aid>pigeon-engine</pigeon-engine.aid>
+    <pigeon-engine.version>${dpsf-all.version}</pigeon-engine.version>
+    <pigeon-engine.name>pigeon-engine v${dpsf-all.version}</pigeon-engine.name>
   </properties>
   <modules>
     <module>dpsf-net</module>
+    <module>dpsf-soap</module>    
     <module>dpsf-example</module>
     <module>dpsf-tool</module>
+    <module>pigeon-engine</module>
   </modules>
   <description>dpsf</description>
   <developers>
@@ -46,112 +54,166 @@
     </developer>
   </developers>
   <dependencyManagement>
-    <dependencies>
-	<dependency>
-		<groupId>${pom.groupId}</groupId>
-		<artifactId>${dpsf-net.aid}</artifactId>
-		<version>${dpsf-net.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>${pom.groupId}</groupId>
-		<artifactId>${dpsf-example.aid}</artifactId>
-		<version>${dpsf-example.version}</version>
-	</dependency>
-       <dependency>
-             <groupId>com.dianping.hawk</groupId>
-             <artifactId>hawk-client</artifactId>
-             <version>0.6.5</version>
-             <scope>provided</scope>
-       </dependency>
-        <dependency>
-            <groupId>com.dianping.cat</groupId>
-            <artifactId>cat-core</artifactId>
-            <version>0.3.3</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-             <groupId>com.dianping.lion</groupId>
-             <artifactId>lion-client</artifactId>
-             <version>0.2.2</version>
-             <scope>provided</scope>
-        </dependency>
-        <dependency>
-              <groupId>aspectj</groupId>
-              <artifactId>aspectjrt</artifactId>
-              <version>1.5.3</version>
-              <scope>compile</scope>
-        </dependency>
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring</artifactId>
-		<version>2.5.6</version>
-	</dependency>
-	<dependency>
-                <groupId>cglib</groupId>
-        	<artifactId>cglib</artifactId>
-        	<version>2.2</version>
-      	</dependency>
-      	<dependency>
-		<groupId>commons-beanutils</groupId>
-		<artifactId>commons-beanutils</artifactId>
-		<version>1.6.1</version>
-	</dependency>		 			
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>4.4</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>commons-lang</groupId>
-		<artifactId>commons-lang</artifactId>
-		<version>2.3</version>
-	</dependency>
-	<dependency>
-		<groupId>commons-collections</groupId>
-		<artifactId>commons-collections</artifactId>
-		<version>3.2</version>
-	</dependency>
-	<dependency>
-		<groupId>commons-logging</groupId>
-		<artifactId>commons-logging</artifactId>
-		<version>1.1.1</version>
-	</dependency>
-	<dependency>
-		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-		<version>1.2.14</version>
-	</dependency>
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-log4j12</artifactId>
-		<version>1.4.3</version>
-	</dependency>
-	<dependency>
-		<groupId>dom4j</groupId>
-		<artifactId>dom4j</artifactId>
-		<version>1.6.1</version>
-	</dependency>
-	<dependency>
-    		<groupId>com.google.protobuf</groupId>
-    		<artifactId>protobuf-java</artifactId>
-   	 	<version>2.3.0</version>
+  <dependencies>
+  <dependency>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${dpsf-net.aid}</artifactId>
+    <version>${dpsf-net.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${dpsf-soap.aid}</artifactId>
+    <version>${dpsf-soap.version}</version>
+  </dependency>  
+  <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${pigeon-engine.aid}</artifactId>
+        <version>${pigeon-engine.version}</version>
+  </dependency>
+    <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${dpsf-example.aid}</artifactId>
+        <version>${dpsf-example.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.dianping.hawk</groupId>
+      <artifactId>hawk-client</artifactId>
+      <version>0.6.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.dianping.lion</groupId>
+      <artifactId>lion-client</artifactId>
+      <version>0.2.2</version>
+      <scope>provided</scope>
+    </dependency>    
+    <dependency>
+      <groupId>com.dianping</groupId>
+      <artifactId>avatar-tracker</artifactId>
+      <version>2.1.9</version>
+      <optional>true</optional>
+    </dependency>    
+    <dependency>
+      <groupId>com.dianping.cat</groupId>
+      <artifactId>cat-core</artifactId>
+      <version>0.3.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.2.2</version>
+    </dependency>
+    <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring</artifactId>
+       <version>2.5.6</version>
+       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>2.5.6</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>2.5.6</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>2.5.6</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-aegis</artifactId>
+      <version>1.2.6</version>
+    </dependency>  
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.caucho</groupId>
+      <artifactId>hessian</artifactId>
+      <version>3.1.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache</groupId>
+      <artifactId>libthrift</artifactId>
+      <version>0.4.0</version>
+    </dependency>      
+  	<dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>2.2</version>
+      </dependency>
+    <dependency>
+  		<groupId>commons-beanutils</groupId>
+  		<artifactId>commons-beanutils</artifactId>
+  		<version>1.6.1</version>
+  	</dependency>		 			
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.4</version>
+  		<scope>test</scope>
   	</dependency>
-	<dependency>
-    		<groupId>org.jboss.netty</groupId>
-		<artifactId>netty</artifactId>
-		<version>3.2.1.Final</version>
+  	<dependency>
+  		<groupId>commons-lang</groupId>
+  		<artifactId>commons-lang</artifactId>
+  		<version>2.3</version>
   	</dependency>
-	<dependency>
-    		<groupId>com.caucho</groupId>
-    		<artifactId>hessian</artifactId>
-    		<version>3.1.5</version>
-	</dependency>
-	<dependency>
-    		<groupId>org.apache</groupId>
-    		<artifactId>libthrift</artifactId>
-    		<version>0.4.0</version>
-	</dependency>
+  	<dependency>
+  		<groupId>commons-collections</groupId>
+  		<artifactId>commons-collections</artifactId>
+  		<version>3.2</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-logging</groupId>
+  		<artifactId>commons-logging</artifactId>
+  		<version>1.1.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>log4j</groupId>
+  		<artifactId>log4j</artifactId>
+  		<version>1.2.14</version>
+  	</dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.6</version>
+    </dependency>   
+  	<dependency>
+  		<groupId>dom4j</groupId>
+  		<artifactId>dom4j</artifactId>
+  		<version>1.6.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.jboss.netty</groupId>
+	    <artifactId>netty</artifactId>
+	    <version>3.2.1.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>2.3.19</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>6.1.26</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.5</version>
+    </dependency>
   </dependencies>
   </dependencyManagement>
   <build>

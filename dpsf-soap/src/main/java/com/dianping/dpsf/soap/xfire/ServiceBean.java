@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dianping.dpsf.xfire;
+package com.dianping.dpsf.soap.xfire;
 
 import java.net.URL;
 import java.util.HashMap;
