@@ -11,7 +11,7 @@
   <artifactId>dpsf-all</artifactId>
   <packaging>pom</packaging>
   <version>1.0.2</version>
-  <name>dianping dpsf v${project.version}</name>
+  <name>arch-pigeon</name>
   <organization>
     <name>dianping</name>
     <url>http://www.dianping.com/</url>

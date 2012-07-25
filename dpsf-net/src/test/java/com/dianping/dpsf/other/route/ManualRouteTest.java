@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.dianping.dpsf.Constants;
@@ -69,7 +70,7 @@ public class ManualRouteTest {
 		return pf;
 	}
 	
-	@Test
+	@Ignore
 	public void testManualRoute() throws Exception {
 		ProxyFactory<IEcho> f1 = createProxyFactory("group1", add1+","+add2, IEcho.class);
 		int cnt1 = 0;
