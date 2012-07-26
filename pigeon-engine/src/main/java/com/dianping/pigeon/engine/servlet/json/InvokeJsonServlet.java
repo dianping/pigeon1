@@ -52,7 +52,13 @@ public class InvokeJsonServlet extends ServiceServlet {
 		String serviceName = request.getParameter("serviceName");
 		String methodName = request.getParameter("methodName");
 		String[] types = request.getParameterValues("methodParameterTypes");
+		if(types == null) {
+			types = request.getParameterValues("methodParameterTypes[]");
+		}
 		String[] values = request.getParameterValues("methodParameters");
+		if (values == null) {
+			values = request.getParameterValues("methodParameters[]");
+		}
 		Object service = this.services.get(serviceName);
 		if (service == null) {
 			return;

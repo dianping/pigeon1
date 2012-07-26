@@ -48,6 +48,7 @@ public final class JettyInit {
 		holder.setInitParameter("gzip", "false");
 		context.addServlet(holder, "/jquery/*");
 		context.addServlet(holder, "/ztree/*");
+		context.addServlet(holder, "/bootstrap/*");
 
 		try {
 			server.start();
