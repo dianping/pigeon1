@@ -61,7 +61,7 @@ public abstract class DPSFDecoder extends OneToOneDecoder implements Decoder{
     		return null;
     	}
 		
-		List messages = null;
+		List<Object> messages = null;
 		int lastReadIndex = cb.readerIndex();
 		while(cb.readable()){
 			if(cb.readableBytes() <= 3){
@@ -98,7 +98,7 @@ public abstract class DPSFDecoder extends OneToOneDecoder implements Decoder{
 				}
 				
 				if(messages == null){
-					messages = new ArrayList();
+					messages = new ArrayList<Object>();
 				}
 				messages.add(doInitMsg(message));
 				lastReadIndex = cb.readerIndex();

@@ -37,7 +37,7 @@ public class LocalIP {
 	private static final String IP_TEST_PREFIX = "192.168.";
 
 	static {
-		Enumeration allNetInterfaces = null;
+		Enumeration<?> allNetInterfaces = null;
 		try {
 			allNetInterfaces = NetworkInterface.getNetworkInterfaces();
 		} catch (SocketException e) {
@@ -46,8 +46,8 @@ public class LocalIP {
 		InetAddress ip = null;
 		first: while (allNetInterfaces.hasMoreElements()) {
 			NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
-			Enumeration addresses = netInterface.getInetAddresses();
-			second: while (addresses.hasMoreElements()) {
+			Enumeration<?> addresses = netInterface.getInetAddresses();
+			while (addresses.hasMoreElements()) {
 				ip = (InetAddress) addresses.nextElement();
 				if (ip instanceof Inet4Address) {
 					String ipValue = ip.getHostAddress();

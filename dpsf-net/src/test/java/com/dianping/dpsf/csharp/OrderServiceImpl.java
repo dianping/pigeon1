@@ -17,8 +17,6 @@ import com.dianping.avatar.tracker.TrackerContext;
 
 public class OrderServiceImpl implements OrderService {
 	
-	private AtomicLong counter = new AtomicLong();
-
 	@Override
 	public OrderResponse getOrder(OrderRequest request) {
 		ExecutionContextHolder.setTrackerContext(createTrackerContext());

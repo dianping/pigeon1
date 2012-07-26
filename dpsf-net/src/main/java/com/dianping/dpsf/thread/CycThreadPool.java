@@ -3,11 +3,6 @@
  */
 package com.dianping.dpsf.thread;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
 
 
 /**    
@@ -21,7 +16,7 @@ import java.util.concurrent.ThreadFactory;
  * @version 1.0    
  * @created 2010-8-16 下午09:22:35   
  */
-public class CycThreadPool extends DPSFThreadPool{
+public final class CycThreadPool extends DPSFThreadPool{
 	
 	private static DPSFThreadPool threadPool;
 	

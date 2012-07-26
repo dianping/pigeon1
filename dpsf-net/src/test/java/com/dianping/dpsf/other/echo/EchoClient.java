@@ -20,12 +20,10 @@ package com.dianping.dpsf.other.echo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.dianping.dpsf.net.channel.manager.LionNotifier;
 import com.dianping.dpsf.net.channel.manager.PigeonClientMock;
 
 public class EchoClient {

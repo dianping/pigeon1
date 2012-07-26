@@ -3,7 +3,6 @@
  */
 package com.dianping.dpsf.channel.protobuf;
 
-import com.dianping.dpsf.component.DPSFController;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 

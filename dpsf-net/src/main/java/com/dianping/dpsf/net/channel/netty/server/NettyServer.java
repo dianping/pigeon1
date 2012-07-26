@@ -1,23 +1,13 @@
 package com.dianping.dpsf.net.channel.netty.server;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 import com.dianping.dpsf.DPSFLog;
-import com.dianping.dpsf.api.ServiceRegistry;
-import com.dianping.dpsf.exception.NetException;
-import com.dianping.dpsf.net.channel.DPSFChannel;
-import com.dianping.dpsf.net.channel.HookRunnable;
 import com.dianping.dpsf.net.channel.Server;
 import com.dianping.dpsf.process.RequestProcessor;
 import com.dianping.dpsf.repository.ServiceRepository;
@@ -46,8 +36,6 @@ public class NettyServer implements Server{
 	
 	private boolean started = false;
 	
-	private ServiceRepository sr;
-	
 	public NettyServer(int port,int corePoolSize,int maxPoolSize,int workQueueSize,ServiceRepository sr){
 		this(null,port,corePoolSize,maxPoolSize,workQueueSize,sr);
 	}
@@ -55,16 +43,15 @@ public class NettyServer implements Server{
 	public NettyServer(String ip,int port,int corePoolSize,int maxPoolSize,int workQueueSize,ServiceRepository sr){
 		this.ip = ip;
 		this.port = port;
-		this.sr = sr;
 		this.bootstrap = new ServerBootstrap(
                 new NioServerSocketChannelFactory(
                 		Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Server-BossExecutor")),
                 		Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Server-WorkerExecutor"))));
-		this.bootstrap.setPipelineFactory(new DPServerChannelPipelineFactory(new RequestProcessor(this.sr,this.port,corePoolSize,maxPoolSize,workQueueSize)));
+		this.bootstrap.setPipelineFactory(new DPServerChannelPipelineFactory(new RequestProcessor(sr,this.port,corePoolSize,maxPoolSize,workQueueSize)));
 	}
 	
 
-	public void start() throws NetException {
+	public void start() {
 		if(!started){
 			InetSocketAddress address = null;
 			if(this.ip == null){
@@ -75,13 +62,6 @@ public class NettyServer implements Server{
 			this.bootstrap.bind(address);
 			this.started = true;
 			//Runtime.getRuntime().addShutdownHook(new Thread(new HookRunnable(this)));
-			InetAddress inet = null;
-			try {
-				inet = InetAddress.getLocalHost();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}  
 		}
 		log.info("Server start at port:"+this.port+"***********");
 	}

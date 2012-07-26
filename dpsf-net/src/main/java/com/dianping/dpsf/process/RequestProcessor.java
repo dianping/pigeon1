@@ -67,7 +67,7 @@ public class RequestProcessor {
 		this.sr = sr;
 		this.port = port;
 		this.serverChannels = new DefaultChannelGroup("Server-Channels");
-		this.threadPool = new ExeThreadPool("Server-RequestProcessor-"+this.port,corePoolSize,maxPoolSize,new ArrayBlockingQueue(workQueueSize));
+		this.threadPool = new ExeThreadPool("Server-RequestProcessor-"+this.port,corePoolSize,maxPoolSize,new ArrayBlockingQueue<Runnable>(workQueueSize));
 		
 		this.contexts = new ConcurrentHashMap<DPSFRequest,RequestContext>();
 		CycThreadPool.getPool().execute(new TimeoutCheck());

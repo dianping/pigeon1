@@ -4,7 +4,6 @@
 package com.dianping.dpsf.net.channel.netty.client;
 
 import java.net.SocketAddress;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.netty.channel.Channel;

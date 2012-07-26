@@ -13,13 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ClientBootstrap;
-import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 
 import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.exception.NetException;
-import com.dianping.dpsf.thread.CycThreadPool;
 
 /**    
  * <p>    
@@ -41,7 +39,6 @@ public class DPClientChannelGroup {
 	private int connectTimeout = 2000;
 	
 	private final int minSize = NettyClient.CLIENT_CONNECTIONS;
-	private final int maxSize = NettyClient.CLIENT_CONNECTIONS;
 	
 	private final AtomicInteger currentUsedNum = new AtomicInteger(0);
 	
@@ -89,7 +86,6 @@ public class DPClientChannelGroup {
 	}
 	
 	public void init() throws NetException {
-		NetException e = null;
 		int newSize = this.minSize-this.channelList.size();
 		
 		createChannel(newSize);
@@ -123,7 +119,7 @@ public class DPClientChannelGroup {
 		}
 	}
 	
-	private void destoryChannel(int desSize){
+	public void destoryChannel(int desSize){
 		int k = 0;
 		for(int i=0;i<this.channelList.size();i++){
 			if(this.channelList.get(i).tryLock_()){
@@ -170,60 +166,6 @@ public class DPClientChannelGroup {
 	    }
 	    return false;
 	}
-	
-	private class GroupTask implements Runnable{
 
-		/* (non-Javadoc)
-		 * @see java.lang.Runnable#run()
-		 */
-		public void run() {
-			int k = 0;
-			int j = 0;
-			while(true){
-				if(channelList.size() > 0){
-//					logger.warn(address.getHostName()+" channel size:"+channelList.size()+" k:"+k+" j:"+j);
-					try{
-						if(channelList.size()<minSize){
-							createChannel(minSize - channelList.size());
-						}
-						if(channelList.size()<=currentUsedNum.get()){
-							k++;
-						}else{
-							k=0;
-						}
-						if(k>=2){
-							k=0;
-							if(channelList.size() < maxSize){
-								int newSize = channelList.size()+2 <= maxSize ? 2 : 1;
-								createChannel(newSize);
-							}
-						}
-//						
-//						if(channelList.size()>currentUsedNum.get()+2){
-//							j++;
-//						}else{
-//							j=0;
-//						}
-//						if(j>=30){
-//							j=0;
-//							if(channelList.size() > minSize){
-//								int desSize = channelList.size()-2 >= minSize ? 2 : 1;
-//								destoryChannel(desSize);
-//							}
-//						}
-					}catch(Exception e){
-						logger.error(e.getMessage(),e);
-					}
-				}
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			
-		}
-		
-	}
 	
 }

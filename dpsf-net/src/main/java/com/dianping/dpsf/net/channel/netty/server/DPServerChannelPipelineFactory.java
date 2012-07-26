@@ -5,8 +5,6 @@ import static org.jboss.netty.channel.Channels.pipeline;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 
-import com.dianping.dpsf.net.channel.Server;
-import com.dianping.dpsf.net.channel.protocol.DPSFEncoder;
 import com.dianping.dpsf.net.channel.protocol.DPSFServerDecoder;
 import com.dianping.dpsf.net.channel.protocol.DPSFServerEncoder;
 import com.dianping.dpsf.process.RequestProcessor;

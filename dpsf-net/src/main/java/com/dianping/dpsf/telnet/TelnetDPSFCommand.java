@@ -3,9 +3,6 @@
  */
 package com.dianping.dpsf.telnet;
 
-import org.jboss.netty.channel.Channel;
-
-import com.dianping.dpsf.thread.DPSFThreadPool;
 import com.dianping.dpsf.thread.ExeThreadPool;
 
 /**    

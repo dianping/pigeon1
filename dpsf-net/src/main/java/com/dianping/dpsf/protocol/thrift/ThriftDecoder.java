@@ -14,7 +14,6 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import com.dianping.dpsf.channel.thrift.ChannelBufferTTransport;
 import com.dianping.dpsf.exception.DPSFRuntimeException;
 import com.dianping.dpsf.net.channel.protocol.AbstractDecoder;
-import com.dianping.dpsf.net.channel.protocol.Decoder;
 
 /**    
  * <p>    

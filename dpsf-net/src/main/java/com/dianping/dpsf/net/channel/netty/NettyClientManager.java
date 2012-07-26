@@ -152,7 +152,7 @@ public class NettyClientManager implements ClientManager{
 		if("true".equalsIgnoreCase(dynamicService)) {
 			logger.info("disabled by system property, start without dynamic service support");
 		} else {
-			Class clazz = null;
+			Class<?> clazz = null;
 			try {
 				clazz = Class.forName(lionClientClass);
 			} catch (Exception e) {
@@ -173,9 +173,9 @@ public class NettyClientManager implements ClientManager{
 								if(oldHpSet == null) {
 									toAddHpSet = newHpSet;
 								} else {
-									toRemoveHpSet = new HashSet(oldHpSet);
+									toRemoveHpSet = new HashSet<HostInfo>(oldHpSet);
 									toRemoveHpSet.removeAll(newHpSet);
-									toAddHpSet = new HashSet(newHpSet);
+									toAddHpSet = new HashSet<HostInfo>(newHpSet);
 									toAddHpSet.removeAll(oldHpSet);
 								}
 								for (HostInfo hostPort : toAddHpSet) {
@@ -220,7 +220,7 @@ public class NettyClientManager implements ClientManager{
 							LionNotifier.hostWeightChanged(host, port, weight);
 						}
 					};
-					Constructor con = clazz.getConstructor(new Class[]{ServiceChange.class});
+					Constructor<?> con = clazz.getConstructor(new Class[]{ServiceChange.class});
 					lionPigeonClient = (PigeonClient) con.newInstance(sc);
 					logger.info("successfully create Lion's PigeonClient of class " + clazz.getName());
 				} catch (Exception e) {
@@ -269,7 +269,7 @@ public class NettyClientManager implements ClientManager{
 				DPSFCallback callback = (DPSFCallback)msg[2];
 				
 				//TODO [v1.7.0, danson.liu]重发目前实现有问题, 另外还需要考虑重发次数, 不能无限重发!
-				Client client_ = getClient(request.getServiceName(),(String)msg[3], request);
+				//Client client_ = getClient(request.getServiceName(),(String)msg[3], request);
 				
 				if(client != null){
 					RpcStatsPool.flowIn(request, client.getAddress());

@@ -5,17 +5,14 @@ package com.dianping.dpsf.protocol.java;
 
 import static org.jboss.netty.buffer.ChannelBuffers.dynamicBuffer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBufferOutputStream;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 
 import com.dianping.dpsf.net.channel.protocol.AbstractEncoder;
-import com.dianping.dpsf.net.channel.protocol.Encoder;
 
 /**    
  * <p>    

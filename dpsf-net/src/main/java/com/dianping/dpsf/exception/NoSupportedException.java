@@ -16,6 +16,11 @@ package com.dianping.dpsf.exception;
  */
 public class NoSupportedException extends RuntimeException{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8598189303332401202L;
+
 	public NoSupportedException(){
 		super("not supported this operation");
 	}

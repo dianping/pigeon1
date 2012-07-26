@@ -172,10 +172,4 @@ public class ServiceRegistry{
 		this.workQueueSize = workQueueSize;
 	}
 
-	public static void main(String[] args){
-		String name = "http://service.dianping.com/ddsf/sfsf";
-//		String ss = name.substring(SERVICE_DOMAIN.length());
-//		System.out.println(ss.substring(0,ss.indexOf("/")));
-	}
-
 }

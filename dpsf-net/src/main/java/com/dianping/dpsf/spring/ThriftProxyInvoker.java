@@ -67,7 +67,7 @@ public class ThriftProxyInvoker implements InvocationHandler{
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		String argsName = this.serviceClassName+"$"+method.getName()+"_args";
-		Class argsClass = this.argsClazz.get(argsName);
+		Class<?> argsClass = this.argsClazz.get(argsName);
 		if(argsClass == null){
 			argsClass = Class.forName(argsName);
 			this.argsClazz.put(argsName, argsClass);
@@ -121,7 +121,7 @@ public class ThriftProxyInvoker implements InvocationHandler{
 		
 		Field[] thisFields = this.fields.get(argsName);
 		if(thisFields == null){
-			Class argsClass = this.argsClazz.get(argsName);
+			Class<?> argsClass = this.argsClazz.get(argsName);
 			Field[] thisFields_ = argsClass.getFields();
 			thisFields = new Field[thisFields_.length-1];				
 			for(int i=0;i<thisFields_.length-1;i++){

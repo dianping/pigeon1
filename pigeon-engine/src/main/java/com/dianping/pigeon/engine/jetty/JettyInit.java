@@ -21,9 +21,9 @@ import com.dianping.pigeon.engine.servlet.json.ServiceJsonServlet;
  * @author sean.wang
  * @since Jul 16, 2012
  */
-public class JettyInit {
+public final class JettyInit {
 	private JettyInit(){}
-	private static final Log log = LogFactory.getLog(JettyInit.class);
+	private static final Log LOG = LogFactory.getLog(JettyInit.class);
 
 	public static void init(Map<String, Object> services, int pigeonPort, int enginePort) {
 		Server server = new Server(enginePort);
@@ -39,12 +39,12 @@ public class JettyInit {
 		ServletHolder holder = new ServletHolder(new DefaultServlet());
 		URL url = JettyInit.class.getClassLoader().getResource("com/dianping/pigeon/engine/statics");
 		if (url == null) {
-			log.error("can't find static files!");
+			LOG.error("can't find static files!");
 			return;
 		}
 		String staticsDir = url.toExternalForm();
 		holder.setInitParameter("resourceBase", staticsDir);
-		log.info("set resourceBase:" + staticsDir);
+		LOG.info("set resourceBase:" + staticsDir);
 		holder.setInitParameter("gzip", "false");
 		context.addServlet(holder, "/jquery/*");
 		context.addServlet(holder, "/ztree/*");
@@ -52,12 +52,12 @@ public class JettyInit {
 		try {
 			server.start();
 		} catch (Exception e) {
-			log.error("init", e);
+			LOG.error("init", e);
 		}
 		try {
 			server.join();
 		} catch (InterruptedException e) {
-			log.error("init", e);
+			LOG.error("init", e);
 		}
 	}
 

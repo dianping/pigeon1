@@ -26,7 +26,7 @@ public class PigeonClientMock implements PigeonClient {
 	static ServiceChange sc;
 
 	public PigeonClientMock(ServiceChange sc) {
-		this.sc = sc;
+		PigeonClientMock.sc = sc;
 	}
 
 	public static ServiceChange getSc() {

@@ -16,6 +16,11 @@ package com.dianping.dpsf.exception;
  */
 public class DPSFTimeoutException extends Exception{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3262980012905046212L;
+
 	public DPSFTimeoutException(String msg){
 		super(msg);
 	}

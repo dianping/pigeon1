@@ -244,9 +244,9 @@ public class PBRequest implements DPSFRequest{
 			}
 			this.paramClassName = this.request.getParamClassName();
 		}
-		GeneratedMessage gml = this.initParameters.get(this.paramClassName);
+		GeneratedMessage gml = PBRequest.initParameters.get(this.paramClassName);
 		if(gml == null){
-			Class paramClass = null;
+			Class<?> paramClass = null;
 			try {
 				paramClass = Class.forName(this.paramClassName);
 			} catch (ClassNotFoundException e) {
@@ -268,7 +268,7 @@ public class PBRequest implements DPSFRequest{
 			} catch (IllegalAccessException e) {
 				throw new ServiceException(e.getMessage(),e);
 			}
-			this.initParameters.put(this.paramClassName, gml);
+			PBRequest.initParameters.put(this.paramClassName, gml);
 		}
 		return gml;
 	}

@@ -5,16 +5,11 @@ import static org.jboss.netty.channel.Channels.pipeline;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
-import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.protocol.DPSFClientDecoder;
 import com.dianping.dpsf.net.channel.protocol.DPSFClientEncoder;
-import com.dianping.dpsf.net.channel.protocol.DPSFEncoder;
 import com.dianping.dpsf.thread.DPSFThreadPool;
-import com.google.protobuf.ExtensionRegistry;
-import com.google.protobuf.MessageLite;
 
 /**    
   * <p>    

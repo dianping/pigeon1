@@ -16,6 +16,11 @@ package com.dianping.dpsf.exception;
  */
 public class DPSFRuntimeException extends RuntimeException{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1190493774124484842L;
+
 	public DPSFRuntimeException(String msg){
 		super(msg);
 	}

@@ -3,8 +3,6 @@
  */
 package com.dianping.dpsf.channel.protobuf;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.log4j.Logger;
 
 import com.dianping.dpsf.Constants;

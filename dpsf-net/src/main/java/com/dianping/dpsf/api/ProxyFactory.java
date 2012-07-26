@@ -26,7 +26,7 @@ public class ProxyFactory<IFACE>{
 
 	private String serviceName;
 	
-	private Class iface;
+	private Class<?> iface;
 	
 	private String serialize = Constants.SERIALIZE_HESSIAN;
 	

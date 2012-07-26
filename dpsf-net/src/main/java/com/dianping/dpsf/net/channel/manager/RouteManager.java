@@ -179,7 +179,7 @@ public class RouteManager implements WeightAccessor {
 			w_ = new ConcurrentHashMap<String,Integer>();
 			this.weights_.put(serviceName, w_);
 		}
-		Integer value = w_.put(connect, weight);
+//		Integer value = w_.put(connect, weight);
 //		if(value != null && value != weight){
 //			throw new DPSFRuntimeException("the same service and the same host can not have many weight :"+weight+"-->>"+value);
 //		}

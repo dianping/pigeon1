@@ -16,6 +16,11 @@ package com.dianping.dpsf.exception;
  */
 public class ServiceException extends Exception{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 520905516464825323L;
+
 	public ServiceException(){
 		super();
 	}

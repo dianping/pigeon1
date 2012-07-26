@@ -13,7 +13,6 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.net.channel.protocol.AbstractDecoder;
-import com.dianping.dpsf.net.channel.protocol.Decoder;
 import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.MessageLite;
 

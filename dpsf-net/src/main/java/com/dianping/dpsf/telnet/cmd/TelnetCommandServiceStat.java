@@ -3,17 +3,11 @@
  */
 package com.dianping.dpsf.telnet.cmd;
 
-import java.lang.Thread.State;
-import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import com.dianping.dpsf.component.impl.DefaultInvoker;
-import com.dianping.dpsf.net.channel.Client;
-import com.dianping.dpsf.net.channel.netty.NettyClientManager;
 import com.dianping.dpsf.process.RequestExecutor;
-import com.dianping.dpsf.process.RequestProcessor;
 import com.dianping.dpsf.stat.StatBean;
 import com.dianping.dpsf.telnet.TelnetCommandExecutor;
 

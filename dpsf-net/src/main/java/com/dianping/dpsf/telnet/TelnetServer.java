@@ -17,8 +17,6 @@ import com.dianping.dpsf.DPSFUtils;
 import com.dianping.dpsf.telnet.cmd.TelnetCommandServiceStat;
 import com.dianping.dpsf.telnet.cmd.TelnetCommandState;
 import com.dianping.dpsf.telnet.cmd.TelnetCommandWeight;
-import com.dianping.dpsf.thread.DPSFThreadPool;
-import com.dianping.dpsf.thread.ExeThreadPool;
 
 /**    
  * <p>    
@@ -55,8 +53,8 @@ public class TelnetServer {
 	private String superPassword = "p0o9i8u7";
 	public TelnetServer(){
 		
-		this.loginBytes = new byte[]{45,108,111,103,105,110,13,10};
-		this.byeBytes = new byte[]{45,98,121,101,13,10};
+		TelnetServer.loginBytes = new byte[]{45,108,111,103,105,110,13,10};
+		TelnetServer.byeBytes = new byte[]{45,98,121,101,13,10};
 		this.dpsfCmd = new TelnetDPSFCommand();
 		this.serviceCmd = new TelnetServiceCommand();
 		this.dpsfCmd.registerState(TelnetCommandState.getInstance());

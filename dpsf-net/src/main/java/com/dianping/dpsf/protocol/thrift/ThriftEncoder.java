@@ -6,13 +6,11 @@ package com.dianping.dpsf.protocol.thrift;
 import org.apache.thrift.TBase;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.dianping.dpsf.channel.thrift.ChannelBufferTTransport;
 import com.dianping.dpsf.net.channel.protocol.AbstractEncoder;
-import com.dianping.dpsf.net.channel.protocol.Encoder;
 
 /**    
  * <p>    

@@ -16,6 +16,11 @@ package com.dianping.dpsf.exception;
  */
 public class NoConnectionException extends NetException{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7540546627782984539L;
+
 	public NoConnectionException(String msg){
 		super(msg);
 	}

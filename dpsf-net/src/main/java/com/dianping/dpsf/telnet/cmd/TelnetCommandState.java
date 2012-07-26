@@ -202,7 +202,6 @@ public class TelnetCommandState implements TelnetCommandExecutor{
 				for(Entry<Integer,RequestProcessor> entry : this.requestProcessorMap.entrySet()){
 					sb.append("\r\nprocessor:").append(entry.getKey()).append(">>>>:\r\n");
 					RequestProcessor requestProcessor = entry.getValue();
-					ThreadPoolExecutor executor = requestProcessor.getThreadPool().getExecutor();
 					ThreadGroup tg = requestProcessor.getThreadPool().getFactory().getGroup();
 					Thread[] threads = new Thread[tg.activeCount()];
 					tg.enumerate(threads,false);

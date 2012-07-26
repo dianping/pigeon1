@@ -29,11 +29,8 @@ public class DPSFRpcChannel implements RpcChannel{
 	
 	private DPSFMetaData metaData;
 	
-	private RpcController defaultController;
-	
 	public DPSFRpcChannel(DPSFMetaData metaData){
 		this.metaData = metaData;
-		this.defaultController = new DefaultRpcController();
 	}
 
 	/* (non-Javadoc)
@@ -45,7 +42,6 @@ public class DPSFRpcChannel implements RpcChannel{
 			DefaultInvoker.getInstance().invokeCallback(new PBRequest(method,request, metaData.getServiceName(), Constants.MESSAGE_TYPE_SERVICE, metaData.getTimeout()),
 					metaData, new PBController(controller), new PBCallback(responsePrototype,done));
 		} catch (NetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

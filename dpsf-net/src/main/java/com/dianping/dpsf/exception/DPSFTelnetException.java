@@ -16,6 +16,11 @@ package com.dianping.dpsf.exception;
  */
 public class DPSFTelnetException extends Exception{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8759281075117453873L;
+
 	public DPSFTelnetException(String msg){
 		super(msg);
 	}

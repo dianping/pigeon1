@@ -3,7 +3,6 @@
  */
 package com.dianping.dpsf.net.channel;
 
-import org.jboss.netty.channel.Channel;
 
 /**    
  * <p>    

@@ -22,6 +22,11 @@ import com.google.protobuf.MessageLite;
  */
 public class PBResponse implements DPSFResponse{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1444633411274329165L;
+
 	private DPSFProtos.Response response;
 	
 	private long seq;

@@ -4,7 +4,6 @@
 package com.dianping.dpsf.net.channel.protocol;
 
 import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.handler.codec.frame.CorruptedFrameException;
 
 /**    
  * <p>    

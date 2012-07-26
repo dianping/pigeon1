@@ -25,7 +25,6 @@ import com.dianping.dpsf.control.PigeonConfig;
 import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.exception.ServiceException;
 import com.dianping.dpsf.net.channel.Client;
-import com.dianping.dpsf.net.channel.config.ClusterConfigure;
 import com.dianping.dpsf.net.channel.config.ConnectMetaData;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
 import com.dianping.dpsf.process.ResponseFactory;
@@ -233,17 +232,17 @@ public class NettyClient implements Client{
 		return this.port;
 	}
 	
-	private class CloseListener implements ChannelFutureListener {
-
-		/* (non-Javadoc)
-		 * @see org.jboss.netty.channel.ChannelFutureListener#operationComplete(org.jboss.netty.channel.ChannelFuture)
-		 */
-		@Override
-		public void operationComplete(ChannelFuture future) throws Exception {
-			ClusterConfigure.getInstance().removeConnect(NettyClient.this.host+ConnectMetaData.PLACEHOLDER+NettyClient.this.port);
-		}
-		
-	}
+//	private class CloseListener implements ChannelFutureListener {
+//
+//		/* (non-Javadoc)
+//		 * @see org.jboss.netty.channel.ChannelFutureListener#operationComplete(org.jboss.netty.channel.ChannelFuture)
+//		 */
+//		@Override
+//		public void operationComplete(ChannelFuture future) throws Exception {
+//			ClusterConfigure.getInstance().removeConnect(NettyClient.this.host+ConnectMetaData.PLACEHOLDER+NettyClient.this.port);
+//		}
+//		
+//	}
 
 	/**
 	 * @return the channel

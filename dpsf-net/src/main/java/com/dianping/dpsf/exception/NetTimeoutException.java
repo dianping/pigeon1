@@ -13,6 +13,11 @@ package com.dianping.dpsf.exception;
   */ 
 public class NetTimeoutException extends NetException{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1961488305051802648L;
+
 	public NetTimeoutException(){
 		super();
 	}
