@@ -21,131 +21,129 @@ import org.apache.log4j.xml.DOMConfigurator;
 import com.dianping.dpsf.control.PigeonConfig;
 import com.dianping.hawk.Hawk;
 
-
-/**    
- * <p>    
- * Title: DPSFLog.java   
- * </p>    
- * <p>    
- * Description: 描述  
- * </p>   
- * @author saber miao   
- * @version 1.0    
- * @created 2010-9-2 下午05:58:39   
+/**
+ * <p>
+ * Title: DPSFLog.java
+ * </p>
+ * <p>
+ * Description: 描述
+ * </p>
+ * 
+ * @author saber miao
+ * @version 1.0
+ * @created 2010-9-2 下午05:58:39
  */
 public class DPSFLog {
-	
-	static private final String LOGGER_NAME = "dpsf";
-	static public final Log log = LogFactory.getLog(LOGGER_NAME);
-	static public final Logger rootLogger = new RootLogger(Level.DEBUG);
-	static private Logger LOGGER;
-	static private volatile boolean initOK = false;
-	static private int centralLogFactor;
-	
-	static{
+	private DPSFLog() {
+	}
+
+	private static final String LOGGER_NAME = "dpsf";
+	public static final Log log = LogFactory.getLog(LOGGER_NAME);
+	public static final Logger rootLogger = new RootLogger(Level.DEBUG);
+	private static Logger LOGGER;
+	private static volatile boolean initOK = false;
+	private static int centralLogFactor;
+
+	static {
 		initDPSFLog();
 	}
 
-	static public synchronized void initDPSFLog() {
-		if (initOK)
+	public static synchronized void initDPSFLog() {
+		if (initOK) {
 			return;
+		}
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		Thread.currentThread().setContextClassLoader(
-				DPSFLog.class.getClassLoader());
-		
+		Thread.currentThread().setContextClassLoader(DPSFLog.class.getClassLoader());
+
 		Properties logPro = new Properties();
 		String logLevel = "info";
 		String logSuffix = "default";
 		try {
 			logPro.load(DPSFLog.class.getClassLoader().getResourceAsStream("config/applicationContext.properties"));
-			logLevel = logPro.get("dpsf.logLevel")==null?null:logPro.get("dpsf.logLevel").toString();
+			logLevel = logPro.get("dpsf.logLevel") == null ? null : logPro.get("dpsf.logLevel").toString();
 			logSuffix = logPro.get("dpsf.logSuffix").toString();
 		} catch (Exception e) {
 			log.warn("not find dpsf.logSuffix from config/applicationContext.properties");
 		}
-		if(logSuffix == null || logSuffix.length() < 1){
-			try{
+		if (logSuffix == null || logSuffix.length() < 1) {
+			try {
 				logSuffix = logPro.get("lion.app.prefix").toString();
 			} catch (Exception e) {
 				log.warn("not find lion.app.prefix from properties");
 			}
 		}
-		
+
 		LoggerRepository lr = new Hierarchy(rootLogger);
-		
-		new DOMConfigurator().doConfigure(DPSFLog.class.getClassLoader()
-				.getResource("dpsf_log4j.xml"),lr);
-		
-		
+
+		new DOMConfigurator().doConfigure(DPSFLog.class.getClassLoader().getResource("dpsf_log4j.xml"), lr);
+
 		String osName = System.getProperty("os.name");
 		String bizLogDir = null;
-		if(osName != null && osName.toLowerCase().indexOf("windows")>-1){
+		if (osName != null && osName.toLowerCase().indexOf("windows") > -1) {
 			bizLogDir = "d:/";
 		}
 		FileAppender fileAppender = null;
-		for (Enumeration<?> appenders = lr.getLogger(LOGGER_NAME).getAllAppenders(); (null == fileAppender)
-				&& appenders.hasMoreElements();) {
+		for (Enumeration<?> appenders = lr.getLogger(LOGGER_NAME).getAllAppenders(); (null == fileAppender) && appenders.hasMoreElements();) {
 			Appender appender = (Appender) appenders.nextElement();
 			if (FileAppender.class.isInstance(appender)) {
-				FileAppender logFileAppender=(FileAppender)appender;
-				if(logLevel != null && logLevel.equalsIgnoreCase("debug")){
+				FileAppender logFileAppender = (FileAppender) appender;
+				if (logLevel != null && logLevel.equalsIgnoreCase("debug")) {
 					logFileAppender.setThreshold(Level.DEBUG);
 				}
-				String logFileName = logFileAppender.getFile(); 
-				File deleteFile=new File(logFileName);
-				if(logSuffix != null){
-					logFileName = logFileName.replace(".log", "."+logSuffix+".log");
+				String logFileName = logFileAppender.getFile();
+				File deleteFile = new File(logFileName);
+				if (logSuffix != null) {
+					logFileName = logFileName.replace(".log", "." + logSuffix + ".log");
 				}
-				if(bizLogDir != null){
-					
+				if (bizLogDir != null) {
+
 					File logFile = new File(bizLogDir, logFileName);
 					logFileName = logFile.getAbsolutePath();
 				}
-				if(logSuffix != null || bizLogDir != null){
+				if (logSuffix != null || bizLogDir != null) {
 					logFileAppender.setFile(logFileName);
-					logFileAppender.activateOptions(); 
-					if(deleteFile.exists()){
+					logFileAppender.activateOptions();
+					if (deleteFile.exists()) {
 						deleteFile.delete();
 					}
-					log.warn(logFileAppender.getFile()+"的输出路径改变为:"+ logFileName);
+					log.warn(logFileAppender.getFile() + "的输出路径改变为:" + logFileName);
 				}
 			}
 		}
-		
-		
+
 		Thread.currentThread().setContextClassLoader(loader);
 		initOK = true;
 		LOGGER = lr.getLogger(LOGGER_NAME);
-		if(logLevel != null && logLevel.equalsIgnoreCase("debug")){
+		if (logLevel != null && logLevel.equalsIgnoreCase("debug")) {
 			LOGGER.setLevel(Level.DEBUG);
 		}
-		
+
 	}
-	
+
 	public static void centralLogWarn(String key1, String key2, String key3) {
 		centralLogWarn(key1, key2, key3, 1);
 	}
-	
+
 	public static void centralLogWarn(String key1, String key2, String key3, double value) {
 		centralLogWarn(key1, key2, key3, value, 10000);
 	}
-	
+
 	public static void centralLogWarn(String key1, String key2, String key3, double value, long cacheSpan) {
 		centralLog("@pigeon-warn", key1, key2, key3, value, cacheSpan);
 	}
-	
+
 	public static void centralLogError(String key1, String key2, String key3) {
 		centralLogError(key1, key2, key3, 1);
 	}
-	
+
 	public static void centralLogError(String key1, String key2, String key3, double value) {
 		centralLogError(key1, key2, key3, value, 10000);
 	}
-	
+
 	public static void centralLogError(String key1, String key2, String key3, double value, long cacheSpan) {
 		centralLog("@pigeon-error", key1, key2, key3, value, cacheSpan);
 	}
-	
+
 	public static void centralLog(String key1, String key2, String key3, String key4, double value, long cacheSpan) {
 		if (PigeonConfig.isHawkApiValid()) {
 			try {
@@ -159,9 +157,9 @@ public class DPSFLog {
 			}
 		}
 	}
-	
-	public static Logger getLogger(){
-		if(LOGGER == null){
+
+	public static Logger getLogger() {
+		if (LOGGER == null) {
 			initDPSFLog();
 		}
 		return LOGGER;

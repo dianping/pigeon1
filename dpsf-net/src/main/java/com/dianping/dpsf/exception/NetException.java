@@ -13,6 +13,8 @@ package com.dianping.dpsf.exception;
   */ 
 public class NetException extends DPSFException{
 	
+	private static final long serialVersionUID = -5839497325867298648L;
+
 	public NetException(){
 		super();
 	}

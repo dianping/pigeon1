@@ -21,24 +21,27 @@ import com.dianping.dpsf.exception.NetException;
  * @created 2010-12-9 下午05:21:27   
  */
 public class ContextUtil {
+	private ContextUtil() {
+		
+	}
 	
 	private static Logger logger = DPSFLog.getLogger();
 	
 	public static final String TRAC_ORDER = "tracker_order";
 	
-	static Method createContextMethod = null;
-	static Method setContextMethod = null;
-	static Method clearContextMethod = null;
-	static Method getContextMethod = null;
-	static Method addSuccessContextMethod = null;
-	static Method addFailedContextMethod = null;
-	static Method getTokenMethod = null;
+	private static Method createContextMethod = null;
+	private static Method setContextMethod = null;
+	private static Method clearContextMethod = null;
+	private static Method getContextMethod = null;
+	private static Method addSuccessContextMethod = null;
+	private static Method addFailedContextMethod = null;
+	private static Method getTokenMethod = null;
 	
-	static Method getExtensionMethod = null;
-	static Method addExtensionMethod = null;
+	private static Method getExtensionMethod = null;
+	private static Method addExtensionMethod = null;
 	
-	static boolean flag = false;
-	static Object[] defObjs = new Object[]{};
+	private static boolean flag = false;
+	private static Object[] defObjs = new Object[]{};
 	static{
 		
 		try {
@@ -80,7 +83,7 @@ public class ContextUtil {
 	}
 	
 	public static Object createContext(String serviceName,
-			String methodName,String host,int port)throws NetException{
+			String methodName,String host,int port){
 		if(flag){
 			StringBuffer sb = new StringBuffer();
 			sb.append(serviceName).append(".").append(methodName)
@@ -94,7 +97,7 @@ public class ContextUtil {
 		return null;
 	}
 	
-	public static void setContext(Object context) throws NetException{
+	public static void setContext(Object context) {
 		if(flag && context != null){
 			try {
 				setContextMethod.invoke(null, new Object[]{context});
@@ -104,7 +107,7 @@ public class ContextUtil {
 		}
 	}
 	
-	public static Object getContext() throws NetException{
+	public static Object getContext() {
 		if(flag){
 			try {
 				return getContextMethod.invoke(null, defObjs);
@@ -115,7 +118,7 @@ public class ContextUtil {
 		return null;
 	}
 	
-	public static void addSuccessContext(Object context) throws NetException{
+	public static void addSuccessContext(Object context){
 		if(flag && context != null){
 			try {
 				addSuccessContextMethod.invoke(null, new Object[]{context});
@@ -125,7 +128,7 @@ public class ContextUtil {
 		}
 	}
 	
-	public static void addFailedContext(Object context) throws NetException{
+	public static void addFailedContext(Object context) {
 		if(flag && context != null){
 			try {
 				addFailedContextMethod.invoke(null, new Object[]{context});
@@ -146,7 +149,7 @@ public class ContextUtil {
 		return null;
 	}
 	
-	public static Integer getOrder(Object context) throws NetException{
+	public static Integer getOrder(Object context) {
 		if(flag && context != null){
 			try {
 				return (Integer)getExtensionMethod.invoke(context, new Object[]{TRAC_ORDER});
@@ -157,7 +160,7 @@ public class ContextUtil {
 		return null;
 	}
 	
-	public static void setOrder(Object context,Integer order) throws NetException{
+	public static void setOrder(Object context,Integer order) {
 		if(flag && context != null){
 			try {
 				addExtensionMethod.invoke(context, new Object[]{TRAC_ORDER,order});
@@ -167,7 +170,7 @@ public class ContextUtil {
 		}
 	}
 	
-	public static void addCatInfo(Object context,String key,String value) throws NetException{
+	public static void addCatInfo(Object context,String key,String value) {
 		if(flag && context != null){
 			try {
 				addExtensionMethod.invoke(context, new Object[]{key,value});
@@ -177,7 +180,7 @@ public class ContextUtil {
 		}
 	}
 	
-	public static String getCatInfo(Object context,String key) throws NetException{
+	public static String getCatInfo(Object context,String key) {
 		if(flag && context != null){
 			try {
 				return (String)getExtensionMethod.invoke(context, new Object[]{key});

@@ -20,6 +20,7 @@ import org.jboss.netty.channel.ChannelHandlerContext;
  * @created 2010-10-9 下午09:24:39   
  */
 public class DPSFUtils {
+	private DPSFUtils(){}
 	
 	public static void setAttachment(ChannelHandlerContext ctx,int seq,Object value){
 		Map<Integer,Object> attachments = (Map<Integer,Object>)ctx.getAttachment();

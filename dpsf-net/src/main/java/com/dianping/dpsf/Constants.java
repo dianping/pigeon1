@@ -15,22 +15,23 @@ package com.dianping.dpsf;
  * @created 2010-8-12 下午10:46:31   
  */
 public class Constants {
+	private Constants() {}
 	
-	public final static int MESSAGE_TYPE_HEART = 1; 
-	public final static int MESSAGE_TYPE_SERVICE = 2;
-	public final static int MESSAGE_TYPE_EXCEPTION = 3;
-	public final static int MESSAGE_TYPE_SERVICE_EXCEPTION = 4;
-	public final static int MESSAGE_TYPE_TIMEOUT = 5;
+	public static final int MESSAGE_TYPE_HEART = 1; 
+	public static final int MESSAGE_TYPE_SERVICE = 2;
+	public static final int MESSAGE_TYPE_EXCEPTION = 3;
+	public static final int MESSAGE_TYPE_SERVICE_EXCEPTION = 4;
+	public static final int MESSAGE_TYPE_TIMEOUT = 5;
 	
-	public final static byte SERILIZABLE_PB = 1;
-	public final static byte SERILIZABLE_HESSIAN = 2;
-	public final static byte SERILIZABLE_JAVA = 3;
-	public final static byte SERILIZABLE_THRIFT = 4;
-	public final static byte SERILIZABLE_NO = 5;
-	public final static byte SERILIZABLE_HESSIAN1 = 6;		//hessian spec. 1.0, spec 2.0兼容1.0，但1.0不兼容2.0
+	public static final byte SERILIZABLE_PB = 1;
+	public static final byte SERILIZABLE_HESSIAN = 2;
+	public static final byte SERILIZABLE_JAVA = 3;
+	public static final byte SERILIZABLE_THRIFT = 4;
+	public static final byte SERILIZABLE_NO = 5;
+	public static final byte SERILIZABLE_HESSIAN1 = 6;		//hessian spec. 1.0, spec 2.0兼容1.0，但1.0不兼容2.0
 	
-	public final static int CALLTYPE_REPLY = 1;
-	public final static int CALLTYPE_NOREPLY = 2;
+	public static final int CALLTYPE_REPLY = 1;
+	public static final int CALLTYPE_NOREPLY = 2;
 	
 
 	public static final String CALL_SYNC = "sync";
