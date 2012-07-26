@@ -23,8 +23,11 @@ public class InvokeJsonServlet extends ServiceServlet {
 
 	private Map<String, Object> services;
 
+	private int pigeonPort;
+
 	public InvokeJsonServlet(Map<String, Object> services, int pigeonPort) {
 		this.services = services;
+		this.pigeonPort = pigeonPort;
 	}
 
 	private Gson gson = new Gson();

@@ -22,9 +22,10 @@ import com.dianping.pigeon.engine.servlet.json.ServiceJsonServlet;
  * @since Jul 16, 2012
  */
 public class JettyInit {
+	private JettyInit(){}
 	private static final Log log = LogFactory.getLog(JettyInit.class);
 
-	public static void init(Map<String, Object> services, int pigeonPort, int enginePort) throws Exception {
+	public static void init(Map<String, Object> services, int pigeonPort, int enginePort) {
 		Server server = new Server(enginePort);
 
 		Context context = new Context(Context.SESSIONS);
@@ -48,8 +49,16 @@ public class JettyInit {
 		context.addServlet(holder, "/jquery/*");
 		context.addServlet(holder, "/ztree/*");
 
-		server.start();
-		server.join();
+		try {
+			server.start();
+		} catch (Exception e) {
+			log.error("init", e);
+		}
+		try {
+			server.join();
+		} catch (InterruptedException e) {
+			log.error("init", e);
+		}
 	}
 
 }

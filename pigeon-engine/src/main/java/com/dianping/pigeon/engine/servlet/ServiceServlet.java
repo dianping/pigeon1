@@ -32,9 +32,9 @@ import freemarker.template.TemplateException;
 public class ServiceServlet extends HttpServlet {
 	private static final long serialVersionUID = -2703014417332812558L;
 
-	protected static Set<String> ingoreMethods = new HashSet<String>();
+	private Set<String> ingoreMethods = new HashSet<String>();
 
-	static {
+	{
 		Method[] objectMethodArray = Object.class.getMethods();
 		for (Method method : objectMethodArray) {
 			ingoreMethods.add(method.getName() + ":" + Arrays.toString(method.getParameterTypes()));
@@ -42,9 +42,9 @@ public class ServiceServlet extends HttpServlet {
 
 	}
 
-	private static final Configuration cfg = new Configuration();
+	private final Configuration cfg = new Configuration();
 
-	static {
+	{
 		cfg.setObjectWrapper(new DefaultObjectWrapper());
 		ClassTemplateLoader templateLoader = new ClassTemplateLoader(ServiceServlet.class, "/com/dianping/pigeon/engine/view");
 		cfg.setTemplateLoader(templateLoader);
