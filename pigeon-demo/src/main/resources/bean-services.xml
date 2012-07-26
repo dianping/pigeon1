@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="byName">
+
+
+	<bean id="exampleService" class="com.dianping.dpsf.spring.ServiceRegistry"
+		init-method="init" lazy-init="false">
+		<property name="enableEngine" value="true" />
+		<property name="services">
+			<map>
+				<entry key="http://service.dianping.com/itemName/exampleService_1.0.0"
+					value-ref="exampleImpl" />
+				<entry
+					key="http://service.dianping.com/itemName/javaExampleService_1.0.0"
+					value-ref="exampleImpl" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="exampleImpl" class="com.dianping.dpsf.tserver.ExampleServiceImpl" />
+
+</beans>

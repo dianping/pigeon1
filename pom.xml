@@ -22,9 +22,9 @@
     <dpsf-net.aid>dpsf-net</dpsf-net.aid>
     <dpsf-net.version>${dpsf-all.version}</dpsf-net.version>
     <dpsf-net.name>dpsf-net v${dpsf-all.version}</dpsf-net.name>
-    <dpsf-soap.aid>dpsf-soap</dpsf-soap.aid>
-    <dpsf-soap.version>${dpsf-all.version}</dpsf-soap.version>
-    <dpsf-soap.name>dpsf-soap v${dpsf-all.version}</dpsf-soap.name>    
+    <pigeon-demo.aid>pigeon-demo</pigeon-demo.aid>
+    <pigeon-demo.version>${dpsf-all.version}</pigeon-demo.version>
+    <pigeon-demo.name>pigeon-demo v${dpsf-all.version}</pigeon-demo.name>    
     <dpsf-tool.aid>dpsf-tool</dpsf-tool.aid>
     <dpsf-tool.version>${dpsf-all.version}</dpsf-tool.version>
     <dpsf-tool.name>dpsf-tool v${dpsf-all.version}</dpsf-tool.name> 
@@ -34,8 +34,8 @@
   </properties>
   <modules>
     <module>dpsf-net</module>
-    <module>dpsf-soap</module>    
     <module>dpsf-tool</module>
+    <module>pigeon-demo</module>
     <module>pigeon-engine</module>
   </modules>
   <description>dpsf</description>
@@ -52,19 +52,19 @@
   <dependencyManagement>
   <dependencies>
   <dependency>
-    <groupId>${project.groupId}</groupId>
-    <artifactId>${dpsf-net.aid}</artifactId>
-    <version>${dpsf-net.version}</version>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>${dpsf-net.aid}</artifactId>
+         <version>${dpsf-net.version}</version>
   </dependency>
-  <dependency>
-    <groupId>${project.groupId}</groupId>
-    <artifactId>${dpsf-soap.aid}</artifactId>
-    <version>${dpsf-soap.version}</version>
-  </dependency>  
   <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>${pigeon-engine.aid}</artifactId>
         <version>${pigeon-engine.version}</version>
+  </dependency>
+  <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${pigeon-demo.aid}</artifactId>
+        <version>${pigeon-demo.version}</version>
   </dependency>
     <dependency>
       <groupId>com.dianping.hawk</groupId>
