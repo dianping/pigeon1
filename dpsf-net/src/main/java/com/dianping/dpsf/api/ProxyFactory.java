@@ -57,7 +57,7 @@ public class ProxyFactory<IFACE>{
 	
 	private LoadBalance loadBalanceObj;
 	
-	public void init()throws Exception{
+	public void init() {
 		
 		if(this.group == null){
 			this.group = this.iface.getName()+"_"+groupId.incrementAndGet();
@@ -124,7 +124,7 @@ public class ProxyFactory<IFACE>{
 		ClientManagerFactory.getClientManager().setGroupRoute(serviceName, group, connectSet);
 	}
 	
-	private void initPB() throws Exception{
+	private void initPB() {
 //		if(this.callMethod.equalsIgnoreCase(Constants.CALL_CALLBACK)){
 //			if(this.iface.endsWith("$Interface")){
 //				this.interfaceName = this.iface;
@@ -154,7 +154,7 @@ public class ProxyFactory<IFACE>{
 //		this.obj = constructor.newInstance(this.channel);
 	}
 	
-	private void initJavaAndHessian() throws Exception{
+	private void initJavaAndHessian() {
 		this.obj = (IFACE)Proxy.newProxyInstance(ProxyFactory.class.getClassLoader(), 
 				new Class[]{this.iface}, new ProxyInvoker(new DPSFMetaData(this.serviceName,
 						this.timeout,this.callMethod,this.serialize,this.callback,this.group, this.writeBufferLimit)));
@@ -186,7 +186,7 @@ public class ProxyFactory<IFACE>{
 //        client.setProperty(CommonsHttpMessageSender.HTTP_TIMEOUT, this.timeout+"");
 //	}
 	
-	private void initWS() throws Exception{
+	private void initWS(){
 //		this.objType = Class.forName(this.iface);
 ////		String serviceURL = "";
 ////		if(this.hosts != null && this.hosts.length() > 0){
@@ -215,7 +215,7 @@ public class ProxyFactory<IFACE>{
 //				new Class[]{this.objType}, new WSProxyInvoker(this.objType,this.serviceName,this.timeout));
 	}
 	
-	private void initThrift() throws Exception{
+	private void initThrift() {
 //		if(!this.iface.endsWith("$Iface")){
 //			this.iface += "$iface";
 //		}

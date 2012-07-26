@@ -52,7 +52,7 @@ public class ServiceRegistry{
 		this.port = port;
 	}
 	
-	public void init() throws Exception{
+	public void init() throws ClassNotFoundException {
 		if("dp".equals(this.serviceType.trim().toLowerCase())){
 			initDPService();
 		}else if("ws".equals(this.serviceType.trim().toLowerCase())){
@@ -71,7 +71,7 @@ public class ServiceRegistry{
 		}
 	}
 	
-	private void initDPService() throws Exception{
+	private void initDPService() throws ClassNotFoundException {
 		isInit = true;
 		this.sr = new ServiceRepository();
 		com.dianping.dpsf.net.channel.Server server = new NettyServer(port,corePoolSize,maxPoolSize,workQueueSize,this.sr);
@@ -85,7 +85,7 @@ public class ServiceRegistry{
 		}
 	}
 	
-	private void initWSService() throws Exception{
+	private void initWSService() {
 		
 //		Class wsClazz = Class.forName("com.dianping.dpsf.spring.WSInit");
 //		Method[] ms = wsClazz.getDeclaredMethods();

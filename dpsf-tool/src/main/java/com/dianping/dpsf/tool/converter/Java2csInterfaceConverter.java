@@ -3,9 +3,12 @@ package com.dianping.dpsf.tool.converter;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -58,7 +61,7 @@ public class Java2csInterfaceConverter {
 	 */
 	private StringBuffer warningMessage = new StringBuffer();
 	
-	public void csFileConvert(List<Class<?>> clsList, String directory, String sourceFile) throws Exception {
+	public void csFileConvert(List<Class<?>> clsList, String directory, String sourceFile) throws IOException, SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		loadParaName(sourceFile, clsList);
 		//convert the interfaces
 		for(Class<?> cls : clsList) {
@@ -250,7 +253,7 @@ public class Java2csInterfaceConverter {
 		return result;
 	}
 	
-	private String hasDefault(Object obj, Field f) throws Exception {
+	private String hasDefault(Object obj, Field f) throws IllegalArgumentException, IllegalAccessException {
 		String hasDef = null;
 		Class<?> t = f.getType();
 		f.setAccessible(true);
@@ -269,7 +272,7 @@ public class Java2csInterfaceConverter {
 		return hasDef;
 	}
 	
-	private void convertReferring(Map<String, List<String>> referMap, String directory) throws Exception {
+	private void convertReferring(Map<String, List<String>> referMap, String directory) throws InstantiationException, IllegalAccessException, IOException {
 		if(referMap.size() == 0 ) {
 			return;
 		}
@@ -350,7 +353,7 @@ public class Java2csInterfaceConverter {
 		return methodParaNames;
 	}
 	
-	protected void loadParaName(String sourceFile, List<Class<?>> clsList) throws Exception {
+	protected void loadParaName(String sourceFile, List<Class<?>> clsList) throws IOException {
 		//load the source files
 		JarFile jarFile = new JarFile(sourceFile);
 		Enumeration<JarEntry> entries = jarFile.entries();

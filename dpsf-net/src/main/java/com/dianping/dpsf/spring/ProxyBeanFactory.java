@@ -2,6 +2,7 @@ package com.dianping.dpsf.spring;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -70,7 +71,7 @@ public class ProxyBeanFactory implements FactoryBean {
 	 */
 	private boolean writeBufferLimit = PigeonConfig.getDefaultWriteBufferLimit();
 
-	public void init() throws Exception {
+	public void init() throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException  {
 
 		if (this.group == null) {
 			this.group = this.iface + "_" + groupId.incrementAndGet();
@@ -143,7 +144,7 @@ public class ProxyBeanFactory implements FactoryBean {
 		}
 	}
 
-	private void initPB() throws Exception {
+	private void initPB() throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (this.callMethod.equalsIgnoreCase(Constants.CALL_CALLBACK)) {
 			if (this.iface.endsWith("$Interface")) {
 				this.setInterfaceName(this.iface);
@@ -173,12 +174,12 @@ public class ProxyBeanFactory implements FactoryBean {
 		this.obj = constructor.newInstance(this.channel);
 	}
 
-	private void initJavaAndHessian() throws Exception {
+	private void initJavaAndHessian() throws ClassNotFoundException {
 		this.objType = Class.forName(this.iface);
 		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType }, new ProxyInvoker(new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize, this.callback, this.group, this.writeBufferLimit)));
 	}
 
-	private void initWS() throws Exception {
+	private void initWS() throws ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		this.objType = Class.forName(this.iface);
 		if (!this.serviceName.startsWith("http")) {
 			if (this.serviceName.startsWith("//")) {
@@ -198,7 +199,7 @@ public class ProxyBeanFactory implements FactoryBean {
 		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType }, wsHandler);
 	}
 
-	private void initThrift() throws Exception {
+	private void initThrift() throws ClassNotFoundException {
 		if (!this.iface.endsWith("$Iface")) {
 			this.iface += "$Iface";
 		}
