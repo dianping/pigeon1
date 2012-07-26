@@ -74,7 +74,7 @@ public class NettyServer implements Server{
 			}
 			this.bootstrap.bind(address);
 			this.started = true;
-			Runtime.getRuntime().addShutdownHook(new Thread(new HookRunnable(this)));
+			//Runtime.getRuntime().addShutdownHook(new Thread(new HookRunnable(this)));
 			InetAddress inet = null;
 			try {
 				inet = InetAddress.getLocalHost();
