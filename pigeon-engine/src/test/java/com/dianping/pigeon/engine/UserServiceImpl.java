@@ -10,6 +10,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public User getUser(User u) {
+		u.setEmail("sean@dianping.com");
 		return u;
 	}
 
