@@ -3,7 +3,6 @@ package com.dianping.dpsf.tool.converter;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,8 +18,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -93,7 +92,9 @@ public class Java2csInterfaceConverter {
 					Class<?>[] pClasses = method.getParameterTypes();
 					String[] paraName = readParaName(cls, method);
 					for(int i = 0; i < pClasses.length; i++) {
-						sBody.append(convertJavaCSType(pClasses[i]) + " " + paraName[i]);
+						sBody.append(convertJavaCSType(pClasses[i]));
+						sBody.append(" ");
+						sBody.append(paraName[i]);
 						if(i != pClasses.length - 1) {
 							sBody.append(", ");
 						}
@@ -111,7 +112,8 @@ public class Java2csInterfaceConverter {
 				for(int i = 0; i < enums.length; i++) {
 					Method method = enums[i].getClass().getMethod("name");
 					String name = (String)method.invoke(enums[i], null);
-					sBody.append("\t\t"+name);
+					sBody.append("\t\t");
+					sBody.append(name);
 					if(i != enums.length - 1) {
 						sBody.append(",");
 					}
@@ -140,7 +142,7 @@ public class Java2csInterfaceConverter {
 			bos.write(sHead.toString().getBytes());
 			bos.write(sBody.toString().getBytes());
 			bos.close();
-			System.out.println(folder+cls.getSimpleName()+".cs generated.");
+			//System.out.println(folder+cls.getSimpleName()+".cs generated.");
 		}
 		//convert the referred entities
 		convertReferring(referMap, directory);
@@ -155,21 +157,22 @@ public class Java2csInterfaceConverter {
 		} else {
 			rList = referMap.get(orginCls.getName());
 		}
-		referName = referName.replaceAll("\\[+L", "");
-		referName = referName.replace(";", "");
-		rList.add(referName);
+		String rName = referName.replaceAll("\\[+L", "");
+		rName = rName.replace(";", "");
+		rList.add(rName);
 	}
 	
 	private String createPackageDirectory(String directory, String fullClsName) {
-		directory = directory.replaceAll("\\\\", "/");
-		StringBuffer packagePath = new StringBuffer(directory);
+		String dir = directory.replaceAll("\\\\", "/");
+		StringBuffer packagePath = new StringBuffer(dir);
 		if(fullClsName != null) {
 			String[] files = fullClsName.split("\\.");
 			for(int i = 0; i < files.length - 1; i++) {
-				if(!(directory.endsWith("/") || directory.endsWith("\\"))) {
+				if(!(dir.endsWith("/") || dir.endsWith("\\"))) {
 					packagePath.append("/");
 				}
-				packagePath.append(files[i]+"/");
+				packagePath.append(files[i]);
+				packagePath.append("/");
 			}
 			File f = new File(packagePath.toString());
 			if(!f.exists()) {
