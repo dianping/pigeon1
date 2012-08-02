@@ -7,7 +7,6 @@
 		<version>1.7.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.dianping.dpsf</groupId>
 	<name>${dpsf-net.name}</name>
 	<artifactId>${dpsf-net.aid}</artifactId>
 	<version>${dpsf-net.version}</version>
@@ -58,13 +57,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.dianping.hawk</groupId>
-			<artifactId>hawk-client</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.dianping.cat</groupId>
 			<artifactId>cat-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.dianping.hawk</groupId>
+			<artifactId>hawk-client</artifactId>
+		</dependency>		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

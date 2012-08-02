@@ -138,7 +138,6 @@ public class DefaultInvoker implements Invoker{
 		
 		// Add Cat Info
 		String serverMessageId = Cat.getProducer().createMessageId(); 
-		String responseMessageId = Cat.getProducer().createMessageId();
 		MessageTree tree = Cat.getManager().getThreadLocalMessageTree();
 		if(tree==null){
 			Cat.setup(null);
@@ -150,11 +149,9 @@ public class DefaultInvoker implements Invoker{
 		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_ROOT_MESSAGE_ID, rootMessageId);
 		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_CURRENT_MESSAGE_ID, currentMessageId);
 		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_SERVER_MESSAGE_ID, serverMessageId);
-		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_RESPONSE_MESSAGE_ID, responseMessageId);
 		
 		MessageProducer cat = Cat.getProducer();
 		cat.logEvent(CatConstants.TYPE_REMOTE_CALL, CatConstants.NAME_REQUEST, Transaction.SUCCESS, serverMessageId);
-		cat.logEvent(CatConstants.TYPE_REMOTE_CALL, CatConstants.NAME_RESPONSE, Transaction.SUCCESS, responseMessageId);
 		
 		RpcStatsPool.flowIn(request, client.getAddress());
 		try {
@@ -204,27 +201,7 @@ public class DefaultInvoker implements Invoker{
 				sb.append(serviceMeta.get(length - 2)).append(":").append(serviceMeta.get(length - 1)).append(":").append(request.getMethodName());
 				name = sb.toString();
 			}
-			MessageProducer producer = Cat.getProducer();
-			Transaction t = producer.newTransaction(CatConstants.TYPE_RESULT, name);
 
-			producer.logEvent(CatConstants.NAME_RESPONSE, CatConstants.NAME_PAYLOAD, Transaction.SUCCESS, Stringizers.forJson().compact().from(response, CatConstants.MAX_LENGTH, CatConstants.MAX_ITEM_LENGTH));
-
-			Object context = response.getContext();
-			String rootMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_ROOT_MESSAGE_ID);
-			String serverMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_SERVER_MESSAGE_ID);
-			String currentMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_RESPONSE_MESSAGE_ID);
-			MessageTree tree = Cat.getManager().getThreadLocalMessageTree();
-			if(tree==null){
-				Cat.setup(null);
-				tree = Cat.getManager().getThreadLocalMessageTree();
-			}
-			tree.setRootMessageId(rootMessageId);
-			tree.setParentMessageId(serverMessageId);
-			tree.setMessageId(currentMessageId);
-			t.setStatus(Transaction.SUCCESS);
-			// }}}
-
-			try {
 				DPSFCallback callback = (DPSFCallback) callData[2];
 				if (callback != null) {
 					// DPSFRequest request = (DPSFRequest) callData[0];
@@ -256,11 +233,6 @@ public class DefaultInvoker implements Invoker{
 				}
 				requestMap.remove(response.getSequence());
 				requestStat.timeService(callback.getRequest().getServiceName(), callback.getRequest().getCreateMillisTime());
-			} catch (Exception e) {
-				t.setStatus(e);
-			} finally {
-				t.complete();
-			}
 		} else {
 			log.warn("no request for response:" + response.getSequence());
 		}
