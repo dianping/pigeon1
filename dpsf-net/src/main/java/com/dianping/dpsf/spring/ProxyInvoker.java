@@ -98,7 +98,6 @@ public class ProxyInvoker implements InvocationHandler {
 		DPSFRequest request = new DefaultRequest(this.metaData.getServiceName(), method.getName(), args, this.metaData.getSerialize(), Constants.MESSAGE_TYPE_SERVICE, this.metaData.getTimeout(), method.getParameterTypes());
 		try {
 			t.addData("CallType", this.metaData.getCallMethod());
-
 			if (Constants.CALL_SYNC.equalsIgnoreCase(this.metaData.getCallMethod())) {
 				DPSFResponse res = null;
 				try {

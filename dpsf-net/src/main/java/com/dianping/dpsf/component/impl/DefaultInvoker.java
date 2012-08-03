@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.dianping.cat.Cat;
 import com.dianping.cat.CatConstants;
+import com.dianping.cat.message.Event;
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.spi.MessageTree;
@@ -41,7 +42,6 @@ import com.dianping.dpsf.telnet.cmd.TelnetCommandServiceStat;
 import com.dianping.dpsf.thread.CycThreadPool;
 import com.dianping.dpsf.thread.ExeThreadPool;
 import com.site.helper.Splitters;
-import com.site.helper.Stringizers;
 
 /**    
  * <p>    
@@ -111,6 +111,12 @@ public class DefaultInvoker implements Invoker{
 		request.setSequence(seq);
 		request.setAttachment(Constants.REQ_ATTACH_WRITE_BUFF_LIMIT, metaData.isWriteBufferLimit());
 		Client client = ClientManagerFactory.getClientManager().getClient(metaData.getServiceName(),metaData.getGroup(), request);
+		
+		MessageProducer cat = Cat.getProducer();
+		Event event = cat.newEvent(CatConstants.TYPE_CALL, "route");
+		event.addData("host", client.getHost());
+		event.addData("port", client.getPort());
+		
 		if (request.getCallType() == Constants.CALLTYPE_REPLY) {
 			Object[] callData = new Object[5];
 			int index = 0;
@@ -150,7 +156,6 @@ public class DefaultInvoker implements Invoker{
 		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_CURRENT_MESSAGE_ID, currentMessageId);
 		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_SERVER_MESSAGE_ID, serverMessageId);
 		
-		MessageProducer cat = Cat.getProducer();
 		cat.logEvent(CatConstants.TYPE_REMOTE_CALL, CatConstants.NAME_REQUEST, Transaction.SUCCESS, serverMessageId);
 		
 		RpcStatsPool.flowIn(request, client.getAddress());
@@ -195,11 +200,9 @@ public class DefaultInvoker implements Invoker{
 			DPSFRequest request = (DPSFRequest) callData[0];
 			List<String> serviceMeta = Splitters.by("/").noEmptyItem().split(request.getServiceName());
 			int length = serviceMeta.size();
-			String name = "Unknown";
 			if (length > 2) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(serviceMeta.get(length - 2)).append(":").append(serviceMeta.get(length - 1)).append(":").append(request.getMethodName());
-				name = sb.toString();
 			}
 
 				DPSFCallback callback = (DPSFCallback) callData[2];
