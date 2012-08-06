@@ -94,6 +94,17 @@ public class RequestExecutor implements Runnable {
 				StringBuilder sb = new StringBuilder();
 
 				sb.append(serviceMeta.get(length - 2)).append(":").append(serviceMeta.get(length - 1)).append(":").append(this.request.getMethodName());
+				String[] parameterTypes = request.getParamClassName();
+				sb.append('(');
+				int pLen = parameterTypes.length;
+				for (int i = 0; i < pLen; i++) {
+					String parameterType = parameterTypes[i];
+					sb.append(parameterType);
+					if (i < pLen - 1) {
+						sb.append(',');
+					}
+				}
+				sb.append(')');
 				name = sb.toString();
 			}
 

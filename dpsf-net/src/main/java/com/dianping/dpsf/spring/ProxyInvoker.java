@@ -60,7 +60,6 @@ public class ProxyInvoker implements InvocationHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
 	 */
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -72,8 +71,18 @@ public class ProxyInvoker implements InvocationHandler {
 
 		if (length > 2) {
 			StringBuilder sb = new StringBuilder();
-
 			sb.append(serviceMeta.get(length - 2)).append(":").append(serviceMeta.get(length - 1)).append(":").append(method.getName());
+			Class<?>[] parameterTypes = method.getParameterTypes();
+			sb.append('(');
+			int pLen = parameterTypes.length;
+			for (int i = 0; i < pLen; i++) {
+				Class<?> parameterType = parameterTypes[i];
+				sb.append(parameterType.getCanonicalName());
+				if (i < pLen - 1) {
+					sb.append(',');
+				}
+			}
+			sb.append(')');
 			name = sb.toString();
 		}
 
