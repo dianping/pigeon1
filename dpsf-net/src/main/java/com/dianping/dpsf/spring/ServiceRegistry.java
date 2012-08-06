@@ -58,7 +58,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 300;
 
-	private boolean enableEngine = false;
+	private boolean enableEngine = true;
 
 	public ServiceRegistry() {
 
