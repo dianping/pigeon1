@@ -43,80 +43,81 @@ import com.dianping.dpsf.thread.CycThreadPool;
 import com.dianping.dpsf.thread.ExeThreadPool;
 import com.site.helper.Splitters;
 
-/**    
- * <p>    
- * Title: DefaultInvoker.java   
- * </p>    
- * <p>    
- * Description: 描述  
- * </p>   
- * @author saber miao   
- * @version 1.0    
- * @created 2010-8-19 上午12:05:09   
+/**
+ * <p>
+ * Title: DefaultInvoker.java
+ * </p>
+ * <p>
+ * Description: 描述
+ * </p>
+ * 
+ * @author saber miao
+ * @version 1.0
+ * @created 2010-8-19 上午12:05:09
  */
-public class DefaultInvoker implements Invoker{
-	
+public class DefaultInvoker implements Invoker {
+
 	private static Logger log = DPSFLog.getLogger();
-	
-	private Map<Long,Object[]> requestMap = new ConcurrentHashMap<Long,Object[]>();
-	
-	private  AtomicLong sequenceMaker = new AtomicLong(0);
-	
-	private  ExeThreadPool threadPool = new ExeThreadPool("DPSF-DEF-Invoker-Exe");
-	
+
+	private Map<Long, Object[]> requestMap = new ConcurrentHashMap<Long, Object[]>();
+
+	private AtomicLong sequenceMaker = new AtomicLong(0);
+
+	private ExeThreadPool threadPool = new ExeThreadPool("DPSF-DEF-Invoker-Exe");
+
 	private static Invoker invoker;
 	private ServiceStat requestStat = new ServiceStat();
-	
-	private DefaultInvoker(){
+
+	private DefaultInvoker() {
 		CycThreadPool.getPool().execute(new TimeoutCheck());
 	}
-	
-	private synchronized static void createInvoker(){
-		if(invoker != null){
+
+	private synchronized static void createInvoker() {
+		if (invoker != null) {
 			return;
 		}
 		invoker = new DefaultInvoker();
 		ClientManagerFactory.getClientManager().setInvoker(invoker);
-		TelnetCommandServiceStat.getInstance().setInvoker((DefaultInvoker)invoker);
+		TelnetCommandServiceStat.getInstance().setInvoker((DefaultInvoker) invoker);
 	}
-	
-	public static Invoker getInstance(){
-		if(invoker == null){
+
+	public static Invoker getInstance() {
+		if (invoker == null) {
 			createInvoker();
 		}
 		return invoker;
 	}
 
-	public DPSFResponse invokeSync(DPSFRequest request,
-			DPSFMetaData metaData,DPSFController controller)throws NetException, InterruptedException{
-		DPSFFuture future = invokeFuture(request,metaData,controller);
+	public DPSFResponse invokeSync(DPSFRequest request, DPSFMetaData metaData, DPSFController controller) throws NetException, InterruptedException {
+		DPSFFuture future = invokeFuture(request, metaData, controller);
 		DPSFResponse res = null;
-		try{
+		try {
 			res = future.get(metaData.getTimeout());
-		}catch(NetTimeoutException e){
+		} catch (NetTimeoutException e) {
 			requestStat.failCountService(request.getServiceName());
 			throw e;
 		}
-		
+
 		return res;
 	}
-	public void invokeCallback(DPSFRequest request,
-			DPSFMetaData metaData,DPSFController controller,DPSFCallback callback)throws NetException{
-		
+
+	public void invokeCallback(DPSFRequest request, DPSFMetaData metaData, DPSFController controller, DPSFCallback callback) throws NetException {
+
 		request.createMillisTime();
-		if(request.getCallType() == 0){
+		if (request.getCallType() == 0) {
 			request.setCallType(Constants.CALLTYPE_REPLY);
 		}
 		long seq = sequenceMaker.incrementAndGet();
 		request.setSequence(seq);
 		request.setAttachment(Constants.REQ_ATTACH_WRITE_BUFF_LIMIT, metaData.isWriteBufferLimit());
-		Client client = ClientManagerFactory.getClientManager().getClient(metaData.getServiceName(),metaData.getGroup(), request);
-		
+		Client client = ClientManagerFactory.getClientManager().getClient(metaData.getServiceName(), metaData.getGroup(), request);
+
 		MessageProducer cat = Cat.getProducer();
 		Event event = cat.newEvent(CatConstants.TYPE_CALL, "route");
 		event.addData("host", client.getHost());
 		event.addData("port", client.getPort());
-		
+		event.setStatus(Event.SUCCESS);
+
 		if (request.getCallType() == Constants.CALLTYPE_REPLY) {
 			Object[] callData = new Object[5];
 			int index = 0;
@@ -124,10 +125,9 @@ public class DefaultInvoker implements Invoker{
 			callData[index++] = controller;
 			callData[index++] = callback;
 			callData[index++] = metaData.getGroup();
-			
+
 			try {
-				callData[index] = new CentralStatContext(request.getServiceName(), request.getMethodName(),
-						((DefaultRequest)request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType());
+				callData[index] = new CentralStatContext(request.getServiceName(), request.getMethodName(), ((DefaultRequest) request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType());
 			} catch (Exception e) {
 				callData[index] = new CentralStatContext(request.getServiceName(), request.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType());
 			}
@@ -136,16 +136,15 @@ public class DefaultInvoker implements Invoker{
 			callback.setRequest(request);
 			callback.setClient(client);
 		}
-		
-		//传递业务上下文
-		Object newContext = ContextUtil.createContext(request.getServiceName(), 
-				request.getMethodName(), client.getHost(), client.getPort());
+
+		// 传递业务上下文
+		Object newContext = ContextUtil.createContext(request.getServiceName(), request.getMethodName(), client.getHost(), client.getPort());
 		request.setContext(newContext);
-		
+
 		// Add Cat Info
-		String serverMessageId = Cat.getProducer().createMessageId(); 
+		String serverMessageId = Cat.getProducer().createMessageId();
 		MessageTree tree = Cat.getManager().getThreadLocalMessageTree();
-		if(tree==null){
+		if (tree == null) {
 			Cat.setup(null);
 			tree = Cat.getManager().getThreadLocalMessageTree();
 		}
@@ -155,43 +154,39 @@ public class DefaultInvoker implements Invoker{
 		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_ROOT_MESSAGE_ID, rootMessageId);
 		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_CURRENT_MESSAGE_ID, currentMessageId);
 		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_SERVER_MESSAGE_ID, serverMessageId);
-		
+
 		cat.logEvent(CatConstants.TYPE_REMOTE_CALL, CatConstants.NAME_REQUEST, Transaction.SUCCESS, serverMessageId);
-		
+
 		RpcStatsPool.flowIn(request, client.getAddress());
 		try {
 			client.write(request, callback);
 		} catch (Exception e) {
 			RpcStatsPool.flowOut(request, client.getAddress());
 		}
-		
+
 		ClientContext.setUsedClientAddress(client.getAddress());
 		requestStat.countService(request.getServiceName());
 		// notify one way call
 		if (Constants.CALLTYPE_NOREPLY == request.getCallType()) {
 			try {
-				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request
-						.getMethodName(), ((DefaultRequest)request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType()));
+				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request.getMethodName(), ((DefaultRequest) request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType()));
 			} catch (Exception e) {
-				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request
-						.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType()));
+				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType()));
 			}
 		}
 	}
-	
-	public DPSFFuture invokeFuture(DPSFRequest request,
-			DPSFMetaData metaData,DPSFController controller)throws NetException{
+
+	public DPSFFuture invokeFuture(DPSFRequest request, DPSFMetaData metaData, DPSFController controller) throws NetException {
 		CallbackFuture future = new CallbackFuture();
-		invokeCallback(request,metaData,controller,future);
+		invokeCallback(request, metaData, controller, future);
 		return future;
 	}
-	
-	public void invokeOneway(DPSFRequest request,
-			DPSFMetaData metaData,DPSFController controller)throws NetException{
+
+	public void invokeOneway(DPSFRequest request, DPSFMetaData metaData, DPSFController controller) throws NetException {
 		request.setCallType(Constants.CALLTYPE_NOREPLY);
-		invokeCallback(request,metaData,controller,null);
+		invokeCallback(request, metaData, controller, null);
 	}
-	
+
 	public void invokeReponse(DPSFResponse response) {
 		Object[] callData = requestMap.get(response.getSequence());
 		if (callData != null) {
@@ -205,59 +200,56 @@ public class DefaultInvoker implements Invoker{
 				sb.append(serviceMeta.get(length - 2)).append(":").append(serviceMeta.get(length - 1)).append(":").append(request.getMethodName());
 			}
 
-				DPSFCallback callback = (DPSFCallback) callData[2];
-				if (callback != null) {
-					// DPSFRequest request = (DPSFRequest) callData[0];
-					Client client = callback.getClient();
-					if (client != null) {
-						RpcStatsPool.flowOut(request, client.getAddress());
-					}
-
-					// Log call back invocation for noraml return code.
-					long duration = System.currentTimeMillis() - request.getCreateMillisTime();
-					CentralStatContext centralStatContext = (CentralStatContext) callData[4];
-					if (centralStatContext != null) {
-						try {
-							if (duration < request.getTimeout()) {
-								if (response.getMessageType() != Constants.MESSAGE_TYPE_EXCEPTION || (response.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION && callback instanceof ServiceWarpCallback)) {
-									if (centralStatContext.getDuration() == null) {
-										centralStatContext.setDuration(duration);
-									}
-									centralStatContext.setReturnCode(response.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION ? ReturnCode.EXCEPTION : ReturnCode.SUCCESS);
-									CentralStatService.notifyMethodInvoke(centralStatContext);
-								}
-							}
-						} catch (ServiceException e) {
-							log.warn("Get MessageType for callback invoke failed. Miss Center Stat for this invocation.");
-						}
-					}
-					callback.callback(response);
-					this.threadPool.execute(callback);
+			DPSFCallback callback = (DPSFCallback) callData[2];
+			if (callback != null) {
+				// DPSFRequest request = (DPSFRequest) callData[0];
+				Client client = callback.getClient();
+				if (client != null) {
+					RpcStatsPool.flowOut(request, client.getAddress());
 				}
-				requestMap.remove(response.getSequence());
-				requestStat.timeService(callback.getRequest().getServiceName(), callback.getRequest().getCreateMillisTime());
+
+				// Log call back invocation for noraml return code.
+				long duration = System.currentTimeMillis() - request.getCreateMillisTime();
+				CentralStatContext centralStatContext = (CentralStatContext) callData[4];
+				if (centralStatContext != null) {
+					try {
+						if (duration < request.getTimeout()) {
+							if (response.getMessageType() != Constants.MESSAGE_TYPE_EXCEPTION || (response.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION && callback instanceof ServiceWarpCallback)) {
+								if (centralStatContext.getDuration() == null) {
+									centralStatContext.setDuration(duration);
+								}
+								centralStatContext.setReturnCode(response.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION ? ReturnCode.EXCEPTION : ReturnCode.SUCCESS);
+								CentralStatService.notifyMethodInvoke(centralStatContext);
+							}
+						}
+					} catch (ServiceException e) {
+						log.warn("Get MessageType for callback invoke failed. Miss Center Stat for this invocation.");
+					}
+				}
+				callback.callback(response);
+				this.threadPool.execute(callback);
+			}
+			requestMap.remove(response.getSequence());
+			requestStat.timeService(callback.getRequest().getServiceName(), callback.getRequest().getCreateMillisTime());
 		} else {
 			log.warn("no request for response:" + response.getSequence());
 		}
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param request
 	 * @param metaData
 	 * @param controller
 	 * @param callback
 	 * @throws NetException
 	 */
-	public void HBInvokeCallback(DPSFRequest request,
-			DPSFMetaData metaData,DPSFController controller,DPSFCallback callback)throws NetException{
-		
+	public void HBInvokeCallback(DPSFRequest request, DPSFMetaData metaData, DPSFController controller, DPSFCallback callback) throws NetException {
+
 		request.createMillisTime();
-		if(request.getCallType() == 0){
+		if (request.getCallType() == 0) {
 			request.setCallType(Constants.CALLTYPE_REPLY);
 		}
-		Client client = ClientManagerFactory.getClientManager().getClient(metaData.getServiceName(),metaData.getGroup(), request);
+		Client client = ClientManagerFactory.getClientManager().getClient(metaData.getServiceName(), metaData.getGroup(), request);
 		long seq = sequenceMaker.incrementAndGet();
 		request.setSequence(seq);
 		if (request.getCallType() == Constants.CALLTYPE_REPLY) {
@@ -267,10 +259,9 @@ public class DefaultInvoker implements Invoker{
 			callData[index++] = controller;
 			callData[index++] = callback;
 			callData[index++] = metaData.getGroup();
-			
+
 			try {
-				callData[index] = new CentralStatContext(request.getServiceName(), request.getMethodName(),
-						((DefaultRequest)request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType());
+				callData[index] = new CentralStatContext(request.getServiceName(), request.getMethodName(), ((DefaultRequest) request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType());
 			} catch (Exception e) {
 				callData[index] = new CentralStatContext(request.getServiceName(), request.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType());
 			}
@@ -279,54 +270,49 @@ public class DefaultInvoker implements Invoker{
 			callback.setRequest(request);
 			callback.setClient(client);
 		}
-		
-		//传递业务上下文
-		Object newContext = ContextUtil.createContext(request.getServiceName(), 
-				request.getMethodName(), client.getHost(), client.getPort());
+
+		// 传递业务上下文
+		Object newContext = ContextUtil.createContext(request.getServiceName(), request.getMethodName(), client.getHost(), client.getPort());
 		request.setContext(newContext);
-//		//order自增
-//		Object currentContext = ContextUtil.getContext();
-//		Integer currentOrder = ContextUtil.getOrder(currentContext);
-//		if(currentOrder == null){
-//			currentOrder = 0;
-//		}
-//		ContextUtil.setOrder(newContext, currentOrder+1);
-		client.write(request,callback);
-		
+		// //order自增
+		// Object currentContext = ContextUtil.getContext();
+		// Integer currentOrder = ContextUtil.getOrder(currentContext);
+		// if(currentOrder == null){
+		// currentOrder = 0;
+		// }
+		// ContextUtil.setOrder(newContext, currentOrder+1);
+		client.write(request, callback);
+
 		RpcStatsPool.flowIn(request, client.getAddress());
-		
+
 		ClientContext.setUsedClientAddress(client.getAddress());
 		requestStat.countService(request.getServiceName());
 		// notify one way call
 		if (Constants.CALLTYPE_NOREPLY == request.getCallType()) {
 			try {
-				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request
-						.getMethodName(), ((DefaultRequest)request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType()));
+				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request.getMethodName(), ((DefaultRequest) request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType()));
 			} catch (Exception e) {
-				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request
-						.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType()));
+				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType()));
 			}
 		}
 	}
-	
-	
-	
-	
-	private class TimeoutCheck implements Runnable{
 
-		/* (non-Javadoc)
+	private class TimeoutCheck implements Runnable {
+
+		/*
+		 * (non-Javadoc)
 		 * @see java.lang.Runnable#run()
 		 */
 		public void run() {
-			while(true){
-				try{
+			while (true) {
+				try {
 					long now = System.currentTimeMillis();
-					for(Long key : requestMap.keySet()){
+					for (Long key : requestMap.keySet()) {
 						Object[] requestData = requestMap.get(key);
 						if (requestData != null) {
-							DPSFRequest request = (DPSFRequest)requestData[0];
+							DPSFRequest request = (DPSFRequest) requestData[0];
 							if (request.getCreateMillisTime() + request.getTimeout() < now) {
-								DPSFCallback callback  = (DPSFCallback) requestData[2];
+								DPSFCallback callback = (DPSFCallback) requestData[2];
 								if (callback != null && callback.getClient() != null) {
 									RpcStatsPool.flowOut(request, callback.getClient().getAddress());
 								}
@@ -337,23 +323,21 @@ public class DefaultInvoker implements Invoker{
 									centralStatContext.setReturnCode(ReturnCode.TIMEOUT);
 									CentralStatService.notifyMethodInvoke(centralStatContext);
 								}
-	
+
 								requestMap.remove(key);
 								log.warn("remove timeout key:" + key);
 							}
 						}
 					}
 					Thread.sleep(1000);
-				}catch(Exception e){
-					log.error(e.getMessage(),e);
+				} catch (Exception e) {
+					log.error(e.getMessage(), e);
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
-	
 
 	/**
 	 * @return the requestStat
@@ -362,5 +346,4 @@ public class DefaultInvoker implements Invoker{
 		return requestStat;
 	}
 
-	
 }

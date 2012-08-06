@@ -5,6 +5,7 @@ package com.dianping.dpsf.process;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -72,7 +73,6 @@ public class RequestExecutor implements Runnable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
@@ -98,6 +98,9 @@ public class RequestExecutor implements Runnable {
 			}
 
 			t = cat.newTransaction(type, name);
+			InetSocketAddress address = (InetSocketAddress) channel.getRemoteAddress();
+			t.addData("host", address.getHostName());
+			t.addData("port", address.getPort());
 
 			cat.logEvent(CatConstants.NAME_REQUEST, CatConstants.NAME_PAYLOAD, Transaction.SUCCESS, Arrays.toString(request.getParameters()));
 
@@ -106,7 +109,7 @@ public class RequestExecutor implements Runnable {
 			String serverMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_CURRENT_MESSAGE_ID);
 			String currentMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_SERVER_MESSAGE_ID);
 			MessageTree tree = Cat.getManager().getThreadLocalMessageTree();
-			if(tree==null){
+			if (tree == null) {
 				Cat.setup(null);
 				tree = Cat.getManager().getThreadLocalMessageTree();
 			}
@@ -232,7 +235,6 @@ public class RequestExecutor implements Runnable {
 
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see org.jboss.netty.channel.ChannelFutureListener#operationComplete(org.jboss.netty.channel.ChannelFuture)
 		 */
 		public void operationComplete(ChannelFuture future) throws Exception {
