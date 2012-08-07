@@ -28,6 +28,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.thrift.TException;
 import org.junit.Test;
 
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.async.ServiceCallback;
 import com.dianping.dpsf.async.ServiceFuture;
@@ -85,10 +87,12 @@ public class DpsfGeneralInvocationNoLionTest extends DpsfBaseFunctionalTest {
 	
 	@Test
 	public void testFutureWithJava() throws DPSFException, InterruptedException {
+		Transaction t = Cat.getProducer().newTransaction("GG","HH");
 		DemoService demoServiceStub = createDemoServiceStub(Constants.SERIALIZE_JAVA, Constants.CALL_FUTURE, DEMO_SERVICE_HOST1, "1");
 		demoServiceStub.echo(DEMO_MESSAGE);
 		ServiceFuture future = ServiceFutureFactory.getFuture();
 		Object echoReturn = future._get();
+		t.complete();
 		assertEquals(DEMO_EXPECT_RETURN, echoReturn);
 	}
 	

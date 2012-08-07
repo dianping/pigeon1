@@ -164,7 +164,7 @@ public class CallbackFuture implements DPSFCallback,DPSFFuture{
 				throw new NetException(e);
 			}
 			if(response!=null){
-			Cat.getProducer().logEvent(CatConstants.NAME_RESPONSE, "Payload", Message.SUCCESS, Stringizers.forJson().from(this.response.getReturn(), 20, 100));
+			Cat.getProducer().logEvent(CatConstants.TYPE_RESPONSE, "Payload", Message.SUCCESS, Stringizers.forJson().from(this.response.getReturn(), CatConstants.MAX_LENGTH,CatConstants.MAX_ITEM_LENGTH));
 			}
 			return this.response;
 		}
