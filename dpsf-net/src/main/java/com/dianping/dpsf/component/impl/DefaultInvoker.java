@@ -42,6 +42,7 @@ import com.dianping.dpsf.telnet.cmd.TelnetCommandServiceStat;
 import com.dianping.dpsf.thread.CycThreadPool;
 import com.dianping.dpsf.thread.ExeThreadPool;
 import com.site.helper.Splitters;
+import com.site.helper.Stringizers;
 
 /**
  * <p>
@@ -113,10 +114,14 @@ public class DefaultInvoker implements Invoker {
 		Client client = ClientManagerFactory.getClientManager().getClient(metaData.getServiceName(), metaData.getGroup(), request);
 
 		MessageProducer cat = Cat.getProducer();
-		Event event = cat.newEvent(CatConstants.TYPE_CALL, "route");
-		event.addData("host", client.getHost());
-		event.addData("port", client.getPort());
-		event.setStatus(Event.SUCCESS);
+		Event event = cat.newEvent("PigeonCall.server", client.getHost() +":" + client.getPort());
+		try {
+			event.addData(Stringizers.forJson().from(((DefaultRequest) request).getParameters(), CatConstants.MAX_LENGTH,CatConstants.MAX_ITEM_LENGTH));
+			event.setStatus(Event.SUCCESS);
+		} catch (Exception e) {
+			event.setStatus(e);
+		}
+		
 
 		if (request.getCallType() == Constants.CALLTYPE_REPLY) {
 			Object[] callData = new Object[5];

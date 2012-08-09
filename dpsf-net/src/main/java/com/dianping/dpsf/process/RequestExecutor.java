@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -17,6 +16,7 @@ import org.jboss.netty.channel.ChannelFutureListener;
 
 import com.dianping.cat.Cat;
 import com.dianping.cat.CatConstants;
+import com.dianping.cat.message.Message;
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.spi.MessageTree;
@@ -32,6 +32,7 @@ import com.dianping.dpsf.repository.DPSFMethod;
 import com.dianping.dpsf.repository.ServiceRepository;
 import com.dianping.dpsf.stat.ServiceStat;
 import com.site.helper.Splitters;
+import com.site.helper.Stringizers;
 
 /**
  * <p>
@@ -84,36 +85,35 @@ public class RequestExecutor implements Runnable {
 
 			cat = Cat.getProducer();
 
-			String type = CatConstants.TYPE_SERVICE;
 			String name = "Unknown";
 
 			List<String> serviceMeta = Splitters.by("/").noEmptyItem().split(this.request.getServiceName());
 			int length = serviceMeta.size();
 
 			if (length > 2) {
-				StringBuilder sb = new StringBuilder();
+				StringBuilder sb = new StringBuilder(128);
 
-				sb.append(serviceMeta.get(length - 2)).append(":").append(serviceMeta.get(length - 1)).append(":").append(this.request.getMethodName());
-				String[] parameterTypes = request.getParamClassName();
+				sb.append(serviceMeta.get(length - 2)).append(':').append(serviceMeta.get(length - 1)).append(':').append(this.request.getMethodName());
+				Object[] parameters = request.getParameters();
 				sb.append('(');
-				int pLen = parameterTypes.length;
+				int pLen = parameters.length;
 				for (int i = 0; i < pLen; i++) {
-					String parameterType = parameterTypes[i];
-					sb.append(parameterType);
+					Object parameter = parameters[i];
+					sb.append(parameter.getClass().getSimpleName());
 					if (i < pLen - 1) {
 						sb.append(',');
 					}
 				}
 				sb.append(')');
 				name = sb.toString();
+				
+				
 			}
 
-			t = cat.newTransaction(type, name);
+			t = cat.newTransaction("PigeonService", name);
 			InetSocketAddress address = (InetSocketAddress) channel.getRemoteAddress();
-			t.addData("host", address.getHostName());
-			t.addData("port", address.getPort());
-
-			cat.logEvent(CatConstants.NAME_REQUEST, CatConstants.NAME_PAYLOAD, Transaction.SUCCESS, Arrays.toString(request.getParameters()));
+			String parameters = Stringizers.forJson().from(request.getParameters(), CatConstants.MAX_LENGTH,CatConstants.MAX_ITEM_LENGTH);
+			cat.logEvent("PigeonService.client", address.getHostName() + ":" + address.getPort(), Message.SUCCESS,  parameters);
 
 			Object context = request.getContext();
 			String rootMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_ROOT_MESSAGE_ID);

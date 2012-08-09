@@ -12,7 +12,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import com.dianping.cat.Cat;
-import com.dianping.cat.CatConstants;
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 import com.dianping.dpsf.Constants;
@@ -66,18 +65,17 @@ public class ProxyInvoker implements InvocationHandler {
 		MessageProducer cat = Cat.getProducer();
 		List<String> serviceMeta = Splitters.by("/").noEmptyItem().split(this.metaData.getServiceName());
 		int length = serviceMeta.size();
-		String type = CatConstants.TYPE_CALL;
 		String name = "Unknown";
 
 		if (length > 2) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(serviceMeta.get(length - 2)).append(":").append(serviceMeta.get(length - 1)).append(":").append(method.getName());
+			StringBuilder sb = new StringBuilder(128);
+			sb.append(serviceMeta.get(length - 2)).append(':').append(serviceMeta.get(length - 1)).append(':').append(method.getName());
 			Class<?>[] parameterTypes = method.getParameterTypes();
 			sb.append('(');
 			int pLen = parameterTypes.length;
 			for (int i = 0; i < pLen; i++) {
 				Class<?> parameterType = parameterTypes[i];
-				sb.append(parameterType.getCanonicalName());
+				sb.append(parameterType.getSimpleName());
 				if (i < pLen - 1) {
 					sb.append(',');
 				}
@@ -86,7 +84,7 @@ public class ProxyInvoker implements InvocationHandler {
 			name = sb.toString();
 		}
 
-		Transaction t = cat.newTransaction(type, name);
+		Transaction t = cat.newTransaction("PigeonCall", name);
 
 		t.setStatus(Transaction.SUCCESS);
 
@@ -113,7 +111,6 @@ public class ProxyInvoker implements InvocationHandler {
 					res = DefaultInvoker.getInstance().invokeSync(request, metaData, null);
 				} catch (NetException e) {
 					log.error(e.getMessage(), e);
-					t.setStatus(e);
 					throw e;
 				}
 				if (now > 0) {
@@ -128,11 +125,9 @@ public class ProxyInvoker implements InvocationHandler {
 				} else if (res.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION) {
 					log.error(res.getCause());
 					DPSFException dpsfException = new DPSFException(res.getCause());
-					t.setStatus(dpsfException);
 					throw dpsfException;
 				} else if (res.getMessageType() == Constants.MESSAGE_TYPE_SERVICE_EXCEPTION) {
 					Throwable throwable = (Throwable) res.getReturn();
-					t.setStatus(throwable);
 					throw throwable;
 				}
 				throw new DPSFException("no result to call");
@@ -141,7 +136,6 @@ public class ProxyInvoker implements InvocationHandler {
 					DefaultInvoker.getInstance().invokeCallback(request, metaData, null, new ServiceWarpCallback(metaData.getCallback()));
 				} catch (NetException e) {
 					log.error(e.getMessage(), e);
-					t.setStatus(e);
 					throw e;
 				}
 				return getReturn(method.getReturnType());
@@ -153,7 +147,6 @@ public class ProxyInvoker implements InvocationHandler {
 				} catch (Exception e) {
 					ServiceFutureFactory.remove();
 					log.error(e.getMessage(), e);
-					t.setStatus(e);
 					throw e;
 				}
 				return getReturn(method.getReturnType());
@@ -162,18 +155,19 @@ public class ProxyInvoker implements InvocationHandler {
 					DefaultInvoker.getInstance().invokeOneway(request, metaData, null);
 				} catch (NetException e) {
 					log.error(e.getMessage(), e);
-					t.setStatus(e);
 					throw e;
 				}
 				return getReturn(method.getReturnType());
 			}
 			DPSFException dpsfException = new DPSFException("callmethod configure is error:" + this.metaData.getCallMethod());
-			t.setStatus(dpsfException);
 			throw dpsfException;
 		} catch (Exception e) {
 			t.setStatus(e);
 			throw e;
-		} finally {
+		} catch(Error e){
+			t.setStatus(e);
+			throw e;
+		}finally {
 			t.complete();
 		}
 	}

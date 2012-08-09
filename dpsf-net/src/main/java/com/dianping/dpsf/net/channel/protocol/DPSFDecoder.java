@@ -5,6 +5,7 @@ package com.dianping.dpsf.net.channel.protocol;
 
 import static org.jboss.netty.buffer.ChannelBuffers.dynamicBuffer;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +88,11 @@ public abstract class DPSFDecoder extends OneToOneDecoder implements Decoder{
 				message = getDecoder(serializable).decode(ctx, channel, cb);
 			}catch (Exception e){
 				isException = true;
-				logger.error(e.getMessage(),e);
+				try {
+					logger.error(((InetSocketAddress)channel.getRemoteAddress()).getHostName() + "\n" +e.getMessage(),e);
+				} catch (Exception e1) {
+					logger.error("", e1);
+				}
 			}
 			
 			if(message != null){

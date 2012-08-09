@@ -9,8 +9,6 @@ import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ChannelFuture;
 
 import com.dianping.cat.Cat;
-import com.dianping.cat.CatConstants;
-import com.dianping.cat.message.Message;
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.ContextUtil;
 import com.dianping.dpsf.DPSFLog;
@@ -27,7 +25,6 @@ import com.dianping.dpsf.stat.CentralStatService;
 import com.dianping.dpsf.stat.CentralStatService.CentralStatContext;
 import com.dianping.dpsf.stat.CentralStatService.ReturnCode;
 import com.dianping.dpsf.stat.RpcStatsPool;
-import com.site.helper.Stringizers;
 
 /**    
  * <p>    
@@ -163,9 +160,9 @@ public class CallbackFuture implements DPSFCallback,DPSFFuture{
 			} catch (ServiceException e) {
 				throw new NetException(e);
 			}
-			if(response!=null){
-			Cat.getProducer().logEvent(CatConstants.TYPE_RESPONSE, "Payload", Message.SUCCESS, Stringizers.forJson().from(this.response.getReturn(), CatConstants.MAX_LENGTH,CatConstants.MAX_ITEM_LENGTH));
-			}
+//			if(response!=null){
+//			Cat.getProducer().logEvent("PigeonCall", "Response", Message.SUCCESS, Stringizers.forJson().from(this.response.getReturn(), CatConstants.MAX_LENGTH,CatConstants.MAX_ITEM_LENGTH));
+//			}
 			return this.response;
 		}
 	}
