@@ -46,16 +46,6 @@ public class DefaultRequest implements DPSFRequest{
 	
 	private int messageType;
 	
-	private String addtional;
-	
-	public String getAddtional() {
-		return addtional;
-	}
-
-	public void setAddtional(String additional) {
-		this.addtional = additional;
-	}
-
 	private Object context;
 	
 	private transient Class<?>[] parameterClasses;

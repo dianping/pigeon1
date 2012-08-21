@@ -78,7 +78,6 @@ public class HessianSerializeTest {
 			DefaultRequest request = (DefaultRequest) hessian2Input.readObject();
 			System.out.println(request);
 			System.out.println(request.getSerializ());
-			System.out.println(request.getAddtional());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
