@@ -36,7 +36,7 @@ public class DefaultRequest implements DPSFRequest{
 	
 	private int timeout;
 	
-	private transient long createMillisTime;
+	private long createMillisTime;
 	
 	private String serviceName;
 	
@@ -182,12 +182,6 @@ public class DefaultRequest implements DPSFRequest{
 		return this.messageType;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.dianping.dpsf.component.DPSFRequest#createMillisTime()
-	 */
-	public void createMillisTime() {
-		this.createMillisTime = System.currentTimeMillis();
-	}
 
 	/* (non-Javadoc)
 	 * @see com.dianping.dpsf.component.DPSFSerializable#getContext()
@@ -213,6 +207,15 @@ public class DefaultRequest implements DPSFRequest{
 	@Override
 	public Object getAttachment(String name) {
 		return attachments.get(name);
+	}
+
+	@Override
+	public void setCreateMillisTime(long createTime) {
+		this.createMillisTime = createTime;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 }

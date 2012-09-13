@@ -166,7 +166,7 @@ public abstract class DpsfBaseFunctionalTest {
 	
 	protected void assertNoClientException(Exception e, String serviceName) {
 		Assert.assertTrue(e instanceof NetException);
-		Assert.assertTrue(e.getMessage().contains("no client for serviceName:" + serviceName));
+		Assert.assertTrue(e.getMessage().contains("no connection for serviceName:" + serviceName));
 	}
 	
 	protected void assertNoAvailableServerException(Exception e, String serviceName) {

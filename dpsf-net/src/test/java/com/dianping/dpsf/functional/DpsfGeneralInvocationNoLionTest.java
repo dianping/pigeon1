@@ -82,7 +82,7 @@ public class DpsfGeneralInvocationNoLionTest extends DpsfBaseFunctionalTest {
 	public void testSyncWithJava() {
 		Transaction t = Cat.getProducer().newTransaction("GG3","HH");
 		DemoService demoServiceStub = createDemoServiceStub(Constants.SERIALIZE_JAVA, Constants.CALL_SYNC, DEMO_SERVICE_HOST1, "1");
-		String echoReturn = demoServiceStub.echo(DEMO_MESSAGE + "xxx");
+		String echoReturn = demoServiceStub.echo(DEMO_MESSAGE);
 		t.complete();
 		assertEquals(DEMO_EXPECT_RETURN, echoReturn);
 	}

@@ -59,7 +59,7 @@ public class DPServerHandler extends SimpleChannelUpstreamHandler{
 				 String msg = "Request execute fail:seq--"+request.getSequence()+"\r\n";
 				 //心跳消息只返回正常的, 异常不返回
 				 if(request.getCallType() == Constants.CALLTYPE_REPLY && request.getMessageType() != Constants.MESSAGE_TYPE_HEART) {
-					 ctx.getChannel().write(ResponseFactory.createFailResponse(request,msg));
+					 ctx.getChannel().write(ResponseFactory.createFailResponse(request,e1));
 				 }
 				 log.error(msg+"****SEQ:"+request.getSequence()+"****callType:"+request.getCallType(),e1);
 				 Cat.getProducer().logError(e1);
@@ -82,7 +82,7 @@ public class DPServerHandler extends SimpleChannelUpstreamHandler{
 	 @Override
 	 public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
 	     log.error(e.getCause().getMessage(),e.getCause());
-	     e.getChannel().close();
+//	     e.getChannel().close();
 	 }
 
 }

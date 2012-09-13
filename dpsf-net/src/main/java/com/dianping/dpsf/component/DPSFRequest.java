@@ -24,10 +24,12 @@ public interface DPSFRequest extends DPSFSerializable {
 	int getCallType();
 
 	int getTimeout();
+	
+	void setTimeout(int timeout);
 
 	long getCreateMillisTime();
 
-	void createMillisTime();
+	void setCreateMillisTime(long createTime);
 
 	String getServiceName();
 

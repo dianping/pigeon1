@@ -3,6 +3,7 @@
  */
 package com.dianping.dpsf.component.impl;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -17,10 +18,15 @@ import com.dianping.dpsf.component.DPSFCallback;
 import com.dianping.dpsf.component.DPSFFuture;
 import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
+import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.exception.NetTimeoutException;
 import com.dianping.dpsf.exception.ServiceException;
 import com.dianping.dpsf.net.channel.Client;
+import com.dianping.dpsf.protocol.DefaultResponse;
+import com.dianping.dpsf.protocol.protobuf.DPSFProtos;
+import com.dianping.dpsf.protocol.protobuf.PBResponse;
+import com.dianping.dpsf.protocol.thrift.ThriftResponse;
 import com.dianping.dpsf.stat.CentralStatService;
 import com.dianping.dpsf.stat.CentralStatService.CentralStatContext;
 import com.dianping.dpsf.stat.CentralStatService.ReturnCode;
@@ -108,7 +114,8 @@ public class CallbackFuture implements DPSFCallback,DPSFFuture{
 					sb.append(this.error.getMsg()).append("\r\n seq:").append(request.getSequence())
 					.append(" callType:").append(request.getCallType()).append("\r\n serviceName:")
 					.append(request.getServiceName()).append(" methodName:").append(request.getMethodName())
-					.append("\r\n host:").append(client.getHost()).append(":").append(client.getPort());
+					.append("\r\n host:").append(client.getHost()).append(":").append(client.getPort())
+					.append("\r\n timeout:"+request.getTimeout());
 					
 					RpcStatsPool.flowOut(request, client.getAddress());
 					
@@ -136,25 +143,41 @@ public class CallbackFuture implements DPSFCallback,DPSFFuture{
 				}
 			}
 			try {
-				if(response.getMessageType() == Constants.MESSAGE_TYPE_SERVICE_EXCEPTION){
+				if(response.getMessageType() == Constants.MESSAGE_TYPE_SERVICE_EXCEPTION
+						||response.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION){
+					Throwable cause = null;
+					if(response instanceof DefaultResponse){
+						cause = (Throwable)response.getReturn();
+					}else{
+						cause = new DPSFException(response.getCause());
+					}
 					StringBuffer sb = new StringBuffer();
-					sb.append("Service Exception Info *************\r\n")
+					sb.append(cause.getMessage()).append("\r\n");
+					sb.append("Remote Service Exception Info *************\r\n")
 					.append(" token:").append(ContextUtil.getTooken(this.response.getContext())).append("\r\n")
 					.append(" seq:").append(request.getSequence())
 					.append(" callType:").append(request.getCallType()).append("\r\n serviceName:")
 					.append(request.getServiceName()).append(" methodName:").append(request.getMethodName())
-					.append("\r\n host:").append(client.getHost()).append(":").append(client.getPort());
-					logger.error(sb.toString());
-					response.setReturn((Throwable)response.getReturn());
-				}
-				
-				if (response.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION) {
-					if (centralStatContext != null) {
-						if (centralStatContext.getDuration() == null) {
-							centralStatContext.setDuration(System.currentTimeMillis() - start);
+					.append("\r\n host:").append(client.getHost()).append(":").append(client.getPort())
+					.append("\r\n timeout:"+request.getTimeout());
+					Field field;
+					try {
+						field = Throwable.class.getDeclaredField("detailMessage");
+						field.setAccessible(true);
+						field.set(cause, sb.toString());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+					logger.error(cause.getMessage(),cause);
+					if (response.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION) {
+						if (centralStatContext != null) {
+							if (centralStatContext.getDuration() == null) {
+								centralStatContext.setDuration(System.currentTimeMillis() - start);
+							}
+							centralStatContext.setReturnCode(ReturnCode.EXCEPTION);
+							CentralStatService.notifyMethodInvoke(centralStatContext);
 						}
-						centralStatContext.setReturnCode(ReturnCode.EXCEPTION);
-						CentralStatService.notifyMethodInvoke(centralStatContext);
 					}
 				}
 			} catch (ServiceException e) {

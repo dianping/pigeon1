@@ -146,9 +146,9 @@ public class HeartBeatTask implements Runnable, ClusterListener {
 	
 	private DPSFRequest createHeartRequest(Client client) {
 		DPSFRequest request = new DefaultRequest(HEART_TASK_SERVICE, HEART_TASK_METHOD, null, 
-					Constants.SERILIZABLE_JAVA, Constants.MESSAGE_TYPE_HEART, 30000, null);
+					Constants.SERILIZABLE_HESSIAN, Constants.MESSAGE_TYPE_HEART, 30000, null);
 		request.setSequence(generateHeartSeq(client));
-		request.createMillisTime();
+		request.setCreateMillisTime(System.currentTimeMillis());
 		return request;
 	}
 

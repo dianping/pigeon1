@@ -218,7 +218,7 @@ public class NettyClient implements Client{
 			}
 			logger.error("channel:"+future.getChannel()==null?null:future.getChannel().getId()+" *****************"+future.getCause());
 			RpcStatsPool.flowOut(request, NettyClient.this.address);
-			DPSFResponse response = ResponseFactory.createFailResponse(request, future.getCause().toString());
+			DPSFResponse response = ResponseFactory.createFailResponse(request, future.getCause());
 			doResponse(response);
 		}
 		

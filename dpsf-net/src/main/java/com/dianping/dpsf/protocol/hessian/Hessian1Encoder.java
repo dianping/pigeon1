@@ -23,6 +23,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.caucho.hessian.io.HessianOutput;
+import com.dianping.dpsf.component.DPSFSerializable;
 import com.dianping.dpsf.net.channel.protocol.AbstractEncoder;
 
 /**
@@ -51,7 +52,7 @@ public class Hessian1Encoder  extends AbstractEncoder {
 		ChannelBufferOutputStream bout = new ChannelBufferOutputStream(
 				dynamicBuffer(estimatedLength, ctx.getChannel().getConfig().getBufferFactory())
 		);
-        bout.write(LENGTH_PLACEHOLDER);
+		beforeDo(bout);
         HessianOutput h1out = new HessianOutput(bout);
 		try{
 		    h1out.writeObject(msg);
@@ -60,7 +61,7 @@ public class Hessian1Encoder  extends AbstractEncoder {
 			h1out.close();
 		}
 		ChannelBuffer encoded = bout.buffer();
-        afterDo(encoded);
+        afterDo(encoded,msg);
         return encoded;
 	}
 

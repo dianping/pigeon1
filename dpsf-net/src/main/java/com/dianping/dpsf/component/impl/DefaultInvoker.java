@@ -103,8 +103,7 @@ public class DefaultInvoker implements Invoker {
 	}
 
 	public void invokeCallback(DPSFRequest request, DPSFMetaData metaData, DPSFController controller, DPSFCallback callback) throws NetException {
-
-		request.createMillisTime();
+		initRequest(request);
 		if (request.getCallType() == 0) {
 			request.setCallType(Constants.CALLTYPE_REPLY);
 		}
@@ -250,7 +249,7 @@ public class DefaultInvoker implements Invoker {
 	 */
 	public void HBInvokeCallback(DPSFRequest request, DPSFMetaData metaData, DPSFController controller, DPSFCallback callback) throws NetException {
 
-		request.createMillisTime();
+		initRequest(request);
 		if (request.getCallType() == 0) {
 			request.setCallType(Constants.CALLTYPE_REPLY);
 		}
@@ -298,6 +297,22 @@ public class DefaultInvoker implements Invoker {
 				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request.getMethodName(), ((DefaultRequest) request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType()));
 			} catch (Exception e) {
 				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType()));
+			}
+		}
+	}
+	//初始化Request的createTime和timeout，以便统一这两个值
+	private void initRequest(DPSFRequest request){
+		Object createTime = ContextUtil.getLocalContext(Constants.REQUEST_CREATE_TIME);
+		if(createTime != null){
+			request.setCreateMillisTime(Long.parseLong(String.valueOf(createTime)));
+		}else{
+			request.setCreateMillisTime(System.currentTimeMillis());
+		}
+		Object timeout = ContextUtil.getLocalContext(Constants.REQUEST_TIMEOUT);
+		if(timeout != null){
+			int timeout_ = Integer.parseInt(String.valueOf(timeout));
+			if(timeout_ < request.getTimeout()){
+				request.setTimeout(timeout_);
 			}
 		}
 	}
@@ -349,6 +364,10 @@ public class DefaultInvoker implements Invoker {
 	 */
 	public ServiceStat getRequestStat() {
 		return requestStat;
+	}
+
+	public static void setInvoker(Invoker invoker) {
+		DefaultInvoker.invoker = invoker;
 	}
 
 }

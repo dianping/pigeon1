@@ -73,6 +73,12 @@ public class ProxyBeanFactory implements FactoryBean {
 
 	public void init() throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException  {
 
+		this.serviceName = this.serviceName.trim();
+		this.serialize = this.serialize.trim();
+		this.iface = this.iface.trim();
+		this.callMethod = this.callMethod.trim();
+		
+		
 		if (this.group == null) {
 			this.group = this.iface + "_" + groupId.incrementAndGet();
 		}

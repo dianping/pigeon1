@@ -122,14 +122,12 @@ public class ProxyInvoker implements InvocationHandler {
 				}
 				if (res.getMessageType() == Constants.MESSAGE_TYPE_SERVICE) {
 					return res.getReturn();
-				} else if (res.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION) {
-					log.error(res.getCause());
-					DPSFException dpsfException = new DPSFException(res.getCause());
-					throw dpsfException;
-				} else if (res.getMessageType() == Constants.MESSAGE_TYPE_SERVICE_EXCEPTION) {
-					Throwable throwable = (Throwable) res.getReturn();
-					throw throwable;
-				}
+				} else if (res.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION 
+						|| res.getMessageType() == Constants.MESSAGE_TYPE_SERVICE_EXCEPTION) {
+					Throwable cause = (Throwable)res.getReturn();
+					log.error(cause.getMessage(),cause);
+					throw cause;
+				} 
 				throw new DPSFException("no result to call");
 			} else if (Constants.CALL_CALLBACK.equals(this.metaData.getCallMethod())) {
 				try {
@@ -163,9 +161,11 @@ public class ProxyInvoker implements InvocationHandler {
 			throw dpsfException;
 		} catch (Exception e) {
 			t.setStatus(e);
+			Cat.getProducer().logError(e);
 			throw e;
 		} catch(Error e){
 			t.setStatus(e);
+			Cat.getProducer().logError(e);
 			throw e;
 		}finally {
 			t.complete();

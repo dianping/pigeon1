@@ -24,13 +24,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.component.DPSFRequest;
+import com.dianping.dpsf.component.Invoker;
+import com.dianping.dpsf.component.impl.DefaultInvoker;
 import com.dianping.dpsf.net.channel.Client;
+import com.dianping.dpsf.net.channel.manager.ClientManager;
 import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
 import com.dianping.dpsf.net.channel.netty.NettyClientManager;
 import com.dianping.dpsf.other.echo.EchoServer;
@@ -57,9 +62,16 @@ public class RouteTest {
 	static String add4 = "127.0.0.1:19996";
 	
 	static ProxyBeanFactory f;
-	
+	static ClientManager manager;
+	static Invoker invoker;
 	@BeforeClass
 	public static void setMock() throws Exception {
+		manager = ClientManagerFactory.getClientManager();
+		ClientManagerFactory.setManager(null);
+		
+		invoker = DefaultInvoker.getInstance();
+		DefaultInvoker.setInvoker(null);
+		
 		EchoServer.main(new String[]{"a"});
 		EchoServer2.main(new String[]{"a"});
 		EchoServer3.main(new String[]{"a"});
@@ -70,6 +82,11 @@ public class RouteTest {
 		f = createProxyBeanFactory(SN, IEcho.class.getName());
 		
 		request = new DefaultRequest(SN, "", null, Constants.SERILIZABLE_HESSIAN, Constants.MESSAGE_TYPE_SERVICE, 1000, null);
+	}
+	@AfterClass
+	public static void releaseMock(){
+		DefaultInvoker.setInvoker(invoker);
+		ClientManagerFactory.setManager(manager);
 	}
 
 	private static ProxyBeanFactory createProxyBeanFactory(String sn, String iface) throws Exception {

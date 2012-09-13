@@ -14,6 +14,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.dianping.dpsf.DPSFLog;
+import com.dianping.dpsf.component.DPSFSerializable;
 import com.dianping.dpsf.net.channel.protocol.AbstractEncoder;
 import com.google.protobuf.MessageLite;
 
@@ -48,11 +49,11 @@ public class PBEncoder extends AbstractEncoder {
 		byte[] bytes = ((MessageLite) msg).toByteArray();
 
 		ChannelBufferOutputStream bout = new ChannelBufferOutputStream(dynamicBuffer(estimatedLength, ctx.getChannel().getConfig().getBufferFactory()));
-		bout.write(LENGTH_PLACEHOLDER);
+		beforeDo(bout);
 		bout.write(bytes);
 
 		ChannelBuffer cb = bout.buffer();
-		afterDo(cb);
+		afterDo(cb,msg);
 		if (now > 0) {
 			logger.warn("encoder time:" + (System.nanoTime() - now) / 1000);
 		}

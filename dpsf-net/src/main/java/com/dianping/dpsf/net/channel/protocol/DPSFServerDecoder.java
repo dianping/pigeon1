@@ -3,7 +3,14 @@
  */
 package com.dianping.dpsf.net.channel.protocol;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.Channels;
+
 import com.dianping.dpsf.component.DPSFRequest;
+import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.exception.NetException;
 
 /**    
@@ -37,8 +44,12 @@ public class DPSFServerDecoder extends DPSFDecoder{
 			return null;
 		}
 		DPSFRequest request = (DPSFRequest)message;
-		request.createMillisTime();
 		return request;
+	}
+
+	@Override
+	public void doFailResponse(Channel channel, DPSFResponse response) {
+		Channels.write(channel,response);
 	}
 
 }

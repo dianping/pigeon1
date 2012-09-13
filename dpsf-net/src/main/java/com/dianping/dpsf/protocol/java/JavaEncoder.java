@@ -12,6 +12,7 @@ import org.jboss.netty.buffer.ChannelBufferOutputStream;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
+import com.dianping.dpsf.component.DPSFSerializable;
 import com.dianping.dpsf.net.channel.protocol.AbstractEncoder;
 
 /**    
@@ -38,7 +39,7 @@ public class JavaEncoder extends AbstractEncoder{
 		ChannelBufferOutputStream bout =
             new ChannelBufferOutputStream(dynamicBuffer(
                     estimatedLength, ctx.getChannel().getConfig().getBufferFactory()));
-        bout.write(LENGTH_PLACEHOLDER);
+		beforeDo(bout);
         ObjectOutputStream oout = new CompactObjectOutputStream(bout);
         try{
         	oout.writeObject(msg);
@@ -48,7 +49,7 @@ public class JavaEncoder extends AbstractEncoder{
         }
 
         ChannelBuffer encoded = bout.buffer();
-        afterDo(encoded);
+        afterDo(encoded,msg);
         return encoded;
 	}
 

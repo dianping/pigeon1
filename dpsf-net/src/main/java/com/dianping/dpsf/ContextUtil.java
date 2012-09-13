@@ -4,6 +4,9 @@
 package com.dianping.dpsf;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -42,6 +45,9 @@ public class ContextUtil {
 	
 	private static boolean flag = false;
 	private static Object[] defObjs = new Object[]{};
+	
+	private static ThreadLocal<Map> localContext = new ThreadLocal<Map>();
+	
 	static{
 		
 		try {
@@ -79,7 +85,6 @@ public class ContextUtil {
 		} catch (Exception e) {
 			logger.info("App does not have ExecutionContext");
 		}
-		
 	}
 	
 	public static Object createContext(String serviceName,
@@ -190,9 +195,59 @@ public class ContextUtil {
 		}
 		return null;
 	}
+	
+	public static void putContextInfo(Object context,String key,String value) {
+		if(flag && context != null){
+			try {
+				addExtensionMethod.invoke(context, new Object[]{key,value});
+			} catch (Exception e) {
+				throw new NetException(e);
+			}
+		}
+	}
+	
+	public static String getContextInfo(Object context,String key) {
+		if(flag && context != null){
+			try {
+				return (String)getExtensionMethod.invoke(context, new Object[]{key});
+			} catch (Exception e) {
+				throw new NetException(e);
+			}
+		}
+		return null;
+	}
 
 	public static void clearContext() {
-		// TODO Auto-generated method stub
+		if(flag){
+			try {
+				clearContextMethod.invoke(null, new Object[0]);
+			} catch (Exception e) {
+				throw new NetException(e);
+			}
+		}
 		
+	}
+	
+	public static void putLocalContext(Object key,Object value){
+		Map context = localContext.get();
+		if(context == null){
+			context = new HashMap();
+			localContext.set(context);
+		}
+		context.put(key, value);
+	}
+	
+	public static Object getLocalContext(Object key){
+		Map context = localContext.get();
+		if(context == null){
+			return null;
+		}
+		return context.get(key);
+	}
+	public static void clearLocalContext(){
+		Map context = localContext.get();
+		if(context != null){
+			context.clear();
+		}
 	}
 }

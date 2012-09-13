@@ -142,6 +142,8 @@ public class RequestExecutor implements Runnable {
 				if (messageType == Constants.MESSAGE_TYPE_SERVICE) {
 					// 传递上下文
 					ContextUtil.setContext(this.request.getContext());
+					ContextUtil.putLocalContext(Constants.REQUEST_CREATE_TIME, this.request.getCreateMillisTime());
+					ContextUtil.putLocalContext(Constants.REQUEST_TIMEOUT, this.request.getTimeout());
 					response = doBusiness();
 					requestStat.timeService(this.request.getServiceName(), this.request.getCreateMillisTime());
 					if (response == null) {
@@ -150,12 +152,12 @@ public class RequestExecutor implements Runnable {
 					}
 					// 传递上下文
 					response.setContext(ContextUtil.getContext());
-					ContextUtil.clearContext();
+					
 				} else if (messageType == Constants.MESSAGE_TYPE_HEART) {
 					response = doHeart();
 				}
 			} catch (Exception e) {
-				response = ResponseFactory.createFailResponse(this.request, e.getMessage());
+				response = doFailResponse(e);
 				// 传递上下文
 				try {
 					response.setContext(ContextUtil.getContext());
@@ -171,6 +173,8 @@ public class RequestExecutor implements Runnable {
 			cat.logError(e);
 			t.setStatus(e);
 		} finally {
+			ContextUtil.clearContext();
+			ContextUtil.clearLocalContext();
 			t.complete();
 		}
 	}
@@ -187,7 +191,7 @@ public class RequestExecutor implements Runnable {
 		} catch (ServiceException e) {
 			logger.error(e.getMessage(), e);
 			if (this.request.getCallType() == Constants.CALLTYPE_REPLY) {
-				response = ResponseFactory.createFailResponse(this.request, e.getMessage());
+				response = doFailResponse(e);
 			}
 		}
 
@@ -210,12 +214,13 @@ public class RequestExecutor implements Runnable {
 				if (e2 != null) {
 					logger.error(e2.getMessage(), e2);
 				}
-
+				Cat.getProducer().logError(e2);
 				if (this.request.getCallType() == Constants.CALLTYPE_REPLY) {
 					return ResponseFactory.createServiceExceptionResponse(this.request, e2);
 				}
 			} catch (Exception e1) {
 				logger.error(e1.getMessage(), e1);
+				Cat.getProducer().logError(e1);
 				if (this.request.getCallType() == Constants.CALLTYPE_REPLY) {
 					response = doFailResponse(e1);
 				}
@@ -231,7 +236,7 @@ public class RequestExecutor implements Runnable {
 	private DPSFResponse doFailResponse(Exception e) {
 		logger.error(e.getMessage(), e);
 		if (this.request.getCallType() == Constants.CALLTYPE_REPLY) {
-			return ResponseFactory.createFailResponse(this.request, e.getClass().getName() + ":::" + e.getMessage());
+			return ResponseFactory.createFailResponse(this.request, e);
 		}
 		return null;
 	}
