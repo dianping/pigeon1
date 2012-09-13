@@ -39,7 +39,7 @@ public class DPSFThreadPool {
 		this.name = poolName;
 		this.factory = new DefaultThreadFactory(poolName);
 		this.executor = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,
-												 60L, TimeUnit.SECONDS,
+												 20L, TimeUnit.SECONDS,
 								                 new SynchronousQueue<Runnable>(),
 								                 this.factory
 								                 );
@@ -50,7 +50,7 @@ public class DPSFThreadPool {
 		this.name = poolName;
 		this.factory = new DefaultThreadFactory(poolName);
 		this.executor = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,
-												 60L, TimeUnit.SECONDS,
+												 20L, TimeUnit.SECONDS,
 												 workQueue,
 								                 this.factory
 								                 );
@@ -61,7 +61,7 @@ public class DPSFThreadPool {
 		this.name = poolName;
 		this.factory = new DefaultThreadFactory(poolName);
 		this.executor = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,
-												 60L, TimeUnit.SECONDS,
+												 20L, TimeUnit.SECONDS,
 												 workQueue,
 								                 this.factory,
 								                 handler);
