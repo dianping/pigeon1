@@ -66,6 +66,9 @@ public class RouteTest {
 	static Invoker invoker;
 	@BeforeClass
 	public static void setMock() throws Exception {
+		
+		System.setProperty(NettyClientManager.LION_CLIENT_CLASS, PigeonClientMock.class.getName());
+		
 		manager = ClientManagerFactory.getClientManager();
 		ClientManagerFactory.setManager(null);
 		
@@ -76,7 +79,7 @@ public class RouteTest {
 		EchoServer2.main(new String[]{"a"});
 		EchoServer3.main(new String[]{"a"});
 		
-		System.setProperty(NettyClientManager.LION_CLIENT_CLASS, PigeonClientMock.class.getName());
+		
 		PigeonClientMock.setServiceAddress(SN, add1);
 		
 		f = createProxyBeanFactory(SN, IEcho.class.getName());
