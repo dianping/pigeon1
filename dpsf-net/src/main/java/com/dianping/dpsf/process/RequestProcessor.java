@@ -128,6 +128,8 @@ public class RequestProcessor {
 									msg.append("DPSF RequestExecutor timeout seq:").append(request.getSequence());
 									msg.append("  ip:").append(rc.getHost()).append("  timeout:"+request.getTimeout())
 									.append("  createTime:").append(request.getCreateMillisTime())
+									.append("\r\n")
+									.append("  serviceName:").append(request.getServiceName())
 									.append("\r\n");
 									Object[] params = request.getParameters();
 									if(params != null && params.length > 0){
