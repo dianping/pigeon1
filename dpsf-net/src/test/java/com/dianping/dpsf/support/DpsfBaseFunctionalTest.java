@@ -30,8 +30,10 @@ import org.junit.BeforeClass;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.async.ServiceCallback;
+import com.dianping.dpsf.component.impl.DefaultInvoker;
 import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetException;
+import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
 import com.dianping.dpsf.net.channel.netty.NettyClientManager;
 import com.dianping.dpsf.other.route.PigeonClientMock;
 import com.dianping.dpsf.protocol.protobuf.DpsfTestMessages.OrderService;
@@ -79,6 +81,9 @@ public abstract class DpsfBaseFunctionalTest {
 	
 	@AfterClass
 	public static void tearDown() {
+		System.clearProperty(NettyClientManager.LION_CLIENT_CLASS);
+		DefaultInvoker.setInvoker(null);
+		ClientManagerFactory.setManager(null);
 	}
 
 	private static void setUpLionEnvironment() {

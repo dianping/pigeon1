@@ -2,12 +2,15 @@ package com.dianping.dpsf.fail;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.Assert;
 
+import com.dianping.dpsf.component.impl.DefaultInvoker;
+import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
 import com.dianping.dpsf.net.channel.protocol.DPSFDecoder;
 
 public class FailTest {
@@ -32,6 +35,11 @@ public class FailTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	@AfterClass
+	public static void done(){
+		DefaultInvoker.setInvoker(null);
+		ClientManagerFactory.setManager(null);
 	}
 	
 	@Test

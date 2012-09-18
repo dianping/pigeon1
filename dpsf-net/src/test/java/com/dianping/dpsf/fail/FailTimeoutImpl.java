@@ -26,12 +26,12 @@ public class FailTimeoutImpl implements FailTimeout{
 	public int testCallNormal3(int param) {
 		this.createTime = Long.parseLong(String.valueOf(ContextUtil.getLocalContext(Constants.REQUEST_CREATE_TIME)));
 		this.timeout = Integer.parseInt(String.valueOf(ContextUtil.getLocalContext(Constants.REQUEST_TIMEOUT)));
-		try {
-			Thread.currentThread().sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.currentThread().sleep(2000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		return param+1;
 	}
 	

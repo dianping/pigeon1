@@ -62,18 +62,10 @@ public class RouteTest {
 	static String add4 = "127.0.0.1:19996";
 	
 	static ProxyBeanFactory f;
-	static ClientManager manager;
-	static Invoker invoker;
 	@BeforeClass
 	public static void setMock() throws Exception {
 		
 		System.setProperty(NettyClientManager.LION_CLIENT_CLASS, PigeonClientMock.class.getName());
-		
-		manager = ClientManagerFactory.getClientManager();
-		ClientManagerFactory.setManager(null);
-		
-		invoker = DefaultInvoker.getInstance();
-		DefaultInvoker.setInvoker(null);
 		
 		EchoServer.main(new String[]{"a"});
 		EchoServer2.main(new String[]{"a"});
@@ -88,8 +80,9 @@ public class RouteTest {
 	}
 	@AfterClass
 	public static void releaseMock(){
-		DefaultInvoker.setInvoker(invoker);
-		ClientManagerFactory.setManager(manager);
+		System.clearProperty(NettyClientManager.LION_CLIENT_CLASS);
+		DefaultInvoker.setInvoker(null);
+		ClientManagerFactory.setManager(null);
 	}
 
 	private static ProxyBeanFactory createProxyBeanFactory(String sn, String iface) throws Exception {
@@ -107,10 +100,6 @@ public class RouteTest {
 		init.setAccessible(true);
 		init.invoke(pf, null);
 		return pf;
-	}
-	
-	@Before
-	public void initPF() throws Exception {
 	}
 	
 	private void setHostList(String ... adds) {
