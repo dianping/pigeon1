@@ -113,7 +113,7 @@ public class RequestExecutor implements Runnable {
 			t = cat.newTransaction("PigeonService", name);
 			InetSocketAddress address = (InetSocketAddress) channel.getRemoteAddress();
 			String parameters = Stringizers.forJson().from(request.getParameters(), CatConstants.MAX_LENGTH,CatConstants.MAX_ITEM_LENGTH);
-			cat.logEvent("PigeonService.client", address.getHostName() + ":" + address.getPort(), Message.SUCCESS,  parameters);
+			cat.logEvent("PigeonService.client", address.getAddress().getHostAddress() + ":" + address.getPort(), Message.SUCCESS,  parameters);
 
 			Object context = request.getContext();
 			String rootMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_ROOT_MESSAGE_ID);
