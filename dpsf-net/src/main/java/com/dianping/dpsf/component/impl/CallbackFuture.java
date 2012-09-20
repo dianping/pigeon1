@@ -121,7 +121,7 @@ public class CallbackFuture implements DPSFCallback,DPSFFuture{
 					
 					NetTimeoutException netTimeoutException = new NetTimeoutException(sb.toString());
 
-					Cat.getProducer().logError(netTimeoutException);
+//					Cat.getProducer().logError(netTimeoutException);
 					throw netTimeoutException;
 				}else{
 					this.wait(timeoutMillis_);
