@@ -96,12 +96,14 @@ public class RequestExecutor implements Runnable {
 				sb.append(serviceMeta.get(length - 2)).append(':').append(serviceMeta.get(length - 1)).append(':').append(this.request.getMethodName());
 				Object[] parameters = request.getParameters();
 				sb.append('(');
-				int pLen = parameters.length;
-				for (int i = 0; i < pLen; i++) {
-					Object parameter = parameters[i];
-					sb.append(parameter.getClass().getSimpleName());
-					if (i < pLen - 1) {
-						sb.append(',');
+				if(parameters != null){
+					int pLen = parameters.length;
+					for (int i = 0; i < pLen; i++) {
+						Object parameter = parameters[i];
+						sb.append(parameter.getClass().getSimpleName());
+						if (i < pLen - 1) {
+							sb.append(',');
+						}
 					}
 				}
 				sb.append(')');
