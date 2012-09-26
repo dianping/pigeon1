@@ -94,13 +94,17 @@ public class RequestExecutor implements Runnable {
 				StringBuilder sb = new StringBuilder(128);
 
 				sb.append(serviceMeta.get(length - 2)).append(':').append(serviceMeta.get(length - 1)).append(':').append(this.request.getMethodName());
-				Object[] parameters = request.getParameters();
+				String[] parameters = request.getParamClassName();
 				sb.append('(');
 				if(parameters != null){
 					int pLen = parameters.length;
 					for (int i = 0; i < pLen; i++) {
-						Object parameter = parameters[i];
-						sb.append(parameter.getClass().getSimpleName());
+						String parameter = parameters[i];
+						int idx = parameter.lastIndexOf(".");
+						if(idx > -1){
+							parameter = parameter.substring(idx+1);
+						}
+						sb.append(parameter);
 						if (i < pLen - 1) {
 							sb.append(',');
 						}
