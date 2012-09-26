@@ -9,6 +9,7 @@ import java.util.List;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.Channels;
 
+import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.process.ResponseFactory;
@@ -40,6 +41,12 @@ public class DPSFClientDecoder extends DPSFDecoder{
 	 */
 	@Override
 	public Object doInitMsg(Object message) {
+		if(message instanceof DPSFRequest){
+			DPSFRequest request = (DPSFRequest)message;
+			if(request.getCreateMillisTime() == 0){
+				request.setCreateMillisTime(System.currentTimeMillis());
+			}
+		}
 		return message;
 	}
 
