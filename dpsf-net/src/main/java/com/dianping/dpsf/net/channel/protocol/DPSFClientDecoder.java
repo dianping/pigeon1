@@ -41,12 +41,7 @@ public class DPSFClientDecoder extends DPSFDecoder{
 	 */
 	@Override
 	public Object doInitMsg(Object message) {
-		if(message instanceof DPSFRequest){
-			DPSFRequest request = (DPSFRequest)message;
-			if(request.getCreateMillisTime() == 0){
-				request.setCreateMillisTime(System.currentTimeMillis());
-			}
-		}
+		
 		return message;
 	}
 
