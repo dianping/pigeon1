@@ -125,7 +125,7 @@ public class HeartBeatTask implements Runnable, ClusterListener {
 			HeartBeatStat heartStat = getHeartBeatStatWithCreate(client.getAddress());
 			heartStat.currentHeartRequest = null;	//在write之前需要先置空currentHeartRequest
 			DPSFRequest heartRequest = createHeartRequest(client);
-//			client.write(heartRequest);
+			client.write(heartRequest);
 			heartStat.currentHeartRequest = heartRequest;
 		} catch (Exception e) {
 			logger.warn("Send heartbeat to server[" + client.getAddress() + "] failed. detail[" + e.getMessage() + "].");

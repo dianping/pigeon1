@@ -44,6 +44,9 @@ public class DPSFServerDecoder extends DPSFDecoder{
 			return null;
 		}
 		DPSFRequest request = (DPSFRequest)message;
+		if(request.getCreateMillisTime() == 0){
+			request.setCreateMillisTime(System.currentTimeMillis());
+		}
 		return request;
 	}
 
