@@ -1,4 +1,1 @@
-Pigeon
-======
-
-DianPing RPC
+RPC service framework
