@@ -63,7 +63,7 @@ public class ClientCache implements ClusterListener{
 		List<Client> clientList = this.serviceClients.get(serviceName);
 		
 		if(clientList == null || clientList.size() == 0){
-			throw new NetException("no client for serviceName:"
+			throw new NetException("no connection for serviceName:"
 					+serviceName);
 		}
 		return clientList;

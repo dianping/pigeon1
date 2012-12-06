@@ -14,12 +14,15 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.DynamicChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.DPSFUtils;
+import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.exception.NetException;
+import com.dianping.dpsf.process.ResponseFactory;
 import com.dianping.dpsf.telnet.TelnetServer;
 
 /**    
@@ -36,9 +39,14 @@ import com.dianping.dpsf.telnet.TelnetServer;
 public abstract class DPSFDecoder extends OneToOneDecoder implements Decoder{
 
 	private static Logger logger = DPSFLog.getLogger();
+	private static Logger log = Logger.getLogger(DPSFDecoder.class);
+	
+	private static boolean isClientTest = false;
+	private static boolean isServerTest = false;
 	
     public Object decode(
             ChannelHandlerContext ctx, Channel channel, Object msg) throws Exception {
+    	
     	if (!(msg instanceof ChannelBuffer)) {
             return msg;
         }
@@ -86,10 +94,31 @@ public abstract class DPSFDecoder extends OneToOneDecoder implements Decoder{
 			Object message = null;
 			try{
 				message = getDecoder(serializable).decode(ctx, channel, cb);
+				
+				if(isClientTest && this instanceof DPSFClientDecoder){
+					message = null;
+		    		DPSFDecoder.class.getClassLoader().loadClass("com.dianping.test.client.xxx");
+		    	}
+		    	if(isServerTest && this instanceof DPSFServerDecoder){
+		    		message = null;
+		    		DPSFDecoder.class.getClassLoader().loadClass("com.dianping.test.server.xxx");
+		    	}
 			}catch (Exception e){
 				isException = true;
 				try {
-					logger.error(((InetSocketAddress)channel.getRemoteAddress()).getHostName() + "\n" +e.getMessage(),e);
+					//解析对端encoder扩展的seq字段
+					Object seqObj = DPSFUtils.getAttachment(ctx, Constants.ATTACHMENT_REQUEST_SEQ);
+					if(seqObj != null){
+						long seq = Long.parseLong(String.valueOf(seqObj));
+						String errorMsg = "Deserialize Exception>>>>host:"
+							+((InetSocketAddress)channel.getRemoteAddress()).getHostName()
+							+" seq:"+seq+ "\n" +e.getMessage();
+						logger.error(errorMsg,e);
+						log.error(errorMsg,e);
+						doFailResponse(channel, 
+								ResponseFactory.createThrowableResponse(seq,serializable,e));
+					}
+					
 				} catch (Exception e1) {
 					logger.error("", e1);
 				}
@@ -107,7 +136,6 @@ public abstract class DPSFDecoder extends OneToOneDecoder implements Decoder{
 				}
 				messages.add(doInitMsg(message));
 				lastReadIndex = cb.readerIndex();
-				
 			}else if(isException){
 				lastReadIndex = cb.readerIndex();
 			}else{
@@ -141,4 +169,30 @@ public abstract class DPSFDecoder extends OneToOneDecoder implements Decoder{
     
     public abstract Object doInitMsg(Object message);
     
+    public abstract void doFailResponse(Channel channel,DPSFResponse response);
+
+	public static boolean isClientTest() {
+		return isClientTest;
+	}
+
+	/**
+	 * 单元测试方法，开发用户勿用
+	 * @param isClientTest
+	 */
+	public static void setClientTest(boolean isClientTest) {
+		DPSFDecoder.isClientTest = isClientTest;
+	}
+
+	public static boolean isServerTest() {
+		return isServerTest;
+	}
+
+	/**
+	 * 单元测试方法，开发用户勿用
+	 * @param isServerTest
+	 */
+	public static void setServerTest(boolean isServerTest) {
+		DPSFDecoder.isServerTest = isServerTest;
+	}
+
 }

@@ -7,6 +7,7 @@ package com.dianping.dpsf.async;
 
 import java.util.concurrent.TimeUnit;
 
+import com.dianping.cat.Cat;
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.impl.CallbackFuture;
@@ -47,21 +48,28 @@ public class ServiceFutureImpl extends CallbackFuture implements ServiceFuture{
 	@Override
 	public Object _get(long timeoutMillis) throws InterruptedException,
 	DPSFException {
-		DPSFResponse res = super.get(timeoutMillis);
+		
 		try {
+			DPSFResponse res = super.get(timeoutMillis);
 			if(res.getMessageType() == Constants.MESSAGE_TYPE_SERVICE){
 				return res.getReturn();
 			}else if(res.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION){
 				logger.error(res.getCause());
-				throw new DPSFException(res.getCause());
+				DPSFException dpsfE = new DPSFException(res.getCause());
+				Cat.getProducer().logError(dpsfE);
+				throw dpsfE;
 			}else if(res.getMessageType() == Constants.MESSAGE_TYPE_SERVICE_EXCEPTION){
-				throw new DPSFException((Throwable)res.getReturn());
+				DPSFException dpsfE = new DPSFException((Throwable)res.getReturn());
+				Cat.getProducer().logError(dpsfE);
+				throw dpsfE;
 			}else{
 				throw new DPSFException("error messageType:"+res.getMessageType());
 			}
 			
-		} catch (ServiceException e) {
-			throw new DPSFException(e);
+		} catch (Exception e) {
+			DPSFException dpsfE = new DPSFException(e);
+			Cat.getProducer().logError(dpsfE);
+			throw dpsfE;
 		}
 	}
 

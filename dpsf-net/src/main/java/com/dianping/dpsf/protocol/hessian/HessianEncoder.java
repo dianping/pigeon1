@@ -15,6 +15,7 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.caucho.hessian.io.Hessian2Output;
 import com.caucho.hessian.io.SerializerFactory;
+import com.dianping.dpsf.component.DPSFSerializable;
 import com.dianping.dpsf.net.channel.protocol.AbstractEncoder;
 
 /**
@@ -42,7 +43,7 @@ public class HessianEncoder extends AbstractEncoder {
 
 	public Object encode(ChannelHandlerContext ctx, Channel channel, Object msg) throws Exception {
 		ChannelBufferOutputStream bout = new ChannelBufferOutputStream(dynamicBuffer(estimatedLength, ctx.getChannel().getConfig().getBufferFactory()));
-		bout.write(LENGTH_PLACEHOLDER);
+		beforeDo(bout);
 		Hessian2Output h2out = new Hessian2Output(bout);
 		try {
 			h2out.writeObject(msg);
@@ -51,7 +52,7 @@ public class HessianEncoder extends AbstractEncoder {
 			h2out.close();
 		}
 		ChannelBuffer encoded = bout.buffer();
-		afterDo(encoded);
+		afterDo(encoded,msg);
 		return encoded;
 	}
 

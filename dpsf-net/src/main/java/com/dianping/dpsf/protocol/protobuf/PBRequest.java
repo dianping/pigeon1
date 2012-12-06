@@ -341,4 +341,14 @@ public class PBRequest implements DPSFRequest{
 		return this.attachments.get(name);
 	}
 
+	@Override
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
+	@Override
+	public void setCreateMillisTime(long createTime) {
+		this.createTime = createTime;
+	}
+
 }

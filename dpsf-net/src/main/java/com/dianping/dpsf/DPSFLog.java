@@ -52,8 +52,6 @@ public class DPSFLog {
 		if (initOK) {
 			return;
 		}
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		Thread.currentThread().setContextClassLoader(DPSFLog.class.getClassLoader());
 
 		Properties logPro = new Properties();
 		String logLevel = "info";
@@ -111,7 +109,6 @@ public class DPSFLog {
 			}
 		}
 
-		Thread.currentThread().setContextClassLoader(loader);
 		initOK = true;
 		LOGGER = lr.getLogger(LOGGER_NAME);
 		if (logLevel != null && logLevel.equalsIgnoreCase("debug")) {

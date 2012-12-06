@@ -4,6 +4,10 @@
 package com.dianping.dpsf.net.channel.protocol;
 
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.channel.ChannelHandlerContext;
+
+import com.dianping.dpsf.Constants;
+import com.dianping.dpsf.DPSFUtils;
 
 /**    
  * <p>    
@@ -20,7 +24,7 @@ public abstract class AbstractDecoder implements Decoder{
 	
 	private final static int fieldLenth = 4;
 	
-	protected ChannelBuffer beforeDo(ChannelBuffer buffer){
+	protected ChannelBuffer beforeDo(ChannelHandlerContext ctx,ChannelBuffer buffer){
 		
 		if (buffer.readableBytes() < fieldLenth) {
             return null;
@@ -38,10 +42,26 @@ public abstract class AbstractDecoder implements Decoder{
 
         // extract frame
         int readerIndex = buffer.readerIndex();
-        ChannelBuffer frame = buffer.slice(readerIndex, frameLengthInt);
+        int msgLen = parseExpand(ctx,buffer,frameLengthInt);
+        ChannelBuffer frame = buffer.slice(readerIndex, msgLen);
         buffer.readerIndex(readerIndex + frameLengthInt);
 		
 		return frame;
+	}
+	
+	private int parseExpand(ChannelHandlerContext ctx,ChannelBuffer buffer,int frameLengthInt){
+		int msgLen = frameLengthInt;
+		byte[] expandFlag = new byte[3];
+        buffer.getBytes(buffer.readerIndex()+frameLengthInt-3, expandFlag);
+        if(expandFlag[0] == Constants.EXPAND_FLAG_FIRST 
+        		&& expandFlag[1] == Constants.EXPAND_FLAG_SECOND
+        		&& expandFlag[2] == Constants.EXPAND_FLAG_THIRD){
+        	msgLen = frameLengthInt - AbstractEncoder.EXPAND_LANGTH;
+        	long seq = buffer.getLong(buffer.readerIndex()+msgLen);
+        	DPSFUtils.setAttachment(ctx, Constants.ATTACHMENT_REQUEST_SEQ, seq);
+        }
+        
+        return msgLen;
 	}
 	
 

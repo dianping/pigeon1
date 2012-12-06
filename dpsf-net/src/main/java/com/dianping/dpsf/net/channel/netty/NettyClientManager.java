@@ -10,10 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 
 import org.apache.commons.lang.StringUtils;
@@ -110,8 +110,8 @@ public class NettyClientManager implements ClientManager{
 		DpsfRequestorMonitor.getInstance().setClientManager(this);
 		ManagementContext.getInstance().registerMBean(DpsfRequestorMonitor.getInstance());
 		//TODO [v1.7.0, danson.liu]暂时使用CallerRunsPolicy策略, 1.7.0版中对dpsf中所有线程池进行统一规划
-		this.clientResponseThreadPool = new ExeThreadPool("Client-ResponseProcessor", 50, 600,
-				new ArrayBlockingQueue<Runnable>(50), new CallerRunsPolicy());	
+		this.clientResponseThreadPool = new ExeThreadPool("Client-ResponseProcessor", 20, 600,
+				new LinkedBlockingQueue<Runnable>(50), new CallerRunsPolicy());	
 		ThreadRenamingRunnable.setThreadNameDeterminer(ThreadNameDeterminer.CURRENT);	//Disable thread renaming of Netty
 		this.bossExecutor = Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Client-BossExecutor"));
 		this.workerExecutor = Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Client-WorkerExecutor"));

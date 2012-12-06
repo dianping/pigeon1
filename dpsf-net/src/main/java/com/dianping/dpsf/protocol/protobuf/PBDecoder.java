@@ -57,7 +57,7 @@ public abstract class PBDecoder extends AbstractDecoder{
 		}
     	ChannelBuffer buffer = (ChannelBuffer)msg;
 		
-		ChannelBuffer frame = beforeDo(buffer);
+		ChannelBuffer frame = beforeDo(ctx,buffer);
 		if(frame == null){
 			return null;
 		}

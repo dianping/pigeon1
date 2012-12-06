@@ -36,7 +36,7 @@ public abstract class ThriftDecoder extends AbstractDecoder{
 
 		ChannelBuffer buffer = (ChannelBuffer)msg;
 		
-		ChannelBuffer frame = beforeDo(buffer);
+		ChannelBuffer frame = beforeDo(ctx,buffer);
 		if(frame == null){
 			return null;
 		}

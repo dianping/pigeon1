@@ -4,11 +4,16 @@
 package com.dianping.dpsf.net.channel.protocol;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.Channels;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.DPSFUtils;
+import com.dianping.dpsf.component.DPSFResponse;
 
 /**    
  * <p>    
@@ -33,5 +38,12 @@ public class DPSFClientEncoder extends DPSFEncoder{
         Object[] message = (Object[])msg;
         return super.encode(ctx, channel, message[0]);
     }
+
+	@Override
+	public void doFailResponse(Channel channel, DPSFResponse response) {
+		List<DPSFResponse> respList = new ArrayList<DPSFResponse>();
+		respList.add(response);
+		Channels.fireMessageReceived(channel,respList);
+	}
 
 }

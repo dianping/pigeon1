@@ -10,6 +10,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.dianping.dpsf.channel.thrift.ChannelBufferTTransport;
+import com.dianping.dpsf.component.DPSFSerializable;
 import com.dianping.dpsf.net.channel.protocol.AbstractEncoder;
 
 /**    
@@ -34,10 +35,10 @@ public class ThriftEncoder extends AbstractEncoder{
 		TBase message = (TBase)msg;
 		ChannelBufferTTransport transport = new ChannelBufferTTransport();
 		TBinaryProtocol protocol = new TBinaryProtocol(transport);
-		transport.getChannelBuffer().writeBytes(LENGTH_PLACEHOLDER);
+		beforeDo(transport.getChannelBuffer());
 		message.write(protocol);
 		ChannelBuffer cb = transport.getChannelBuffer();
-		afterDo(cb);
+		afterDo(cb,msg);
 		return cb;
 	}
 	

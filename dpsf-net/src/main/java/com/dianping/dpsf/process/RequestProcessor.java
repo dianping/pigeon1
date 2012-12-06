@@ -5,9 +5,9 @@ package com.dianping.dpsf.process;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.jboss.netty.channel.Channel;
@@ -67,7 +67,7 @@ public class RequestProcessor {
 		this.sr = sr;
 		this.port = port;
 		this.serverChannels = new DefaultChannelGroup("Server-Channels");
-		this.threadPool = new ExeThreadPool("Server-RequestProcessor-"+this.port,corePoolSize,maxPoolSize,new ArrayBlockingQueue<Runnable>(workQueueSize));
+		this.threadPool = new ExeThreadPool("Server-RequestProcessor-"+this.port,corePoolSize,maxPoolSize,new LinkedBlockingQueue<Runnable>(workQueueSize));
 		
 		this.contexts = new ConcurrentHashMap<DPSFRequest,RequestContext>();
 		CycThreadPool.getPool().execute(new TimeoutCheck());
@@ -128,6 +128,8 @@ public class RequestProcessor {
 									msg.append("DPSF RequestExecutor timeout seq:").append(request.getSequence());
 									msg.append("  ip:").append(rc.getHost()).append("  timeout:"+request.getTimeout())
 									.append("  createTime:").append(request.getCreateMillisTime())
+									.append("\r\n")
+									.append("  serviceName:").append(request.getServiceName())
 									.append("\r\n");
 									Object[] params = request.getParameters();
 									if(params != null && params.length > 0){

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>dpsf-all</artifactId>
 		<groupId>com.dianping.dpsf</groupId>
-		<version>1.7.1</version>
+		<version>1.8.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<name>${dpsf-net.name}</name>
@@ -122,6 +122,12 @@
 		<dependency>
 			<groupId>com.dianping.lion</groupId>
 			<artifactId>lion-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.dianping.lion</groupId>
+			<artifactId>lion-dev</artifactId>
+			<version>1.0.0</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.dianping</groupId>

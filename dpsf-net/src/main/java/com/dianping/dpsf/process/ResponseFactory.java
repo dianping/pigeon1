@@ -28,42 +28,43 @@ import com.google.protobuf.MessageLite;
  * @created 2010-9-1 上午10:24:07
  */
 public class ResponseFactory {
-
-	public static DPSFResponse createFailResponse(DPSFRequest request, String message) {
+	
+	public static DPSFResponse createThrowableResponse(long seq,byte serialization,Throwable e){
+		
 		DPSFResponse response = null;
-		if (message == null) {
-			message = "Service has Exception";
+		switch (serialization) {
+		case Constants.SERILIZABLE_PB:
+			response = new PBResponse(e.getMessage());
+			response.setSequence(seq);
+			response.setMessageType(Constants.MESSAGE_TYPE_EXCEPTION);
+			break;
+		case Constants.SERILIZABLE_JAVA:
+			response = new DefaultResponse(serialization, seq, Constants.MESSAGE_TYPE_EXCEPTION, e);
+			break;
+		case Constants.SERILIZABLE_HESSIAN:
+		case Constants.SERILIZABLE_HESSIAN1:
+			response = new DefaultResponse(serialization, seq, Constants.MESSAGE_TYPE_EXCEPTION, e);
+			break;
+		case Constants.SERILIZABLE_THRIFT:
+			response = new ThriftResponse(seq, Constants.MESSAGE_TYPE_EXCEPTION, e.getMessage());
+			break;
 		}
+		return response;
+	}
+
+	public static DPSFResponse createFailResponse(DPSFRequest request, Throwable e) {
+		DPSFResponse response = null;
 		byte serialization = request.getSerializ();
 		if (request.getMessageType() == Constants.MESSAGE_TYPE_HEART) {
-			response = new DefaultResponse(serialization, request.getSequence(), Constants.MESSAGE_TYPE_HEART, message);
+			response = new DefaultResponse(serialization, request.getSequence(), Constants.MESSAGE_TYPE_HEART, e);
 		} else {
-			switch (serialization) {
-			case Constants.SERILIZABLE_PB:
-				response = new PBResponse(message);
-				response.setSequence(request.getSequence());
-				response.setMessageType(Constants.MESSAGE_TYPE_EXCEPTION);
-				break;
-			case Constants.SERILIZABLE_JAVA:
-				response = new DefaultResponse(serialization, request.getSequence(), Constants.MESSAGE_TYPE_EXCEPTION, message);
-				break;
-			case Constants.SERILIZABLE_HESSIAN:
-			case Constants.SERILIZABLE_HESSIAN1:
-				response = new DefaultResponse(serialization, request.getSequence(), Constants.MESSAGE_TYPE_EXCEPTION, message);
-				break;
-			case Constants.SERILIZABLE_THRIFT:
-				response = new ThriftResponse(request.getSequence(), Constants.MESSAGE_TYPE_EXCEPTION, message);
-				break;
-			}
+			response = createThrowableResponse(request.getSequence(),request.getSerializ(),e);
 		}
 		return response;
 	}
 
 	public static DPSFResponse createServiceExceptionResponse(DPSFRequest request, Throwable e) {
 		DPSFResponse response = null;
-		if (e == null) {
-			return createFailResponse(request, null);
-		}
 		byte serialization = request.getSerializ();
 		switch (serialization) {
 		case Constants.SERILIZABLE_PB:

@@ -40,9 +40,9 @@ public class ServiceRegistry{
 	
 	public static boolean isInit = false;
 	
-	private int corePoolSize = 200;
+	private int corePoolSize = 100;
 	private int maxPoolSize = 2000;
-	private int workQueueSize = 300;
+	private int workQueueSize = 100;
 	
 	public ServiceRegistry(){
 		

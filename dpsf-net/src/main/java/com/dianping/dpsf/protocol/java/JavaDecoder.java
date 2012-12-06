@@ -33,7 +33,7 @@ public class JavaDecoder extends AbstractDecoder{
 			throws Exception {
 		ChannelBuffer buffer = (ChannelBuffer)msg;
 		
-		ChannelBuffer frame = beforeDo(buffer);
+		ChannelBuffer frame = beforeDo(ctx,buffer);
 		if(frame == null){
 			return null;
 		}

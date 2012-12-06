@@ -21,7 +21,6 @@ public class Constants {
 	public static final int MESSAGE_TYPE_SERVICE = 2;
 	public static final int MESSAGE_TYPE_EXCEPTION = 3;
 	public static final int MESSAGE_TYPE_SERVICE_EXCEPTION = 4;
-	public static final int MESSAGE_TYPE_TIMEOUT = 5;
 	
 	public static final byte SERILIZABLE_PB = 1;
 	public static final byte SERILIZABLE_HESSIAN = 2;
@@ -50,11 +49,17 @@ public class Constants {
 	public static final byte MESSAGE_HEAD_SECOND = 58;
 	public static final byte[] MESSAGE_HEAD = new byte[]{MESSAGE_HEAD_FIRST,MESSAGE_HEAD_SECOND};
 	
+	public static final byte EXPAND_FLAG_FIRST = 29;
+	public static final byte EXPAND_FLAG_SECOND = 30;
+	public static final byte EXPAND_FLAG_THIRD = 31;
+	public static final byte[] EXPAND_FLAG= new byte[]{EXPAND_FLAG_FIRST,EXPAND_FLAG_SECOND,EXPAND_FLAG_THIRD};
+	
 	public static final int ATTACHMENT_RETRY = 1;
 	public static final int ATTACHMENT_BYTEBUFFER = 2;
 	public static final int ATTACHMENT_IS_TELNET = 3;
 	public static final int ATTACHMENT_CURRENT_INDEX = 4;
 	public static final int ATTACHMENT_TELNET_INFO = 5;
+	public static final int ATTACHMENT_REQUEST_SEQ = 11;
 	
 	public static final String TRANSFER_NULL = "NULL";
 	
@@ -65,5 +70,8 @@ public class Constants {
 	public static final String REQ_ATTACH_WRITE_BUFF_LIMIT = "WRITE_BUFF_LIMIT";
 	
 	public static final int VERSION_150 = 150;
+	
+	public static final String REQUEST_CREATE_TIME = "requestCreateTime";
+	public static final String REQUEST_TIMEOUT = "requestTimeout";
 	
 }
