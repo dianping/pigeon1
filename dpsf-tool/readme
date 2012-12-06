@@ -1,0 +1,18 @@
+###############################
+java类型				C#类型
+int,Integer			int
+short,Short			short
+long,Long			long
+double,Double		double
+float,Float			float
+boolean,Boolean		bool
+String				string
+对象引用XXX			XXX
+Map及子类			IDictionary
+List及子类			IList
+（多维）数组			支持
+泛型					不支持
+enum				不支持
+set					不支持
+date				不支持
+
