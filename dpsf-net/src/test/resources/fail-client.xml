@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+xmlns:amq="http://activemq.apache.org/schema/core" xmlns:avatar="http://www.dianping.com/schema/avatar"
+xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+    <!-- 客户端配置 -->
+	
+	<bean id="fail" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/failService"/>
+		<property name="iface" value="com.dianping.dpsf.fail.Fail"/>
+		<!-- default:pb -->
+		<property name="serialize" value="hessian"/>
+		<!-- sync async oneway future  default:sync -->
+		<property name="callMethod" value="sync"/>
+		<!-- 单位毫秒 default:2000 -->
+		<property name="timeout" value="5000"/>
+	</bean>
+	
+	<bean id="fail1" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/failService1"/>
+		<property name="iface" value="com.dianping.dpsf.fail.FailTimeout"/>
+		<!-- default:pb -->
+		<property name="serialize" value="hessian"/>
+		<!-- sync async oneway future  default:sync -->
+		<property name="callMethod" value="sync"/>
+		<!-- 单位毫秒 default:2000 -->
+		<property name="timeout" value="8000"/>
+	</bean>
+	
+	<bean id="fail2" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/failService2"/>
+		<property name="iface" value="com.dianping.dpsf.fail.FailTimeout"/>
+		<!-- default:pb -->
+		<property name="serialize" value="hessian"/>
+		<!-- sync async oneway future  default:sync -->
+		<property name="callMethod" value="sync"/>
+		<!-- 单位毫秒 default:2000 -->
+		<property name="timeout" value="4000"/>
+	</bean>
+	
+	<bean id="fail3" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">
+		<property name="serviceName" value="http://service.dianping.com/failService3"/>
+		<property name="iface" value="com.dianping.dpsf.fail.FailTimeout"/>
+		<!-- default:pb -->
+		<property name="serialize" value="hessian"/>
+		<!-- sync async oneway future  default:sync -->
+		<property name="callMethod" value="sync"/>
+		<!-- 单位毫秒 default:2000 -->
+		<property name="timeout" value="10000"/>
+	</bean>
+	
+	
+	
+</beans>
