@@ -31,11 +31,10 @@ public class ServiceFutureFactory {
 	}
 	
 	public static void setFuture(ServiceFuture future) throws DPSFException{
-		if(threadFuture.get() != null){
+		if(threadFuture.get() != null) {
 			threadFuture.remove();
 			String msg = "you must call \"ServiceFutureFactory.getFuture()\" before second call service if you use future call";
 			log.error(msg);
-			throw new DPSFException(msg);
 		}
 		threadFuture.set(future);
 	}

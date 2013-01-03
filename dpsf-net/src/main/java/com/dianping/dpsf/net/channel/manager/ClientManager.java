@@ -3,6 +3,7 @@
  */
 package com.dianping.dpsf.net.channel.manager;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -35,6 +36,7 @@ public interface ClientManager {
 	void registeClient(String serviceName, String group, String connect, int weight) throws NetException;
 
 	Client getClient(String serviceName, String group, DPSFRequest request) throws NetException;
+	Client getClient(String serviceName, String group, DPSFRequest request, List<Client> excludeClients) throws NetException;
 
 	void connectionException(Client client, Object attachment, ExceptionEvent e);
 

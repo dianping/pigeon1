@@ -164,8 +164,9 @@ public class DefaultInvoker implements Invoker {
 		RpcStatsPool.flowIn(request, client.getAddress());
 		try {
 			client.write(request, callback);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			RpcStatsPool.flowOut(request, client.getAddress());
+            throw e;
 		}
 
 		ClientContext.setUsedClientAddress(client.getAddress());
@@ -236,7 +237,7 @@ public class DefaultInvoker implements Invoker {
 			requestMap.remove(response.getSequence());
 			requestStat.timeService(callback.getRequest().getServiceName(), callback.getRequest().getCreateMillisTime());
 		} else {
-			log.warn("no request for response:" + response.getSequence());
+//			log.warn("no request for response:" + response.getSequence());
 		}
 	}
 
