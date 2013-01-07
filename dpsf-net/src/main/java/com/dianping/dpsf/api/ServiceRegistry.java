@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
+import com.dianping.dpsf.process.filter.InvocationProcessFilter;
 import com.dianping.dpsf.spring.PigeonBootStrap;
 import org.apache.log4j.Logger;
 
@@ -47,7 +47,7 @@ public class ServiceRegistry{
 	private int corePoolSize = 100;
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 100;
-    private List<RemoteInvocationFilter> customizedInvocationFilters;
+    private List<InvocationProcessFilter> customizedInvocationFilters;
 	
 	public ServiceRegistry(){
 		
@@ -179,7 +179,7 @@ public class ServiceRegistry{
 		this.workQueueSize = workQueueSize;
 	}
 
-    public void setCustomizedInvocationFilters(List<RemoteInvocationFilter> customizedInvocationFilters) {
+    public void setCustomizedInvocationFilters(List<InvocationProcessFilter> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
     }
 }

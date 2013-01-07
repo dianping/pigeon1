@@ -254,6 +254,14 @@ public class PigeonConfig {
         this.useNewInvokeSetByJmx = false;
     }
 
+    public void setUseNewProcessEnabledByJmx() {
+        this.useNewProcessSetByJmx = true;
+    }
+
+    public void setUseNewProcessDisabledByJmx() {
+        this.useNewProcessSetByJmx = false;
+    }
+
 	public static String getStringValueFromLion(String config, String defaultValue) {
 		String configVal = null;
 		if (isLionApiValid()) {

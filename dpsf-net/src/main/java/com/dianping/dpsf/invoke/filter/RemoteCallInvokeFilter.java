@@ -22,22 +22,21 @@ import com.dianping.dpsf.component.impl.ServiceWarpCallback;
 import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.exception.ServiceException;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.invoke.RemoteInvocationRepository;
 import com.dianping.dpsf.net.channel.Client;
 
 /**
- * TODO Comment of The Class
+ * 执行实际的Remote Call，包括Sync, Future，Callback，Oneway
  *
  * @author danson.liu
  */
-public class RemoteCallInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
+public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
 
     private RemoteInvocationRepository remoteInvocationRepository = RemoteInvocationRepository.INSTANCE;
     private static final DPSFResponse NO_RETURN_RESPONSE = new NoReturnResponse();
 
-    public RemoteCallInvocationFilter(int order) {
+    public RemoteCallInvokeFilter(int order) {
         super(order);
     }
 
@@ -78,6 +77,7 @@ public class RemoteCallInvocationFilter extends RemoteInvocationFilter<Invocatio
         try {
             remoteClient.write(request, callback);
         } catch (RuntimeException e) {
+            remoteInvocationRepository.remove(request.getSequence());
             throw new NetException("Send request to service provider failed.", e);
         }
     }
@@ -88,27 +88,55 @@ public class RemoteCallInvocationFilter extends RemoteInvocationFilter<Invocatio
 
     static class NoReturnResponse implements DPSFResponse {
         @Override
-        public void setMessageType(int messageType) {}
+        public void setMessageType(int messageType) {
+        }
+
         @Override
-        public int getMessageType() throws ServiceException {return 0;}
+        public int getMessageType() throws ServiceException {
+            return 0;
+        }
+
         @Override
-        public String getCause() {return null;}
+        public String getCause() {
+            return null;
+        }
+
         @Override
-        public Object getReturn() {return null;}
+        public Object getReturn() {
+            return null;
+        }
+
         @Override
-        public void setReturn(Object obj) {}
+        public void setReturn(Object obj) {
+        }
+
         @Override
-        public byte getSerializ() {return 0;}
+        public byte getSerializ() {
+            return 0;
+        }
+
         @Override
-        public void setSequence(long seq) {}
+        public void setSequence(long seq) {
+        }
+
         @Override
-        public long getSequence() {return 0;}
+        public long getSequence() {
+            return 0;
+        }
+
         @Override
-        public Object getObject() throws NetException {return null;}
+        public Object getObject() throws NetException {
+            return null;
+        }
+
         @Override
-        public Object getContext() {return null;}
+        public Object getContext() {
+            return null;
+        }
+
         @Override
-        public void setContext(Object context) {}
+        public void setContext(Object context) {
+        }
     }
 
 }

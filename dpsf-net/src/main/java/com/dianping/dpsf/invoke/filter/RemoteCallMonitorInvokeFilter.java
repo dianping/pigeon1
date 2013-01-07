@@ -26,13 +26,15 @@ import com.dianping.dpsf.net.channel.Client;
 import com.site.helper.Stringizers;
 
 /**
- * TODO can remove to dpsf-monitor-cat.jar
+ * 对每次Remote Call调用的Cat监控
  *
  * @author danson.liu
  */
-public class RemoteCallMonitorInvocationFilter extends AbstractCatMonitorInvocationFilter<InvocationInvokeContext> {
+public class RemoteCallMonitorInvokeFilter extends InvocationInvokeFilter {
 
-    public RemoteCallMonitorInvocationFilter(int order) {
+    private CatMonitorSupport monitorSupport = new CatMonitorSupport();
+
+    public RemoteCallMonitorInvokeFilter(int order) {
         super(order);
     }
 
@@ -43,7 +45,7 @@ public class RemoteCallMonitorInvocationFilter extends AbstractCatMonitorInvocat
         try {
             cat = Cat.getProducer();
         } catch (Exception e) {
-            logCatError(e);
+            monitorSupport.logCatError(e);
         }
 
         if (cat != null) {
@@ -73,7 +75,7 @@ public class RemoteCallMonitorInvocationFilter extends AbstractCatMonitorInvocat
 
                 cat.logEvent(CatConstants.TYPE_REMOTE_CALL, CatConstants.NAME_REQUEST, Transaction.SUCCESS, serverMessageId);
             } catch (Exception e) {
-                logCatError(e);
+                monitorSupport.logCatError(e);
             }
         }
         return handler.handle(invocationContext);

@@ -14,6 +14,8 @@ package com.dianping.dpsf.invoke;
 
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationContext;
+import com.dianping.dpsf.invoke.filter.InvocationInvokeFilter;
+import com.dianping.dpsf.process.filter.InvocationProcessFilter;
 
 import java.util.*;
 
@@ -24,18 +26,18 @@ import java.util.*;
  */
 public class RemoteInvocationHandlerFactory {
 
-    private static List<RemoteInvocationFilter> internalInvokeFilters = new ArrayList<RemoteInvocationFilter>();
-    private static List<RemoteInvocationFilter> internalProcessFilters = new ArrayList<RemoteInvocationFilter>();
+    private static List<InvocationInvokeFilter>     internalInvokeFilters       =   new ArrayList<InvocationInvokeFilter>();
+    private static List<InvocationProcessFilter>    internalProcessFilters      =   new ArrayList<InvocationProcessFilter>();
 
-    public static RemoteInvocationHandler createInvokeHandler(List<RemoteInvocationFilter> filters) {
+    public static RemoteInvocationHandler createInvokeHandler(List<? extends RemoteInvocationFilter> filters) {
         return createHandler(internalInvokeFilters, filters);
     }
 
-    public static RemoteInvocationHandler createProcessHandler(List<RemoteInvocationFilter> filters) {
+    public static RemoteInvocationHandler createProcessHandler(List<? extends RemoteInvocationFilter> filters) {
         return createHandler(internalProcessFilters, filters);
     }
 
-    private static RemoteInvocationHandler createHandler(List<RemoteInvocationFilter> internalFilters, List<RemoteInvocationFilter> filters) {
+    private static RemoteInvocationHandler createHandler(List<? extends RemoteInvocationFilter> internalFilters, List<? extends RemoteInvocationFilter> filters) {
         Map<Integer, RemoteInvocationFilter> filterMap = new HashMap<Integer, RemoteInvocationFilter>();
         for (RemoteInvocationFilter filter : internalFilters) {
             filterMap.put(filter.order(), filter);
@@ -61,11 +63,11 @@ public class RemoteInvocationHandlerFactory {
         return last;
     }
 
-    public static void registerInternalInvokeFilter(RemoteInvocationFilter filter) {
+    public static void registerInternalInvokeFilter(InvocationInvokeFilter filter) {
         internalInvokeFilters.add(filter);
     }
 
-    public static void registerInternalProcessFilter(RemoteInvocationFilter filter) {
+    public static void registerInternalProcessFilter(InvocationProcessFilter filter) {
         internalProcessFilters.add(filter);
     }
 }

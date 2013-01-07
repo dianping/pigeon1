@@ -35,6 +35,7 @@ public class ServiceFutureFactory {
 			threadFuture.remove();
 			String msg = "you must call \"ServiceFutureFactory.getFuture()\" before second call service if you use future call";
 			log.error(msg);
+            throw new DPSFException(msg);
 		}
 		threadFuture.set(future);
 	}

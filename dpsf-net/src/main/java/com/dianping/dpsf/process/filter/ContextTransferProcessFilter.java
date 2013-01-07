@@ -4,7 +4,6 @@ import com.dianping.dpsf.ContextUtil;
 import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.stat.ServiceStat;
 
@@ -15,7 +14,7 @@ import com.dianping.dpsf.stat.ServiceStat;
  * Time: 上午11:39
  * To change this template use File | Settings | File Templates.
  */
-public class ContextTransferProcessFilter extends RemoteInvocationFilter<InvocationProcessContext> {
+public class ContextTransferProcessFilter extends InvocationProcessFilter {
 
     private ServiceStat serverServiceStat = ServiceStat.getServerServiceStat();
 

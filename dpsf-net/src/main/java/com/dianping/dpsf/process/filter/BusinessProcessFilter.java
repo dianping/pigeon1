@@ -6,7 +6,6 @@ import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
 import com.dianping.dpsf.exception.DPSFException;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.process.ResponseFactory;
 import com.dianping.dpsf.repository.DPSFMethod;
@@ -23,7 +22,7 @@ import java.lang.reflect.Method;
  * Time: 上午11:41
  * To change this template use File | Settings | File Templates.
  */
-public class BusinessProcessFilter extends RemoteInvocationFilter<InvocationProcessContext> {
+public class BusinessProcessFilter extends InvocationProcessFilter {
 
     private ServiceStat serverServiceStat = ServiceStat.getServerServiceStat();
 
@@ -58,7 +57,9 @@ public class BusinessProcessFilter extends RemoteInvocationFilter<InvocationProc
                 }
             } catch (InvocationTargetException e) {
                 Throwable e2 = e.getTargetException();
-                if (e2 != null) {logger.error(e2.getMessage(), e2);}
+                if (e2 != null) {
+                    logger.error(e2.getMessage(), e2);
+                }
                 if (request.getCallType() == Constants.CALLTYPE_REPLY) {
                     response = ResponseFactory.createServiceExceptionResponse(request, e2);
                 }

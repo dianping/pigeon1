@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.dianping.dpsf.control.PigeonConfig;
 import org.apache.log4j.Logger;
 
 import com.dianping.cat.Cat;
@@ -207,7 +208,6 @@ public class DefaultInvoker implements Invoker {
 
 			DPSFCallback callback = (DPSFCallback) callData[2];
 			if (callback != null) {
-				// DPSFRequest request = (DPSFRequest) callData[0];
 				Client client = callback.getClient();
 				if (client != null) {
 					RpcStatsPool.flowOut(request, client.getAddress());
@@ -237,70 +237,12 @@ public class DefaultInvoker implements Invoker {
 			requestMap.remove(response.getSequence());
 			requestStat.timeService(callback.getRequest().getServiceName(), callback.getRequest().getCreateMillisTime());
 		} else {
-//			log.warn("no request for response:" + response.getSequence());
+            if (!PigeonConfig.isUseNewInvokeLogic()) {
+			    log.warn("no request for response:" + response.getSequence());
+            }
 		}
 	}
 
-	/**
-	 * @param request
-	 * @param metaData
-	 * @param controller
-	 * @param callback
-	 * @throws NetException
-	 */
-	public void HBInvokeCallback(DPSFRequest request, DPSFMetaData metaData, DPSFController controller, DPSFCallback callback) throws NetException {
-
-		initRequest(request);
-		if (request.getCallType() == 0) {
-			request.setCallType(Constants.CALLTYPE_REPLY);
-		}
-		Client client = ClientManagerFactory.getClientManager().getClient(metaData.getServiceName(), metaData.getGroup(), request);
-		long seq = sequenceMaker.incrementAndGet();
-		request.setSequence(seq);
-		if (request.getCallType() == Constants.CALLTYPE_REPLY) {
-			Object[] callData = new Object[5];
-			int index = 0;
-			callData[index++] = request;
-			callData[index++] = controller;
-			callData[index++] = callback;
-			callData[index++] = metaData.getGroup();
-
-			try {
-				callData[index] = new CentralStatContext(request.getServiceName(), request.getMethodName(), ((DefaultRequest) request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType());
-			} catch (Exception e) {
-				callData[index] = new CentralStatContext(request.getServiceName(), request.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType());
-			}
-			this.requestMap.put(seq, callData);
-			callback.setCentralStatContext((CentralStatContext) callData[4]);
-			callback.setRequest(request);
-			callback.setClient(client);
-		}
-
-		// 传递业务上下文
-		Object newContext = ContextUtil.createContext(request.getServiceName(), request.getMethodName(), client.getHost(), client.getPort());
-		request.setContext(newContext);
-		// //order自增
-		// Object currentContext = ContextUtil.getContext();
-		// Integer currentOrder = ContextUtil.getOrder(currentContext);
-		// if(currentOrder == null){
-		// currentOrder = 0;
-		// }
-		// ContextUtil.setOrder(newContext, currentOrder+1);
-		client.write(request, callback);
-
-		RpcStatsPool.flowIn(request, client.getAddress());
-
-		ClientContext.setUsedClientAddress(client.getAddress());
-		requestStat.countService(request.getServiceName());
-		// notify one way call
-		if (Constants.CALLTYPE_NOREPLY == request.getCallType()) {
-			try {
-				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request.getMethodName(), ((DefaultRequest) request).getParameterClasses(), client.getHost() + ":" + client.getPort(), request.getCallType()));
-			} catch (Exception e) {
-				CentralStatService.notifyMethodInvoke(new CentralStatContext(request.getServiceName(), request.getMethodName(), client.getHost() + ":" + client.getPort(), request.getCallType()));
-			}
-		}
-	}
 	//初始化Request的createTime和timeout，以便统一这两个值
 	private void initRequest(DPSFRequest request){
 		Object createTime = ContextUtil.getLocalContext(Constants.REQUEST_CREATE_TIME);
@@ -320,10 +262,6 @@ public class DefaultInvoker implements Invoker {
 
 	private class TimeoutCheck implements Runnable {
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Runnable#run()
-		 */
 		public void run() {
 			while (true) {
 				try {

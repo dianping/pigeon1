@@ -12,7 +12,7 @@
  */
 package com.dianping.dpsf.component;
 
-import com.dianping.dpsf.invoke.filter.cluster.FailfastClusterInvocationFilter;
+import com.dianping.dpsf.invoke.filter.cluster.FailfastClusterInvokeFilter;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class ClusterMeta {
 
-    private String name = FailfastClusterInvocationFilter.NAME;
+    private String name = FailfastClusterInvokeFilter.NAME;
 
     private Map<String, Object> attributes;
 

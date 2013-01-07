@@ -13,7 +13,7 @@
 package com.dianping.dpsf.spring;
 
 import com.dianping.dpsf.invoke.*;
-import com.dianping.dpsf.invoke.filter.cluster.FailfastClusterInvocationFilter;
+import com.dianping.dpsf.invoke.filter.cluster.FailfastClusterInvokeFilter;
 import com.dianping.dpsf.invoke.filter.*;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
 import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
@@ -51,16 +51,17 @@ public class PigeonBootStrap {
     }
 
     private static void setupInvocationInvokeFilters() {
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new MockInvocationFilter(10));
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new ServiceCallMonitorInvocationFilter(20));
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new ClusterDelegateInvocationFilter(30));
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new ContextPrepareInvocationFilter(40));
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new RemoteCallMonitorInvocationFilter(50));
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new RemoteCallStatInvocationFilter(60));
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new RemoteCallInvocationFilter(70));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new FinalizeInvokeFilter(10));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new MockInvokeFilter(20));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new ServiceCallMonitorInvokeFilter(30));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new ClusterDelegateInvokeFilter(40));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new ContextPrepareInvokeFilter(50));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new RemoteCallMonitorInvokeFilter(60));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new RemoteCallStatInvokeFilter(70));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new RemoteCallInvokeFilter(80));
 
         ClientManager clientManager = ClientManagerFactory.getClientManager();
-        ClusterDelegateInvocationFilter.registerCluster(new FailfastClusterInvocationFilter(clientManager));
+        ClusterDelegateInvokeFilter.registerCluster(new FailfastClusterInvokeFilter(clientManager));
     }
 
     public static void setupServer() {
@@ -76,11 +77,11 @@ public class PigeonBootStrap {
 
     private static void setupInvocationProcessFilters() {
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(new MonitorProcessFilter(10));
-        RemoteInvocationHandlerFactory.registerInternalProcessFilter(new WriteProcessFilter(20));
+        RemoteInvocationHandlerFactory.registerInternalProcessFilter(new WriteResponseProcessFilter(20));
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(new ContextTransferProcessFilter(30));
-        RemoteInvocationHandlerFactory.registerInternalProcessFilter(new ErrorResponseProcessFilter(40));
+        RemoteInvocationHandlerFactory.registerInternalProcessFilter(new ExceptionProcessFilter(40));
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(new EchoProcessFilter(50));
-        RemoteInvocationHandlerFactory.registerInternalProcessFilter(new HeatbeatProcessFilter(60));
+        RemoteInvocationHandlerFactory.registerInternalProcessFilter(new HeartbeatProcessFilter(60));
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(new BusinessProcessFilter(70));
     }
 

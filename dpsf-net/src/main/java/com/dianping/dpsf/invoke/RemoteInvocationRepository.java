@@ -16,6 +16,7 @@ import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.component.DPSFCallback;
 import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
+import com.dianping.dpsf.control.PigeonConfig;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.stat.RpcStatsPool;
 import com.dianping.dpsf.stat.ServiceStat;
@@ -51,6 +52,10 @@ public class RemoteInvocationRepository {
         invocations.put(sequence, invocation);
     }
 
+    public void remove(long sequence) {
+        invocations.remove(sequence);
+    }
+
     public void receiveResponse(DPSFResponse response) {
         RemoteInvocationBean invocationBean = invocations.get(response.getSequence());
         if (invocationBean != null) {
@@ -67,8 +72,9 @@ public class RemoteInvocationRepository {
             invocations.remove(response.getSequence());
             clientServiceStat.timeService(request.getServiceName(), request.getCreateMillisTime());
         } else {
-            //TODO uncomment me while this version is released!
-//            logger.warn("no request for response:" + response.getSequence());
+            if (PigeonConfig.isUseNewInvokeLogic()) {
+                logger.warn("no request for response:" + response.getSequence());
+            }
         }
     }
 
@@ -95,12 +101,12 @@ public class RemoteInvocationRepository {
         public void run() {
             while (true) {
                 try {
-                    long now = System.currentTimeMillis();
+                    long currentTime = System.currentTimeMillis();
                     for (Long sequence : invocations.keySet()) {
                         RemoteInvocationBean invocationBean = invocations.get(sequence);
                         if (invocationBean != null) {
                             DPSFRequest request = invocationBean.request;
-                            if (request.getCreateMillisTime() + request.getTimeout() < now) {
+                            if (request.getCreateMillisTime() + request.getTimeout() < currentTime) {
                                 DPSFCallback callback = invocationBean.callback;
                                 if (callback != null && callback.getClient() != null) {
                                     RpcStatsPool.flowOut(request, callback.getClient().getAddress());

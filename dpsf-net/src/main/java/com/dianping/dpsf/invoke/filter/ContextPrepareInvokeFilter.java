@@ -14,20 +14,22 @@ package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.ContextUtil;
-import com.dianping.dpsf.component.*;
+import com.dianping.dpsf.component.DPSFMetaData;
+import com.dianping.dpsf.component.DPSFRequest;
+import com.dianping.dpsf.component.DPSFResponse;
+import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.context.ClientContext;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
 
 /**
- * TODO Comment of The Class
+ * 关于Service调用上下文的设置
  *
  * @author danson.liu
  */
-public class ContextPrepareInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
+public class ContextPrepareInvokeFilter extends InvocationInvokeFilter {
 
-    public ContextPrepareInvocationFilter(int order) {
+    public ContextPrepareInvokeFilter(int order) {
         super(order);
     }
 

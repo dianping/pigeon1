@@ -15,7 +15,7 @@ package com.dianping.dpsf.invoke.filter.cluster;
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.component.DPSFMetaData;
 import com.dianping.dpsf.component.InvocationInvokeContext;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
+import com.dianping.dpsf.invoke.filter.InvocationInvokeFilter;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
 import com.dianping.dpsf.protocol.DefaultRequest;
 
@@ -26,13 +26,13 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author danson.liu
  */
-public abstract class ClusterInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
+public abstract class ClusterInvokeFilter extends InvocationInvokeFilter {
 
     protected ClientManager clientManager;
 
     private static AtomicLong requestSequenceMaker = new AtomicLong();
 
-    protected ClusterInvocationFilter(ClientManager clientManager) {
+    protected ClusterInvokeFilter(ClientManager clientManager) {
         super(0);
         this.clientManager = clientManager;
     }

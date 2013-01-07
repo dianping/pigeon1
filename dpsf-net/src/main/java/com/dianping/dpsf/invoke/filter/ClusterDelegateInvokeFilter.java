@@ -16,23 +16,22 @@ import com.dianping.dpsf.component.ClusterMeta;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.exception.DPSFException;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
-import com.dianping.dpsf.invoke.filter.cluster.ClusterInvocationFilter;
+import com.dianping.dpsf.invoke.filter.cluster.ClusterInvokeFilter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO Comment of The Class
+ * Service Cluster实现的Delegate
  *
  * @author danson.liu
  */
-public class ClusterDelegateInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
+public class ClusterDelegateInvokeFilter extends InvocationInvokeFilter {
 
-    private static final Map<String, ClusterInvocationFilter> clusterFilters = new HashMap<String, ClusterInvocationFilter>();
+    private static final Map<String, ClusterInvokeFilter> clusterFilters = new HashMap<String, ClusterInvokeFilter>();
 
-    public ClusterDelegateInvocationFilter(int order) {
+    public ClusterDelegateInvokeFilter(int order) {
         super(order);
     }
 
@@ -40,7 +39,7 @@ public class ClusterDelegateInvocationFilter extends RemoteInvocationFilter<Invo
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
         ClusterMeta clusterMeta = invocationContext.getMetaData().getClusterMeta();
         String cluster = clusterMeta.getName();
-        ClusterInvocationFilter filter = clusterFilters.get(cluster);
+        ClusterInvokeFilter filter = clusterFilters.get(cluster);
         if (filter == null) {
             throw new DPSFException("Cluster[" + cluster + "] is not supported.");
         }
@@ -52,7 +51,7 @@ public class ClusterDelegateInvocationFilter extends RemoteInvocationFilter<Invo
         }
     }
 
-    public static void registerCluster(ClusterInvocationFilter cluster) {
+    public static void registerCluster(ClusterInvokeFilter cluster) {
         clusterFilters.put(cluster.name(), cluster);
     }
 

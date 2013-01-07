@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
+import com.dianping.dpsf.process.filter.InvocationProcessFilter;
 import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ChannelException;
 import org.springframework.beans.BeansException;
@@ -60,7 +60,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 	private int corePoolSize = 200;
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 300;
-    private List<RemoteInvocationFilter> customizedInvocationFilters;
+    private List<InvocationProcessFilter> customizedInvocationFilters;
 	private boolean enableEngine = true;
 
 	public ServiceRegistry() {
@@ -278,7 +278,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 		this.enginePort = enginePort;
 	}
 
-    public void setCustomizedInvocationFilters(List<RemoteInvocationFilter> customizedInvocationFilters) {
+    public void setCustomizedInvocationFilters(List<InvocationProcessFilter> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
     }
 }

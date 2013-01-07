@@ -4,10 +4,8 @@ import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.process.ResponseFactory;
-import com.dianping.dpsf.stat.ServiceStat;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,9 +14,9 @@ import com.dianping.dpsf.stat.ServiceStat;
  * Time: 下午3:35
  * To change this template use File | Settings | File Templates.
  */
-public class ErrorResponseProcessFilter extends RemoteInvocationFilter<InvocationProcessContext> {
+public class ExceptionProcessFilter extends InvocationProcessFilter {
 
-    public ErrorResponseProcessFilter(int order) {
+    public ExceptionProcessFilter(int order) {
         super(order);
     }
 

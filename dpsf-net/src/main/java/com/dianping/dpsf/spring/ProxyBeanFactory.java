@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.dianping.dpsf.invoke.ProxyInvoker;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
 import com.dianping.dpsf.invoke.ThriftProxyInvoker;
+import com.dianping.dpsf.invoke.filter.InvocationInvokeFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.FactoryBean;
@@ -69,7 +69,7 @@ public class ProxyBeanFactory implements FactoryBean {
 
 	private LoadBalance loadBalanceObj;
 
-    private List<RemoteInvocationFilter> customizedInvocationFilters;
+    private List<InvocationInvokeFilter> customizedInvocationFilters;
 
 	private boolean isTest = false;
 
@@ -84,7 +84,7 @@ public class ProxyBeanFactory implements FactoryBean {
 		this.serialize = this.serialize.trim();
 		this.iface = this.iface.trim();
 		this.callMethod = this.callMethod.trim();
-		
+
 		checkParameters();
 		if (this.group == null) {
 			this.group = this.iface + "_" + groupId.incrementAndGet();
@@ -360,7 +360,7 @@ public class ProxyBeanFactory implements FactoryBean {
 		this.interfaceName = interfaceName;
 	}
 
-    public void setCustomizedInvocationFilters(List<RemoteInvocationFilter> customizedInvocationFilters) {
+    public void setCustomizedInvocationFilters(List<InvocationInvokeFilter> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
     }
 }

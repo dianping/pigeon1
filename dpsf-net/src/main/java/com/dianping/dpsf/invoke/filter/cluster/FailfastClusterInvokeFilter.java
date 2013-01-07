@@ -22,11 +22,11 @@ import com.dianping.dpsf.net.channel.manager.ClientManager;
  *
  * @author danson.liu
  */
-public class FailfastClusterInvocationFilter extends ClusterInvocationFilter {
+public class FailfastClusterInvokeFilter extends ClusterInvokeFilter {
 
     public static final String NAME = "fail-fast";
 
-    public FailfastClusterInvocationFilter(ClientManager clientManager) {
+    public FailfastClusterInvokeFilter(ClientManager clientManager) {
         super(clientManager);
     }
 

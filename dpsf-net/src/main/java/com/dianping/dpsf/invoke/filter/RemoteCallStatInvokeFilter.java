@@ -13,24 +13,26 @@
 package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.dpsf.Constants;
-import com.dianping.dpsf.component.*;
+import com.dianping.dpsf.component.DPSFMetaData;
+import com.dianping.dpsf.component.DPSFRequest;
+import com.dianping.dpsf.component.DPSFResponse;
+import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.exception.NetTimeoutException;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.stat.RpcStatsPool;
 import com.dianping.dpsf.stat.ServiceStat;
 
 /**
- * TODO Comment of The Class
+ * 对Remote Call的本地调用统计
  *
  * @author danson.liu
  */
-public class RemoteCallStatInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
+public class RemoteCallStatInvokeFilter extends InvocationInvokeFilter {
 
     private ServiceStat clientServiceStat = ServiceStat.getClientServiceStat();
 
-    public RemoteCallStatInvocationFilter(int order) {
+    public RemoteCallStatInvokeFilter(int order) {
         super(order);
     }
 

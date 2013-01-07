@@ -4,10 +4,8 @@ import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.ContextUtil;
 import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
-import com.dianping.dpsf.component.InvocationContext;
 import com.dianping.dpsf.component.InvocationProcessContext;
 import com.dianping.dpsf.control.PigeonConfig;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import org.jboss.netty.channel.Channel;
 
@@ -18,9 +16,9 @@ import org.jboss.netty.channel.Channel;
  * Time: 上午11:38
  * To change this template use File | Settings | File Templates.
  */
-public class WriteProcessFilter extends RemoteInvocationFilter<InvocationProcessContext> {
+public class WriteResponseProcessFilter extends InvocationProcessFilter {
 
-    public WriteProcessFilter(int order) {
+    public WriteResponseProcessFilter(int order) {
         super(order);
     }
 

@@ -23,13 +23,15 @@ import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import java.lang.reflect.Method;
 
 /**
- * TODO Comment of The Class
+ * 对Service接口调用进行Cat监控
  *
  * @author danson.liu
  */
-public class ServiceCallMonitorInvocationFilter extends AbstractCatMonitorInvocationFilter<InvocationInvokeContext> {
+public class ServiceCallMonitorInvokeFilter extends InvocationInvokeFilter {
 
-    public ServiceCallMonitorInvocationFilter(int order) {
+    private CatMonitorSupport monitorSupport = new CatMonitorSupport();
+
+    public ServiceCallMonitorInvokeFilter(int order) {
         super(order);
     }
 
@@ -37,17 +39,21 @@ public class ServiceCallMonitorInvocationFilter extends AbstractCatMonitorInvoca
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
         DPSFMetaData metaData = invocationContext.getMetaData();
         MessageProducer cat = null;
-        try {cat = Cat.getProducer();} catch (Exception e) {logCatError(e);}
+        try {
+            cat = Cat.getProducer();
+        } catch (Exception e) {
+            monitorSupport.logCatError(e);
+        }
         Transaction transaction = null;
         if (cat != null) {
             try {
                 Method method = invocationContext.getMethod();
-                transaction = cat.newTransaction("PigeonCall", getRemoteCallFullName(metaData.getServiceName(),
+                transaction = cat.newTransaction("PigeonCall", monitorSupport.getRemoteCallFullName(metaData.getServiceName(),
                         method.getName(), method.getParameterTypes()));
                 transaction.setStatus(Transaction.SUCCESS);
                 transaction.addData("CallType", metaData.getCallMethod());
             } catch (Exception e) {
-                logCatError(e);
+                monitorSupport.logCatError(e);
             }
         }
         try {
@@ -59,14 +65,14 @@ public class ServiceCallMonitorInvocationFilter extends AbstractCatMonitorInvoca
                     cat.logError(e);
                 }
             } catch (Exception e1) {
-                logCatError(e1);
+                monitorSupport.logCatError(e1);
             }
             throw e;
         } finally {
             try {
                 if (transaction != null) transaction.complete();
             } catch (Exception e) {
-                logCatError(e);
+                monitorSupport.logCatError(e);
             }
         }
     }

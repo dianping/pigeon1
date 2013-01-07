@@ -11,7 +11,7 @@ import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
-import com.dianping.dpsf.invoke.filter.AbstractCatMonitorInvocationFilter;
+import com.dianping.dpsf.invoke.filter.CatMonitorSupport;
 import com.site.helper.Stringizers;
 import org.jboss.netty.channel.Channel;
 
@@ -24,7 +24,9 @@ import java.net.InetSocketAddress;
  * Time: 上午11:37
  * To change this template use File | Settings | File Templates.
  */
-public class MonitorProcessFilter extends AbstractCatMonitorInvocationFilter<InvocationProcessContext> {
+public class MonitorProcessFilter extends InvocationProcessFilter {
+
+    private CatMonitorSupport monitorSupport = new CatMonitorSupport();
 
     public MonitorProcessFilter(int order) {
         super(order);
@@ -38,7 +40,7 @@ public class MonitorProcessFilter extends AbstractCatMonitorInvocationFilter<Inv
         Transaction transaction = null;
         try {
             cat = Cat.getProducer();
-            transaction = cat.newTransaction("PigeonService", getRemoteCallFullName(request.getServiceName(), request.getMethodName(),
+            transaction = cat.newTransaction("PigeonService", monitorSupport.getRemoteCallFullName(request.getServiceName(), request.getMethodName(),
                     request.getParamClassName()));
             InetSocketAddress address = (InetSocketAddress) channel.getRemoteAddress();
             String parameters = Stringizers.forJson().from(request.getParameters(), CatConstants.MAX_LENGTH, CatConstants.MAX_ITEM_LENGTH);
@@ -58,21 +60,21 @@ public class MonitorProcessFilter extends AbstractCatMonitorInvocationFilter<Inv
             tree.setMessageId(currentMessageId);
             transaction.setStatus(Transaction.SUCCESS);
         } catch (Exception e) {
-            catLogError(cat, e);
+            monitorSupport.catLogError(cat, e);
         }
         try {
             handler.handle(invocationContext);
         } catch (RuntimeException e) {
-            catLogError(cat, e);
+            monitorSupport.catLogError(cat, e);
             if (transaction != null) transaction.setStatus(e);
         } finally {
             try {
                 if (transaction != null) transaction.complete();
             } catch (Exception e) {
-                logCatError(e);
+                monitorSupport.logCatError(e);
             }
             //service异常与后续的异常的打印先后关系不是很重要
-            catLogError(cat, invocationContext.getServiceError());
+            monitorSupport.catLogError(cat, invocationContext.getServiceError());
         }
         return null;
     }

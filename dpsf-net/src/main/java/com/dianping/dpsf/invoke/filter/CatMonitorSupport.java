@@ -13,9 +13,11 @@
 package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.cat.message.MessageProducer;
+import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.component.InvocationContext;
 import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.site.helper.Splitters;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -24,15 +26,13 @@ import java.util.List;
  *
  * @author danson.liu
  */
-public abstract class AbstractCatMonitorInvocationFilter<I extends InvocationContext> extends RemoteInvocationFilter<I> {
+public class CatMonitorSupport {
+
+    private final Logger logger = DPSFLog.getLogger();
 
     private volatile long errorCounter = 0L;
 
-    public AbstractCatMonitorInvocationFilter(int order) {
-        super(order);
-    }
-
-    protected void logCatError(Throwable e) {
+    public void logCatError(Throwable e) {
         try {
             String errorMsg = "[Cat]Monitor pigeon call failed.";
             if (errorCounter <= 50) {
@@ -46,7 +46,7 @@ public abstract class AbstractCatMonitorInvocationFilter<I extends InvocationCon
         errorCounter++;
     }
 
-    protected void catLogError(MessageProducer producer, Throwable e) {
+    public void catLogError(MessageProducer producer, Throwable e) {
         try {
             if (producer != null && e != null) {
                 producer.logError(e);
@@ -56,7 +56,7 @@ public abstract class AbstractCatMonitorInvocationFilter<I extends InvocationCon
         }
     }
 
-    protected String getRemoteCallFullName(String serviceName, String methodName, Class<?>[] parameterTypes) {
+    public String getRemoteCallFullName(String serviceName, String methodName, Class<?>[] parameterTypes) {
         if (parameterTypes != null) {
             String[] parameterTypes_ = new String[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
@@ -68,7 +68,7 @@ public abstract class AbstractCatMonitorInvocationFilter<I extends InvocationCon
         }
     }
 
-    protected String getRemoteCallFullName(String serviceName, String methodName, String[] parameterTypes) {
+    public String getRemoteCallFullName(String serviceName, String methodName, String[] parameterTypes) {
         List<String> serviceFrags = Splitters.by("/").noEmptyItem().split(serviceName);
         int fragLenght = serviceFrags.size();
         String name = "Unknown";

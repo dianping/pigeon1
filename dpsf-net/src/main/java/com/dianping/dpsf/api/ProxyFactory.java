@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.dianping.dpsf.exception.DPSFException;
-import com.dianping.dpsf.invoke.RemoteInvocationFilter;
 import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
+import com.dianping.dpsf.invoke.filter.InvocationInvokeFilter;
 import com.dianping.dpsf.spring.PigeonBootStrap;
 import org.apache.log4j.Logger;
 
@@ -61,7 +61,7 @@ public class ProxyFactory<IFACE>{
 	private Class<? extends LoadBalance> loadBalanceClass;
 
 	private LoadBalance loadBalanceObj;
-    private List<RemoteInvocationFilter> customizedInvocationFilters;
+    private List<InvocationInvokeFilter> customizedInvocationFilters;
 
     public void init() {
         PigeonBootStrap.setupClient();
@@ -234,7 +234,7 @@ public class ProxyFactory<IFACE>{
 		this.writeBufferLimit = writeBufferLimit;
 	}
 
-    public void setCustomizedInvocationFilters(List<RemoteInvocationFilter> customizedInvocationFilters) {
+    public void setCustomizedInvocationFilters(List<InvocationInvokeFilter> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
     }
 }
