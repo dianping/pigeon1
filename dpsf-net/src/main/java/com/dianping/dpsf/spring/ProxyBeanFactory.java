@@ -199,7 +199,7 @@ public class ProxyBeanFactory implements FactoryBean {
 		this.objType = Class.forName(this.iface);
         DPSFMetaData metadata = new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize, this.callback, this.group, this.writeBufferLimit);
         this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType },
-                new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createHandler(customizedInvocationFilters)));
+                new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createInvokeHandler(customizedInvocationFilters)));
 	}
 
 	private void initWS() throws ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException {

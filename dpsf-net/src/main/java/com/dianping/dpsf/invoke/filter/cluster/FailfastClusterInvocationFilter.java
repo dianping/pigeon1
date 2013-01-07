@@ -10,17 +10,12 @@
  * accordance with the terms of the license agreement you entered into
  * with dianping.com.
  */
-package com.dianping.dpsf.invoke.cluster;
+package com.dianping.dpsf.invoke.filter.cluster;
 
-import com.dianping.dpsf.Constants;
-import com.dianping.dpsf.component.DPSFMetaData;
-import com.dianping.dpsf.component.DPSFRequest;
-import com.dianping.dpsf.component.DPSFResponse;
-import com.dianping.dpsf.component.RemoteInvocation;
+import com.dianping.dpsf.component.*;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
-import com.dianping.dpsf.protocol.DefaultRequest;
 
 /**
  * TODO Comment of The Class
@@ -36,12 +31,12 @@ public class FailfastClusterInvocationFilter extends ClusterInvocationFilter {
     }
 
     @Override
-    public DPSFResponse invoke(RemoteInvocationHandler handler, RemoteInvocation invocation) throws Throwable {
-        DPSFMetaData metaData = invocation.getMetaData();
-        DPSFRequest request = createRemoteCallRequest(invocation, metaData);
+    public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
+        DPSFMetaData metaData = invocationContext.getMetaData();
+        DPSFRequest request = createRemoteCallRequest(invocationContext, metaData);
         Client remoteClient = clientManager.getClient(metaData.getServiceName(), metaData.getGroup(), request, null);
-        invocation.setRemoteClient(remoteClient);
-        return handler.handle(invocation);
+        invocationContext.setRemoteClient(remoteClient);
+        return handler.handle(invocationContext);
     }
 
     @Override

@@ -129,7 +129,7 @@ public class ProxyFactory<IFACE>{
         DPSFMetaData metadata = new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize,
                 this.callback, this.group, this.writeBufferLimit);
         this.obj = (IFACE)Proxy.newProxyInstance(ProxyFactory.class.getClassLoader(), new Class[]{this.iface},
-                new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createHandler(customizedInvocationFilters)));
+                new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createInvokeHandler(customizedInvocationFilters)));
 	}
 
 	public IFACE getProxy() throws Exception {

@@ -9,6 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.dianping.dpsf.component.InvocationProcessContext;
+import com.dianping.dpsf.control.PigeonConfig;
+import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import org.apache.log4j.Logger;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.group.ChannelGroup;
@@ -43,31 +46,34 @@ import com.dianping.dpsf.thread.ExeThreadPool;
 public class RequestProcessor {
 	
 	private static Logger logger = DPSFLog.getLogger();
-	private static Logger log = Logger.getLogger(RequestProcessor.class);
+	private static Logger log = Logger.getLogger(RequestProcessor.class);   //TODO Why? by danson.liu
 	
-	private ChannelGroup serverChannels;
-	
-	private DPSFThreadPool threadPool;
-	
-	private Map<DPSFRequest,RequestContext> contexts;
-	
-	private ServiceRepository sr;
-	
-	private int port;
-	
-	private ExecutorListener listener = new ExecutorListener(){
+    private int port;
 
+	private ChannelGroup serverChannels;
+
+	private DPSFThreadPool threadPool;
+
+	private Map<DPSFRequest,RequestContext> contexts;
+
+	private ServiceRepository serviceRepository;
+
+    private RemoteInvocationHandler invocationHandler;
+
+	private ExecutorListener listener = new ExecutorListener(){
 		public void executorCompleted(DPSFRequest request) {
 			contexts.remove(request);
 		}
-		
 	};
 	
-	public RequestProcessor(ServiceRepository sr,int port,int corePoolSize,int maxPoolSize,int workQueueSize){
-		this.sr = sr;
-		this.port = port;
+	public RequestProcessor(ServiceRepository serviceRepository, RemoteInvocationHandler invocationHandler, int port, int corePoolSize,
+        int maxPoolSize, int workQueueSize) {
+		this.serviceRepository = serviceRepository;
+        this.invocationHandler = invocationHandler;
+        this.port = port;
 		this.serverChannels = new DefaultChannelGroup("Server-Channels");
-		this.threadPool = new ExeThreadPool("Server-RequestProcessor-"+this.port,corePoolSize,maxPoolSize,new LinkedBlockingQueue<Runnable>(workQueueSize));
+		this.threadPool = new ExeThreadPool("Server-RequestProcessor-" + this.port, corePoolSize, maxPoolSize,
+                new LinkedBlockingQueue<Runnable>(workQueueSize));
 		
 		this.contexts = new ConcurrentHashMap<DPSFRequest,RequestContext>();
 		CycThreadPool.getPool().execute(new TimeoutCheck());
@@ -81,13 +87,31 @@ public class RequestProcessor {
 		Channel channel_ = null;
 		this.serverChannels.add(channel.getChannel(channel_));
 	}
-	public void addRequest(DPSFRequest request,Channel channel){
-		RequestExecutor executor = new RequestExecutor(request,channel,this.sr,this);
-		executor.addListener(this.listener);
+	public void addRequest(final DPSFRequest request, final Channel channel) {
 		RequestContext context = new RequestContext(((InetSocketAddress)channel.getRemoteAddress()).getHostName());
 		//必须新放入context，不然线程执行时找不到此context
 		this.contexts.put(request, context);
-		context.setFuture(this.threadPool.submit(executor));
+        Runnable requestExecutor = null;
+        if (PigeonConfig.isUseNewProcessLogic()) {
+            requestExecutor = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        InvocationProcessContext invocationContext = new InvocationProcessContext(request, channel, serviceRepository);
+                        invocationContext.addProcessListener(listener);
+                        invocationHandler.handle(invocationContext);
+                    } catch (Throwable t) {
+                        logger.error("Process request failed with invocation handler, you should never be here.", t);
+                    }
+                }
+            };
+        } else {
+            //TODO remove me later! add by danson.liu
+            RequestExecutor oldExecutor = new RequestExecutor(request,channel,this);
+            oldExecutor.addListener(this.listener);
+            requestExecutor = oldExecutor;
+        }
+        context.setFuture(this.threadPool.submit(requestExecutor));
 	}
 	
 	private void fail(DPSFRequest request){
@@ -102,8 +126,8 @@ public class RequestProcessor {
 			logger.error("no context for this request and thread:seq::"+request.getSequence());
 		}
 	}
-	
-	public class TimeoutCheck implements Runnable{
+
+    public class TimeoutCheck implements Runnable{
 
 		/* (non-Javadoc)
 		 * @see java.lang.Runnable#run()
@@ -200,7 +224,7 @@ public class RequestProcessor {
 	}
 
 	public ServiceRepository getServiceRepository() {
-		return sr;
+		return serviceRepository;
 	}
 
 }

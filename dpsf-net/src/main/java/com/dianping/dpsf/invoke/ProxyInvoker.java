@@ -11,10 +11,7 @@ import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.async.ServiceFuture;
 import com.dianping.dpsf.async.ServiceFutureFactory;
 import com.dianping.dpsf.async.ServiceFutureImpl;
-import com.dianping.dpsf.component.DPSFMetaData;
-import com.dianping.dpsf.component.DPSFRequest;
-import com.dianping.dpsf.component.DPSFResponse;
-import com.dianping.dpsf.component.RemoteInvocation;
+import com.dianping.dpsf.component.*;
 import com.dianping.dpsf.component.impl.CallbackFuture;
 import com.dianping.dpsf.component.impl.DefaultInvoker;
 import com.dianping.dpsf.component.impl.ServiceWarpCallback;
@@ -59,7 +56,7 @@ public class ProxyInvoker implements InvocationHandler {
      * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
      */
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (PigeonConfig.isUseNewInvoke()) {
+        if (PigeonConfig.isUseNewInvokeLogic()) {
             String methodName = method.getName();
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (method.getDeclaringClass() == Object.class) {
@@ -74,7 +71,7 @@ public class ProxyInvoker implements InvocationHandler {
             if ("equals".equals(methodName) && parameterTypes.length == 1) {
                 return metaData.equals(args[0]);
             }
-            return extractResult(handler.handle(new RemoteInvocation(metaData, method, args)), method.getReturnType());
+            return extractResult(handler.handle(new InvocationInvokeContext(metaData, method, args)), method.getReturnType());
         } else {
             return oldInvoke(proxy, method, args);
         }

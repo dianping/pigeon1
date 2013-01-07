@@ -1,7 +1,7 @@
 package com.dianping.dpsf.invoke;
 
 import com.dianping.dpsf.component.DPSFResponse;
-import com.dianping.dpsf.component.RemoteInvocation;
+import com.dianping.dpsf.component.InvocationContext;
 
 /**
  * TODO Comment of The Class
@@ -10,6 +10,6 @@ import com.dianping.dpsf.component.RemoteInvocation;
  */
 public interface RemoteInvocationHandler {
 
-    DPSFResponse handle(RemoteInvocation invocation) throws Throwable;
+    DPSFResponse handle(InvocationContext invocationContext) throws Throwable;
 
 }

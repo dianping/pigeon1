@@ -10,7 +10,7 @@
  * accordance with the terms of the license agreement you entered into
  * with dianping.com.
  */
-package com.dianping.dpsf.invoke;
+package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.async.ServiceFuture;
@@ -22,6 +22,9 @@ import com.dianping.dpsf.component.impl.ServiceWarpCallback;
 import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.exception.ServiceException;
+import com.dianping.dpsf.invoke.RemoteInvocationFilter;
+import com.dianping.dpsf.invoke.RemoteInvocationHandler;
+import com.dianping.dpsf.invoke.RemoteInvocationRepository;
 import com.dianping.dpsf.net.channel.Client;
 
 /**
@@ -29,7 +32,7 @@ import com.dianping.dpsf.net.channel.Client;
  *
  * @author danson.liu
  */
-public class RemoteCallInvocationFilter extends RemoteInvocationFilter {
+public class RemoteCallInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
 
     private RemoteInvocationRepository remoteInvocationRepository = RemoteInvocationRepository.INSTANCE;
     private static final DPSFResponse NO_RETURN_RESPONSE = new NoReturnResponse();
@@ -39,10 +42,10 @@ public class RemoteCallInvocationFilter extends RemoteInvocationFilter {
     }
 
     @Override
-    public DPSFResponse invoke(RemoteInvocationHandler handler, RemoteInvocation invocation) throws Throwable {
-        Client remoteClient = invocation.getRemoteClient();
-        DPSFRequest request = invocation.getRequest();
-        DPSFMetaData metaData = invocation.getMetaData();
+    public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
+        Client remoteClient = invocationContext.getRemoteClient();
+        DPSFRequest request = invocationContext.getRequest();
+        DPSFMetaData metaData = invocationContext.getMetaData();
         String callMethod = metaData.getCallMethod();
         if (Constants.CALL_SYNC.equalsIgnoreCase(callMethod)) {
             CallbackFuture future = new CallbackFuture();

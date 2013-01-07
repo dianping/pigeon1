@@ -10,7 +10,7 @@
  * accordance with the terms of the license agreement you entered into
  * with dianping.com.
  */
-package com.dianping.dpsf.invoke;
+package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.cat.Cat;
 import com.dianping.cat.CatConstants;
@@ -19,38 +19,39 @@ import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.spi.MessageTree;
 import com.dianping.dpsf.ContextUtil;
-import com.dianping.dpsf.component.DPSFMetaData;
 import com.dianping.dpsf.component.DPSFResponse;
-import com.dianping.dpsf.component.RemoteInvocation;
+import com.dianping.dpsf.component.InvocationInvokeContext;
+import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
-import com.site.helper.Splitters;
 import com.site.helper.Stringizers;
-
-import java.util.List;
 
 /**
  * TODO can remove to dpsf-monitor-cat.jar
  *
  * @author danson.liu
  */
-public class RemoteCallMonitorInvocationFilter extends AbstractCatMonitorInvocationFilter {
+public class RemoteCallMonitorInvocationFilter extends AbstractCatMonitorInvocationFilter<InvocationInvokeContext> {
 
     public RemoteCallMonitorInvocationFilter(int order) {
         super(order);
     }
 
     @Override
-    public DPSFResponse invoke(RemoteInvocationHandler handler, RemoteInvocation invocation) throws Throwable {
+    public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
         MessageProducer cat = null;
 
-        try {cat = Cat.getProducer();} catch (Exception e) {logCatError(e);}
+        try {
+            cat = Cat.getProducer();
+        } catch (Exception e) {
+            logCatError(e);
+        }
 
         if (cat != null) {
             try {
-                Client remoteClient = invocation.getRemoteClient();
+                Client remoteClient = invocationContext.getRemoteClient();
                 Event event = cat.newEvent("PigeonCall.server", remoteClient.getHost() + ":" + remoteClient.getPort());
                 try {
-                    event.addData(Stringizers.forJson().from(invocation.getArguments(), CatConstants.MAX_LENGTH, CatConstants.MAX_ITEM_LENGTH));
+                    event.addData(Stringizers.forJson().from(invocationContext.getArguments(), CatConstants.MAX_LENGTH, CatConstants.MAX_ITEM_LENGTH));
                     event.setStatus(Event.SUCCESS);
                 } catch (Exception e) {
                     event.setStatus(e);
@@ -65,7 +66,7 @@ public class RemoteCallMonitorInvocationFilter extends AbstractCatMonitorInvocat
                 String rootMessageId = tree.getRootMessageId() == null ? tree.getMessageId() : tree.getRootMessageId();
                 String currentMessageId = tree.getMessageId();
 
-                Object trackerContext = invocation.getTrackerContext();
+                Object trackerContext = invocationContext.getTrackerContext();
                 ContextUtil.addCatInfo(trackerContext, CatConstants.PIGEON_ROOT_MESSAGE_ID, rootMessageId);
                 ContextUtil.addCatInfo(trackerContext, CatConstants.PIGEON_CURRENT_MESSAGE_ID, currentMessageId);
                 ContextUtil.addCatInfo(trackerContext, CatConstants.PIGEON_SERVER_MESSAGE_ID, serverMessageId);
@@ -75,7 +76,7 @@ public class RemoteCallMonitorInvocationFilter extends AbstractCatMonitorInvocat
                 logCatError(e);
             }
         }
-        return handler.handle(invocation);
+        return handler.handle(invocationContext);
     }
 
 }

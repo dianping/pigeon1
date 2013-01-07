@@ -10,15 +10,14 @@
  * accordance with the terms of the license agreement you entered into
  * with dianping.com.
  */
-package com.dianping.dpsf.invoke;
+package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.ContextUtil;
-import com.dianping.dpsf.component.DPSFMetaData;
-import com.dianping.dpsf.component.DPSFRequest;
-import com.dianping.dpsf.component.DPSFResponse;
-import com.dianping.dpsf.component.RemoteInvocation;
+import com.dianping.dpsf.component.*;
 import com.dianping.dpsf.context.ClientContext;
+import com.dianping.dpsf.invoke.RemoteInvocationFilter;
+import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
 
 /**
@@ -26,22 +25,22 @@ import com.dianping.dpsf.net.channel.Client;
  *
  * @author danson.liu
  */
-public class ContextPrepareInvocationFilter extends RemoteInvocationFilter {
+public class ContextPrepareInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
 
     public ContextPrepareInvocationFilter(int order) {
         super(order);
     }
 
     @Override
-    public DPSFResponse invoke(RemoteInvocationHandler handler, RemoteInvocation invocation) throws Throwable {
-        initRequest(invocation.getRequest());
-        DPSFMetaData metaData = invocation.getMetaData();
-        Client remoteClient = invocation.getRemoteClient();
-        Object trackerContext = ContextUtil.createContext(metaData.getServiceName(), invocation.getMethod().getName(),
+    public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
+        initRequest(invocationContext.getRequest());
+        DPSFMetaData metaData = invocationContext.getMetaData();
+        Client remoteClient = invocationContext.getRemoteClient();
+        Object trackerContext = ContextUtil.createContext(metaData.getServiceName(), invocationContext.getMethod().getName(),
                 remoteClient.getHost(), remoteClient.getPort());
-        invocation.setTrackerContext(trackerContext);
+        invocationContext.setTrackerContext(trackerContext);
         ClientContext.setUsedClientAddress(remoteClient.getAddress());
-        return handler.handle(invocation);
+        return handler.handle(invocationContext);
     }
 
     private void initRequest(DPSFRequest request) {

@@ -10,14 +10,13 @@
  * accordance with the terms of the license agreement you entered into
  * with dianping.com.
  */
-package com.dianping.dpsf.invoke;
+package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.dpsf.Constants;
-import com.dianping.dpsf.component.DPSFMetaData;
-import com.dianping.dpsf.component.DPSFRequest;
-import com.dianping.dpsf.component.DPSFResponse;
-import com.dianping.dpsf.component.RemoteInvocation;
+import com.dianping.dpsf.component.*;
 import com.dianping.dpsf.exception.NetTimeoutException;
+import com.dianping.dpsf.invoke.RemoteInvocationFilter;
+import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.stat.RpcStatsPool;
 import com.dianping.dpsf.stat.ServiceStat;
@@ -27,23 +26,23 @@ import com.dianping.dpsf.stat.ServiceStat;
  *
  * @author danson.liu
  */
-public class StatTrackInvocationFilter extends RemoteInvocationFilter {
+public class RemoteCallStatInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
 
     private ServiceStat clientServiceStat = ServiceStat.getClientServiceStat();
 
-    public StatTrackInvocationFilter(int order) {
+    public RemoteCallStatInvocationFilter(int order) {
         super(order);
     }
 
     @Override
-    public DPSFResponse invoke(RemoteInvocationHandler handler, RemoteInvocation invocation) throws Throwable {
-        DPSFRequest request = invocation.getRequest();
-        Client remoteClient = invocation.getRemoteClient();
-        DPSFMetaData metaData = invocation.getMetaData();
+    public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
+        DPSFRequest request = invocationContext.getRequest();
+        Client remoteClient = invocationContext.getRemoteClient();
+        DPSFMetaData metaData = invocationContext.getMetaData();
 
         RpcStatsPool.flowIn(request, remoteClient.getAddress());
         try {
-            DPSFResponse result = handler.handle(invocation);
+            DPSFResponse result = handler.handle(invocationContext);
             clientServiceStat.countService(request.getServiceName());
             return result;
         } catch (Exception e) {

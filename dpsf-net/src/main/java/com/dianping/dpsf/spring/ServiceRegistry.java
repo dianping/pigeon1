@@ -6,8 +6,11 @@ package com.dianping.dpsf.spring;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.dianping.dpsf.invoke.RemoteInvocationFilter;
+import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
 import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ChannelException;
 import org.springframework.beans.BeansException;
@@ -57,7 +60,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 	private int corePoolSize = 200;
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 300;
-
+    private List<RemoteInvocationFilter> customizedInvocationFilters;
 	private boolean enableEngine = true;
 
 	public ServiceRegistry() {
@@ -92,8 +95,10 @@ public class ServiceRegistry implements ApplicationContextAware {
 
 	private void initDPService() throws Exception {
 		isInit = true;
+        PigeonBootStrap.setupServer();
 		this.sr = new ServiceRepository();
-		com.dianping.dpsf.net.channel.Server server = new NettyServer(port, corePoolSize, maxPoolSize, workQueueSize, this.sr);
+		com.dianping.dpsf.net.channel.Server server = new NettyServer(port, corePoolSize, maxPoolSize, workQueueSize,
+                this.sr, RemoteInvocationHandlerFactory.createProcessHandler(customizedInvocationFilters));
 		try {
 			server.start();
 		} catch (ChannelException e) {
@@ -126,7 +131,6 @@ public class ServiceRegistry implements ApplicationContextAware {
 	}
 
 	private void initWSService() throws Exception {
-
 		Class<?> wsClazz = Class.forName("com.dianping.dpsf.spring.WSInit");
 		Method[] ms = wsClazz.getDeclaredMethods();
 		for (Method m : ms) {
@@ -274,4 +278,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 		this.enginePort = enginePort;
 	}
 
+    public void setCustomizedInvocationFilters(List<RemoteInvocationFilter> customizedInvocationFilters) {
+        this.customizedInvocationFilters = customizedInvocationFilters;
+    }
 }

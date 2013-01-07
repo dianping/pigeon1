@@ -12,7 +12,7 @@
  */
 package com.dianping.dpsf.component;
 
-import com.dianping.dpsf.invoke.cluster.FailfastClusterInvocationFilter;
+import com.dianping.dpsf.invoke.filter.cluster.FailfastClusterInvocationFilter;
 
 import java.util.Map;
 

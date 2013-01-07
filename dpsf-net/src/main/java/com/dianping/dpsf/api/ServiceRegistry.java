@@ -4,9 +4,13 @@
 package com.dianping.dpsf.api;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
+import com.dianping.dpsf.invoke.RemoteInvocationFilter;
+import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
+import com.dianping.dpsf.spring.PigeonBootStrap;
 import org.apache.log4j.Logger;
 
 import com.dianping.dpsf.DPSFLog;
@@ -43,6 +47,7 @@ public class ServiceRegistry{
 	private int corePoolSize = 100;
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 100;
+    private List<RemoteInvocationFilter> customizedInvocationFilters;
 	
 	public ServiceRegistry(){
 		
@@ -73,8 +78,10 @@ public class ServiceRegistry{
 	
 	private void initDPService() throws ClassNotFoundException {
 		isInit = true;
+        PigeonBootStrap.setupServer();
 		this.sr = new ServiceRepository();
-		com.dianping.dpsf.net.channel.Server server = new NettyServer(port,corePoolSize,maxPoolSize,workQueueSize,this.sr);
+		com.dianping.dpsf.net.channel.Server server = new NettyServer(port, corePoolSize, maxPoolSize, workQueueSize,
+                this.sr, RemoteInvocationHandlerFactory.createProcessHandler(customizedInvocationFilters));
 		server.start();
 		logger.info("DPSF Server start ************");
 		
@@ -172,4 +179,7 @@ public class ServiceRegistry{
 		this.workQueueSize = workQueueSize;
 	}
 
+    public void setCustomizedInvocationFilters(List<RemoteInvocationFilter> customizedInvocationFilters) {
+        this.customizedInvocationFilters = customizedInvocationFilters;
+    }
 }

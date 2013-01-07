@@ -10,26 +10,30 @@
  * accordance with the terms of the license agreement you entered into
  * with dianping.com.
  */
-package com.dianping.dpsf.invoke;
+package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.dpsf.component.DPSFResponse;
-import com.dianping.dpsf.component.RemoteInvocation;
+import com.dianping.dpsf.component.InvocationContext;
+import com.dianping.dpsf.component.InvocationInvokeContext;
+import com.dianping.dpsf.invoke.RemoteInvocationFilter;
+import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 
 /**
  * TODO Comment of The Class
  *
  * @author danson.liu
  */
-public class MockInvocationFilter extends RemoteInvocationFilter {
+public class MockInvocationFilter extends RemoteInvocationFilter<InvocationInvokeContext> {
 
     public MockInvocationFilter(int order) {
         super(order);
     }
 
     @Override
-    public DPSFResponse invoke(RemoteInvocationHandler handler, RemoteInvocation invocation) throws Throwable {
+    public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
         //TODO implement me!
-        return handler.handle(invocation);
+        DPSFResponse response = handler.handle(invocationContext);
+        return response;
     }
 
 }
