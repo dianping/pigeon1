@@ -13,6 +13,7 @@
 package com.dianping.dpsf.invoke.filter;
 
 import com.dianping.dpsf.Constants;
+import com.dianping.dpsf.ContextUtil;
 import com.dianping.dpsf.async.ServiceFuture;
 import com.dianping.dpsf.async.ServiceFutureFactory;
 import com.dianping.dpsf.async.ServiceFutureImpl;
@@ -25,6 +26,8 @@ import com.dianping.dpsf.exception.ServiceException;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.invoke.RemoteInvocationRepository;
 import com.dianping.dpsf.net.channel.Client;
+
+import java.util.Map;
 
 /**
  * 执行实际的Remote Call，包括Sync, Future，Callback，Oneway
@@ -46,6 +49,7 @@ public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
         DPSFRequest request = invocationContext.getRequest();
         DPSFMetaData metaData = invocationContext.getMetaData();
         String callMethod = metaData.getCallMethod();
+        transferContextValueToRequest(invocationContext, request);
         if (Constants.CALL_SYNC.equalsIgnoreCase(callMethod)) {
             CallbackFuture future = new CallbackFuture();
             sendRequest(remoteClient, request, future);
@@ -80,6 +84,20 @@ public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
             remoteInvocationRepository.remove(request.getSequence());
             throw new NetException("Send request to service provider failed.", e);
         }
+    }
+
+    private void transferContextValueToRequest(InvocationInvokeContext invocationContext, DPSFRequest request) {
+        DPSFMetaData metaData = invocationContext.getMetaData();
+        Client remoteClient = invocationContext.getRemoteClient();
+        Object contextHolder = ContextUtil.createContext(metaData.getServiceName(), invocationContext.getMethod().getName(),
+                remoteClient.getHost(), remoteClient.getPort());
+        Map<String,String> contextValues = invocationContext.getContextValues();
+        if (contextValues != null) {
+            for (Map.Entry<String, String> entry : contextValues.entrySet()) {
+                ContextUtil.putContextValue(contextHolder, entry.getKey(), entry.getValue());
+            }
+        }
+        request.setContext(contextHolder);
     }
 
     public void setRemoteInvocationRepository(RemoteInvocationRepository remoteInvocationRepository) {

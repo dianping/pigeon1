@@ -89,7 +89,7 @@ public class ContextUtilTest {
 		TrackerContext context = new TrackerContext();
 		String token = "token";
 		context.setToken(token);
-		String tokenGot = ContextUtil.getTooken(context);
+		String tokenGot = ContextUtil.getToken(context);
 		assertEquals(token, tokenGot);
 	}
 	

@@ -18,7 +18,6 @@ import com.dianping.cat.message.Event;
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.spi.MessageTree;
-import com.dianping.dpsf.ContextUtil;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
@@ -68,10 +67,9 @@ public class RemoteCallMonitorInvokeFilter extends InvocationInvokeFilter {
                 String rootMessageId = tree.getRootMessageId() == null ? tree.getMessageId() : tree.getRootMessageId();
                 String currentMessageId = tree.getMessageId();
 
-                Object trackerContext = invocationContext.getTrackerContext();
-                ContextUtil.addCatInfo(trackerContext, CatConstants.PIGEON_ROOT_MESSAGE_ID, rootMessageId);
-                ContextUtil.addCatInfo(trackerContext, CatConstants.PIGEON_CURRENT_MESSAGE_ID, currentMessageId);
-                ContextUtil.addCatInfo(trackerContext, CatConstants.PIGEON_SERVER_MESSAGE_ID, serverMessageId);
+                invocationContext.putContextValue(CatConstants.PIGEON_ROOT_MESSAGE_ID, rootMessageId);
+                invocationContext.putContextValue(CatConstants.PIGEON_CURRENT_MESSAGE_ID, currentMessageId);
+                invocationContext.putContextValue(CatConstants.PIGEON_SERVER_MESSAGE_ID, serverMessageId);
 
                 cat.logEvent(CatConstants.TYPE_REMOTE_CALL, CatConstants.NAME_REQUEST, Transaction.SUCCESS, serverMessageId);
             } catch (Exception e) {

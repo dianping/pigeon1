@@ -156,9 +156,9 @@ public class DefaultInvoker implements Invoker {
 		String rootMessageId = tree.getRootMessageId() == null ? tree.getMessageId() : tree.getRootMessageId();
 		String currentMessageId = tree.getMessageId();
 
-		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_ROOT_MESSAGE_ID, rootMessageId);
-		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_CURRENT_MESSAGE_ID, currentMessageId);
-		ContextUtil.addCatInfo(newContext, CatConstants.PIGEON_SERVER_MESSAGE_ID, serverMessageId);
+		ContextUtil.putContextValue(newContext, CatConstants.PIGEON_ROOT_MESSAGE_ID, rootMessageId);
+		ContextUtil.putContextValue(newContext, CatConstants.PIGEON_CURRENT_MESSAGE_ID, currentMessageId);
+		ContextUtil.putContextValue(newContext, CatConstants.PIGEON_SERVER_MESSAGE_ID, serverMessageId);
 
 		cat.logEvent(CatConstants.TYPE_REMOTE_CALL, CatConstants.NAME_REQUEST, Transaction.SUCCESS, serverMessageId);
 

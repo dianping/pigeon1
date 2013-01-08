@@ -150,7 +150,7 @@ public class CallbackFuture implements DPSFCallback,DPSFFuture{
 					StringBuffer sb = new StringBuffer();
 					sb.append(cause.getMessage()).append("\r\n");
 					sb.append("Remote Service Exception Info *************\r\n")
-					.append(" token:").append(ContextUtil.getTooken(this.response.getContext())).append("\r\n")
+					.append(" token:").append(ContextUtil.getToken(this.response.getContext())).append("\r\n")
 					.append(" seq:").append(request.getSequence())
 					.append(" callType:").append(request.getCallType()).append("\r\n serviceName:")
 					.append(request.getServiceName()).append(" methodName:").append(request.getMethodName())

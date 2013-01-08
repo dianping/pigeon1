@@ -47,9 +47,9 @@ public class MonitorProcessFilter extends InvocationProcessFilter {
             cat.logEvent("PigeonService.client", address.getAddress().getHostAddress() + ":" + address.getPort(), Message.SUCCESS, parameters);
 
             Object context = request.getContext();
-            String rootMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_ROOT_MESSAGE_ID);
-            String serverMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_CURRENT_MESSAGE_ID);
-            String currentMessageId = ContextUtil.getCatInfo(context, CatConstants.PIGEON_SERVER_MESSAGE_ID);
+            String rootMessageId = ContextUtil.getContextValue(context, CatConstants.PIGEON_ROOT_MESSAGE_ID);
+            String serverMessageId = ContextUtil.getContextValue(context, CatConstants.PIGEON_CURRENT_MESSAGE_ID);
+            String currentMessageId = ContextUtil.getContextValue(context, CatConstants.PIGEON_SERVER_MESSAGE_ID);
             MessageTree tree = Cat.getManager().getThreadLocalMessageTree();
             if (tree == null) {
                 Cat.setup(null);

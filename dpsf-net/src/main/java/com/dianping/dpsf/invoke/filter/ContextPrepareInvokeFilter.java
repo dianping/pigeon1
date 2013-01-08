@@ -36,11 +36,7 @@ public class ContextPrepareInvokeFilter extends InvocationInvokeFilter {
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
         initRequest(invocationContext.getRequest());
-        DPSFMetaData metaData = invocationContext.getMetaData();
         Client remoteClient = invocationContext.getRemoteClient();
-        Object trackerContext = ContextUtil.createContext(metaData.getServiceName(), invocationContext.getMethod().getName(),
-                remoteClient.getHost(), remoteClient.getPort());
-        invocationContext.setTrackerContext(trackerContext);
         ClientContext.setUsedClientAddress(remoteClient.getAddress());
         return handler.handle(invocationContext);
     }
