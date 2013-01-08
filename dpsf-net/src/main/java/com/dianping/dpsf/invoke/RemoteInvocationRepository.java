@@ -60,17 +60,20 @@ public class RemoteInvocationRepository {
         RemoteInvocationBean invocationBean = invocations.get(response.getSequence());
         if (invocationBean != null) {
             DPSFRequest request = invocationBean.request;
-            DPSFCallback callback = invocationBean.callback;
-            if (callback != null) {
-                Client client = callback.getClient();
-                if (client != null) {
-                    RpcStatsPool.flowOut(request, client.getAddress());
+            try {
+                DPSFCallback callback = invocationBean.callback;
+                if (callback != null) {
+                    Client client = callback.getClient();
+                    if (client != null) {
+                        RpcStatsPool.flowOut(request, client.getAddress());
+                    }
+                    callback.callback(response);
+                    callbackExecutor.execute(callback);
                 }
-                callback.callback(response);
-                callbackExecutor.execute(callback);
+                clientServiceStat.timeService(request.getServiceName(), request.getCreateMillisTime());
+            } finally {
+                invocations.remove(response.getSequence());
             }
-            invocations.remove(response.getSequence());
-            clientServiceStat.timeService(request.getServiceName(), request.getCreateMillisTime());
         } else {
             if (PigeonConfig.isUseNewInvokeLogic()) {
                 logger.warn("no request for response:" + response.getSequence());
