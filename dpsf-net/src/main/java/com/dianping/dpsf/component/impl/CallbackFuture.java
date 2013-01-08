@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ChannelFuture;
 
-import com.dianping.cat.Cat;
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.ContextUtil;
 import com.dianping.dpsf.DPSFLog;
@@ -24,13 +23,10 @@ import com.dianping.dpsf.exception.NetTimeoutException;
 import com.dianping.dpsf.exception.ServiceException;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.protocol.DefaultResponse;
-import com.dianping.dpsf.protocol.protobuf.DPSFProtos;
-import com.dianping.dpsf.protocol.protobuf.PBResponse;
-import com.dianping.dpsf.protocol.thrift.ThriftResponse;
 import com.dianping.dpsf.stat.CentralStatService;
+import com.dianping.dpsf.stat.RpcStatsPool;
 import com.dianping.dpsf.stat.CentralStatService.CentralStatContext;
 import com.dianping.dpsf.stat.CentralStatService.ReturnCode;
-import com.dianping.dpsf.stat.RpcStatsPool;
 
 /**    
  * <p>    
@@ -154,7 +150,7 @@ public class CallbackFuture implements DPSFCallback,DPSFFuture{
 					StringBuffer sb = new StringBuffer();
 					sb.append(cause.getMessage()).append("\r\n");
 					sb.append("Remote Service Exception Info *************\r\n")
-					.append(" token:").append(ContextUtil.getTooken(this.response.getContext())).append("\r\n")
+					.append(" token:").append(ContextUtil.getToken(this.response.getContext())).append("\r\n")
 					.append(" seq:").append(request.getSequence())
 					.append(" callType:").append(request.getCallType()).append("\r\n serviceName:")
 					.append(request.getServiceName()).append(" methodName:").append(request.getMethodName())

@@ -103,7 +103,7 @@ public class NettyClient implements Client{
 //		this.channel.getCloseFuture().addListener(new CloseListener());
 		
 	}
-	public DPSFFuture write(DPSFRequest message,DPSFCallback callback){
+	public DPSFFuture write(DPSFRequest message,DPSFCallback callback) {
 		Object[] msg = new Object[]{message,callback};
 		ChannelFuture future = null;
 		

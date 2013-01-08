@@ -4,8 +4,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.dianping.dpsf.invoke.ProxyInvoker;
+import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
+import com.dianping.dpsf.invoke.ThriftProxyInvoker;
+import com.dianping.dpsf.invoke.filter.InvocationInvokeFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.FactoryBean;
@@ -64,6 +69,8 @@ public class ProxyBeanFactory implements FactoryBean {
 
 	private LoadBalance loadBalanceObj;
 
+    private List<InvocationInvokeFilter> customizedInvocationFilters;
+
 	private boolean isTest = false;
 
 	/**
@@ -72,13 +79,13 @@ public class ProxyBeanFactory implements FactoryBean {
 	private boolean writeBufferLimit = PigeonConfig.getDefaultWriteBufferLimit();
 
 	public void init() throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException  {
-
+        PigeonBootStrap.setupClient();
 		this.serviceName = this.serviceName.trim();
 		this.serialize = this.serialize.trim();
 		this.iface = this.iface.trim();
 		this.callMethod = this.callMethod.trim();
-		
-		
+
+		checkParameters();
 		if (this.group == null) {
 			this.group = this.iface + "_" + groupId.incrementAndGet();
 		}
@@ -143,7 +150,15 @@ public class ProxyBeanFactory implements FactoryBean {
 
 	}
 
-	private void configLoadBalance() {
+    private void checkParameters() {
+        if (!Constants.CALL_SYNC.equalsIgnoreCase(callMethod) && !Constants.CALL_CALLBACK.equalsIgnoreCase(callMethod)
+                && !Constants.CALL_FUTURE.equalsIgnoreCase(callMethod) && !Constants.CALL_ONEWAY.equalsIgnoreCase(callMethod)) {
+            throw new IllegalArgumentException("Pigeon call method only support[" + Constants.CALL_SYNC + ", "
+                    + Constants.CALL_CALLBACK + ", " + Constants.CALL_FUTURE + ", " + Constants.CALL_ONEWAY + "].");
+        }
+    }
+
+    private void configLoadBalance() {
 		Object loadBalanceToSet = loadBalanceObj != null ? loadBalanceObj : (loadBalanceClass != null ? loadBalanceClass : (loadBalance != null ? loadBalance : null));
 		if (loadBalanceToSet != null) {
 			LoadBalanceManager.register(serviceName, group, loadBalanceToSet);
@@ -182,7 +197,9 @@ public class ProxyBeanFactory implements FactoryBean {
 
 	private void initJavaAndHessian() throws ClassNotFoundException {
 		this.objType = Class.forName(this.iface);
-		this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType }, new ProxyInvoker(new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize, this.callback, this.group, this.writeBufferLimit)));
+        DPSFMetaData metadata = new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize, this.callback, this.group, this.writeBufferLimit);
+        this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType },
+                new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createInvokeHandler(customizedInvocationFilters)));
 	}
 
 	private void initWS() throws ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -343,4 +360,7 @@ public class ProxyBeanFactory implements FactoryBean {
 		this.interfaceName = interfaceName;
 	}
 
+    public void setCustomizedInvocationFilters(List<InvocationInvokeFilter> customizedInvocationFilters) {
+        this.customizedInvocationFilters = customizedInvocationFilters;
+    }
 }

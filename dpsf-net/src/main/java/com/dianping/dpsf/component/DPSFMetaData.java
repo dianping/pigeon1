@@ -31,6 +31,8 @@ public class DPSFMetaData {
 	
 	private String group;
 
+    private ClusterMeta clusterMeta = new ClusterMeta();
+
 	private boolean writeBufferLimit;
 	
 	public DPSFMetaData(String serviceName,int timeout,String group, boolean writeBufferLimit){
@@ -148,5 +150,13 @@ public class DPSFMetaData {
 	public boolean isWriteBufferLimit() {
 		return writeBufferLimit;
 	}
-	
+
+    public ClusterMeta getClusterMeta() {
+        return clusterMeta;
+    }
+
+    public void setClusterMeta(ClusterMeta clusterMeta) {
+        this.clusterMeta = clusterMeta;
+    }
+
 }
