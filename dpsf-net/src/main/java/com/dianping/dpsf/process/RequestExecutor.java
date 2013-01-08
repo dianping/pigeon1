@@ -137,6 +137,7 @@ public class RequestExecutor implements Runnable {
 
 			t.setStatus(Transaction.SUCCESS);
 		} catch (Exception e2) {
+			t.setStatus(e2);
 			cat.logError(e2);
 		}
 
@@ -163,6 +164,7 @@ public class RequestExecutor implements Runnable {
 					response = doHeart();
 				}
 			} catch (Exception e) {
+				t.setStatus(e);
 				response = doFailResponse(e);
 				// 传递上下文
 				try {
