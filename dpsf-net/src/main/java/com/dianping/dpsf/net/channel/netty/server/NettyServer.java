@@ -3,6 +3,7 @@ package com.dianping.dpsf.net.channel.netty.server;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
+import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
@@ -35,19 +36,19 @@ public class NettyServer implements Server{
 	private ServerBootstrap bootstrap;
 	
 	private boolean started = false;
-	
-	public NettyServer(int port,int corePoolSize,int maxPoolSize,int workQueueSize,ServiceRepository sr){
-		this(null,port,corePoolSize,maxPoolSize,workQueueSize,sr);
+
+	public NettyServer(int port,int corePoolSize,int maxPoolSize,int workQueueSize,ServiceRepository sr, RemoteInvocationHandler invocationHandler){
+		this(null,port,corePoolSize,maxPoolSize,workQueueSize,sr, invocationHandler);
 	}
 	
-	public NettyServer(String ip,int port,int corePoolSize,int maxPoolSize,int workQueueSize,ServiceRepository sr){
+	public NettyServer(String ip,int port,int corePoolSize,int maxPoolSize,int workQueueSize,ServiceRepository sr, RemoteInvocationHandler invocationHandler){
 		this.ip = ip;
 		this.port = port;
 		this.bootstrap = new ServerBootstrap(
                 new NioServerSocketChannelFactory(
                 		Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Server-BossExecutor")),
                 		Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Server-WorkerExecutor"))));
-		this.bootstrap.setPipelineFactory(new DPServerChannelPipelineFactory(new RequestProcessor(sr,this.port,corePoolSize,maxPoolSize,workQueueSize)));
+		this.bootstrap.setPipelineFactory(new DPServerChannelPipelineFactory(new RequestProcessor(sr, invocationHandler,this.port,corePoolSize,maxPoolSize,workQueueSize)));
 	}
 	
 

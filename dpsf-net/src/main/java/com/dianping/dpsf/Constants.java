@@ -73,5 +73,7 @@ public class Constants {
 	
 	public static final String REQUEST_CREATE_TIME = "requestCreateTime";
 	public static final String REQUEST_TIMEOUT = "requestTimeout";
+
+    public static final String ECHO_METHOD = "$echo";
 	
 }
