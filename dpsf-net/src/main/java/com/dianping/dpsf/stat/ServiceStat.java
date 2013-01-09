@@ -18,9 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @created 2011-4-27 下午05:40:58
  */
 public class ServiceStat {
-	
+
+    private static final ServiceStat CLIENT_SERVICE_STAT = new ServiceStat();
+    private static final ServiceStat SERVER_SERVICE_STAT = new ServiceStat();
+
 	private Map<String,StatBean> requestStat = new ConcurrentHashMap<String,StatBean>();
-	
+
 	public void countService(String serviceName){
 		StatBean stat = this.requestStat.get(serviceName);
 		if(stat == null){
@@ -51,5 +54,13 @@ public class ServiceStat {
 	public Map<String, StatBean> getRequestStat() {
 		return requestStat;
 	}
+
+    public static ServiceStat getClientServiceStat() {
+        return CLIENT_SERVICE_STAT;
+    }
+
+    public static ServiceStat getServerServiceStat() {
+        return SERVER_SERVICE_STAT;
+    }
 
 }

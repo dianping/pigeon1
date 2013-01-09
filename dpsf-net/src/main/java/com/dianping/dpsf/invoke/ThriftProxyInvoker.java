@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dianping.dpsf.spring;
+package com.dianping.dpsf.invoke;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;

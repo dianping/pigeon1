@@ -55,7 +55,7 @@ public class DPServerHandler extends SimpleChannelUpstreamHandler{
 		 for(DPSFRequest request : messages){
 			 try{
 				 this.processor.addRequest(request,ctx.getChannel()); 
-			 }catch(Exception e1) {
+			 } catch(Exception e1) {
 				 String msg = "Request execute fail:seq--"+request.getSequence()+"\r\n";
 				 //心跳消息只返回正常的, 异常不返回
 				 if(request.getCallType() == Constants.CALLTYPE_REPLY && request.getMessageType() != Constants.MESSAGE_TYPE_HEART) {

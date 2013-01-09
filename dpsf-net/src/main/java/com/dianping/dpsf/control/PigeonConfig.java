@@ -34,26 +34,31 @@ public class PigeonConfig {
 
 	private static volatile PigeonConfig INSTANCE;
 	private static volatile int errorLogSeed = 0;
+    private boolean isHawkApiValid;
 
-	private boolean isHawkApiValid;
-	private boolean isLionApiValid;
-
+    private boolean isLionApiValid;
 	private String loadBalanceSetByJmx;
-	private Boolean pigeonSpeedEnabledSetByJmx;
-	private boolean isHeartBeatResponseSetByJmx = true;
+
+    private Boolean pigeonSpeedEnabledSetByJmx;
+    private boolean isHeartBeatResponseSetByJmx = true;
+    private Boolean useNewInvokeSetByJmx;
+    private Boolean useNewProcessSetByJmx;
 
 	private static final String LION_LOADBALANCE = "pigeon.loadbalance";
-	private static final String LION_RECONNECT_INTERVAL = "pigeon.reconnect.interval";
-	private static final String LION_HEARTBEAT_INTERVAL = "pigeon.heartbeat.interval";
-	private static final String LION_HEARTBEAT_TIMEOUT = "pigeon.heartbeat.timeout";
-	private static final String LION_HEARTBEAT_DEADTHRESHOLD = "pigeon.heartbeat.dead.threshold";
-	private static final String LION_HEARTBEAT_HEALTHTHRESHOLD = "pigeon.heartbeat.health.threshold";
-	private static final String LION_HEARTBEAT_AUTOPICKOFF = "pigeon.heartbeat.autopickoff";
-	private static final String LION_SERVICE_NAMESPACE = "pigeon.service.namespace";
-	private static final String LION_PIGEON_SPEED_ENABLED = "pigeon.speed.enabled";
-	private static final String LION_WRITE_BUFFER_HIGH_WATER = "pigeon.channel.writebuff.high";
-	private static final String LION_WRITE_BUFFER_LOW_WATER = "pigeon.channel.writebuff.low";
-	private static final String LION_DEFAULT_WRITE_BUFF_LIMIT = "pigeon.channel.writebuff.defaultlimit";
+
+    private static final String LION_RECONNECT_INTERVAL = "pigeon.reconnect.interval";
+    private static final String LION_HEARTBEAT_INTERVAL = "pigeon.heartbeat.interval";
+    private static final String LION_HEARTBEAT_TIMEOUT = "pigeon.heartbeat.timeout";
+    private static final String LION_HEARTBEAT_DEADTHRESHOLD = "pigeon.heartbeat.dead.threshold";
+    private static final String LION_HEARTBEAT_HEALTHTHRESHOLD = "pigeon.heartbeat.health.threshold";
+    private static final String LION_HEARTBEAT_AUTOPICKOFF = "pigeon.heartbeat.autopickoff";
+    private static final String LION_SERVICE_NAMESPACE = "pigeon.service.namespace";
+    private static final String LION_PIGEON_SPEED_ENABLED = "pigeon.speed.enabled";
+    private static final String LION_WRITE_BUFFER_HIGH_WATER = "pigeon.channel.writebuff.high";
+    private static final String LION_WRITE_BUFFER_LOW_WATER = "pigeon.channel.writebuff.low";
+    private static final String LION_DEFAULT_WRITE_BUFF_LIMIT = "pigeon.channel.writebuff.defaultlimit";
+    private static final String LION_PIGEON_USE_NEW_INVOKE = "pigeon.newinvoke.enabled";
+    private static final String LION_PIGEON_USE_NEW_PROCESS = "pigeon.newprocess.enabled";
 
 	private static final long DEFAULT_RECONNECT_INTERVAL = 3000;
 	private static final long DEFAULT_HEARTBEAT_INTERVAL = 3000;
@@ -64,8 +69,10 @@ public class PigeonConfig {
 	private static final String DEFAULT_SERVICE_NAMESPACE = "http://service.dianping.com/";
 	private static final Boolean DEFAULT_PIGEON_SPEED_ENABLED = false;
 	private static final int DEFAULT_WRITE_BUFFER_HIGH_WATER = 35 * 1024 * 1024;
-	private static final int DEFAULT_WRITE_BUFFER_LOW_WATER = 25 * 1024 * 1024;
-	private static final boolean DEFAULT_WRITE_BUFF_LIMIT = false;
+    private static final int DEFAULT_WRITE_BUFFER_LOW_WATER = 25 * 1024 * 1024;
+    private static final boolean DEFAULT_WRITE_BUFF_LIMIT = false;
+    private static final Boolean DEFAULT_PIGEON_USE_NEW_INVOKE = false;
+    private static final Boolean DEFAULT_PIGEON_USE_NEW_PROCESS = true;     //TODO change me to false
 
 	private PigeonConfig() {
 		checkHawkAndLionStatus();
@@ -165,6 +172,30 @@ public class PigeonConfig {
 		return isPigeonSpeedEnabled != null ? isPigeonSpeedEnabled : DEFAULT_PIGEON_SPEED_ENABLED;
 	}
 
+    public static boolean isUseNewInvokeLogic() {
+        Boolean isUseNewInvoke = getInstance().useNewInvokeSetByJmx;
+        if (isUseNewInvoke == null && isLionApiValid()) {
+            try {
+                isUseNewInvoke = ConfigCache.getInstance().getBooleanProperty(LION_PIGEON_USE_NEW_INVOKE);
+            } catch (Exception e) {
+                logLionError(LION_PIGEON_USE_NEW_INVOKE);
+            }
+        }
+        return isUseNewInvoke != null ? isUseNewInvoke : DEFAULT_PIGEON_USE_NEW_INVOKE;
+    }
+
+    public static boolean isUseNewProcessLogic() {
+        Boolean isUseNewProcess = getInstance().useNewProcessSetByJmx;
+        if (isUseNewProcess == null && isLionApiValid()) {
+            try {
+                isUseNewProcess = ConfigCache.getInstance().getBooleanProperty(LION_PIGEON_USE_NEW_PROCESS);
+            } catch (Exception e) {
+                logLionError(LION_PIGEON_USE_NEW_PROCESS);
+            }
+        }
+        return isUseNewProcess != null ? isUseNewProcess : DEFAULT_PIGEON_USE_NEW_PROCESS;
+    }
+
 	public static boolean getDefaultWriteBufferLimit() {
 		return getBooleanValueFromLion(LION_DEFAULT_WRITE_BUFF_LIMIT, DEFAULT_WRITE_BUFF_LIMIT);
 	}
@@ -214,6 +245,22 @@ public class PigeonConfig {
 	public void setHeartBeatResponseDisabledByJmx() {
 		this.isHeartBeatResponseSetByJmx = false;
 	}
+
+    public void setUseNewInvokeEnabledByJmx() {
+        this.useNewInvokeSetByJmx = true;
+    }
+
+    public void setUseNewInvokeDisabledByJmx() {
+        this.useNewInvokeSetByJmx = false;
+    }
+
+    public void setUseNewProcessEnabledByJmx() {
+        this.useNewProcessSetByJmx = true;
+    }
+
+    public void setUseNewProcessDisabledByJmx() {
+        this.useNewProcessSetByJmx = false;
+    }
 
 	public static String getStringValueFromLion(String config, String defaultValue) {
 		String configVal = null;

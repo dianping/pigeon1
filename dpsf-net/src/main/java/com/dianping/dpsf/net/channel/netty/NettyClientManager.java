@@ -4,18 +4,14 @@
 package com.dianping.dpsf.net.channel.netty;
 
 import java.lang.reflect.Constructor;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 
+import com.dianping.dpsf.invoke.RemoteInvocationRepository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -252,6 +248,16 @@ public class NettyClientManager implements ClientManager{
 		List<Client> clientList = clientCache.getClientList(serviceName);
 		return routerManager.route(clientList,serviceName,group, request);	
 	}
+
+    public Client getClient(String serviceName, String group, DPSFRequest request, List<Client> excludeClients) throws NetException {
+        List<Client> clientList = clientCache.getClientList(serviceName);
+        List<Client> clientsToRoute = new ArrayList<Client>(clientList);
+        if (excludeClients != null) {
+            clientsToRoute.removeAll(excludeClients);
+        }
+        return routerManager.route(clientsToRoute, serviceName, group, request);
+    }
+
 	//TODO 消息发送线程驱动，后期可以优化
 	public void connectionException(Client client,Object attachment,ExceptionEvent e){
 //		if(!client.isConnected())
@@ -289,7 +295,11 @@ public class NettyClientManager implements ClientManager{
 		if(response.getMessageType() == Constants.MESSAGE_TYPE_HEART){
 			this.heartBeatTask.processResponse(response,client);
 		}else{
-			this.invoker.invokeReponse(response);
+            //TODO remove me later!!! switch to new implementation. by danson.liu
+            if (this.invoker != null) {
+			    this.invoker.invokeReponse(response);
+            }
+            RemoteInvocationRepository.INSTANCE.receiveResponse(response);
 		}
 		
 	}
