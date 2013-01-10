@@ -18,7 +18,7 @@ import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
 
 /**
- * TODO Comment of The Class
+ * 调用出错立即失败
  *
  * @author danson.liu
  */
