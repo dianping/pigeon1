@@ -12,9 +12,6 @@
  */
 package com.dianping.dpsf.component;
 
-import com.dianping.dpsf.net.channel.Client;
-
-import java.lang.reflect.Method;
 
 /**
  * TODO Comment of The Class
