@@ -15,6 +15,7 @@ package com.dianping.dpsf.spring;
 import com.dianping.dpsf.invoke.*;
 import com.dianping.dpsf.invoke.filter.cluster.FailfastClusterInvokeFilter;
 import com.dianping.dpsf.invoke.filter.*;
+import com.dianping.dpsf.invoke.filter.cluster.FailoverClusterInvokeFilter;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
 import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
 import com.dianping.dpsf.process.filter.*;
@@ -62,6 +63,7 @@ public class PigeonBootStrap {
 
         ClientManager clientManager = ClientManagerFactory.getClientManager();
         ClusterDelegateInvokeFilter.registerCluster(new FailfastClusterInvokeFilter(clientManager));
+        ClusterDelegateInvokeFilter.registerCluster(new FailoverClusterInvokeFilter(clientManager));
     }
 
     public static void setupServer() {
