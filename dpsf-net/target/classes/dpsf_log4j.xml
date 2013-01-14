@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="dpsfapp"
+		class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="/data/applogs/dpsflog/dpsf.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="GBK" />
+		<param name="threshold" value="info" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d - %c -%-4r [%t] %-5p %x - %m%n" />
+		</layout>
+	</appender>
+	<logger name="dpsf" additivity="true">
+		<appender-ref ref="dpsfapp"/>
+  		<priority value="info"/>
+	</logger>
+  <root>
+      <priority value="info"/> 
+   </root>
+
+</log4j:configuration>
+

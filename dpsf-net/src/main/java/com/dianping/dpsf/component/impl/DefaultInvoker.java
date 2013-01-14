@@ -3,6 +3,7 @@
  */
 package com.dianping.dpsf.component.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -302,18 +303,32 @@ public class DefaultInvoker implements Invoker {
 	}
 	//初始化Request的createTime和timeout，以便统一这两个值
 	private void initRequest(DPSFRequest request){
+		
 		Object createTime = ContextUtil.getLocalContext(Constants.REQUEST_CREATE_TIME);
-		if(createTime != null){
-			request.setCreateMillisTime(Long.parseLong(String.valueOf(createTime)));
-		}else{
-			request.setCreateMillisTime(System.currentTimeMillis());
-		}
 		Object timeout = ContextUtil.getLocalContext(Constants.REQUEST_TIMEOUT);
-		if(timeout != null){
+		
+		if(createTime != null){
+			
+			long createTime_ = Long.parseLong(String.valueOf(createTime));
 			int timeout_ = Integer.parseInt(String.valueOf(timeout));
+			
+			Object firstFlag = ContextUtil.getLocalContext(Constants.REQUEST_FIRST_FLAG);
+			if(firstFlag == null){
+				ContextUtil.putLocalContext(Constants.REQUEST_FIRST_FLAG, true);
+				request.setCreateMillisTime(createTime_);
+			}else{
+				long now = System.currentTimeMillis();
+				timeout_ = timeout_ - (int)(now - createTime_);
+				if(timeout_ <= 0){
+					throw new NetTimeoutException("method has been timeout for first call (startTime:"+new Date(createTime_)+" timeout:"+timeout_+")");
+				}
+				request.setCreateMillisTime(now);
+			}
 			if(timeout_ < request.getTimeout()){
 				request.setTimeout(timeout_);
 			}
+		}else{
+			request.setCreateMillisTime(System.currentTimeMillis());
 		}
 	}
 
