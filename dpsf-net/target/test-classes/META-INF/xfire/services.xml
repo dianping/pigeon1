@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://xfire.codehaus.org/config/1.0">
-  <service>
-    <serviceClass>com.dianping.dpsf.example.java.javaexampleserviceImpl</serviceClass>
-    <wsdlURL>http://localhost:20000/itemname/javaexampleservice?wsdl</wsdlURL>
-    <serviceFactory>org.codehaus.xfire.jaxb2.JaxbServiceFactory</serviceFactory>
-  </service>
-</beans>
-
