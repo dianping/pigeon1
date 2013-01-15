@@ -29,4 +29,6 @@ public interface DemoService {
 	
 	void echoWithError(boolean runtimeError) throws BusinessException;
 
+    void say(int num) throws BusinessException;
+
 }

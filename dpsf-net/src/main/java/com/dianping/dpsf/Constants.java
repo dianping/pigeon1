@@ -15,7 +15,8 @@ package com.dianping.dpsf;
  * @created 2010-8-12 下午10:46:31   
  */
 public class Constants {
-	private Constants() {}
+
+    private Constants() {}
 	
 	public static final int MESSAGE_TYPE_HEART = 1; 
 	public static final int MESSAGE_TYPE_SERVICE = 2;
@@ -26,7 +27,6 @@ public class Constants {
 	public static final byte SERILIZABLE_HESSIAN = 2;
 	public static final byte SERILIZABLE_JAVA = 3;
 	public static final byte SERILIZABLE_THRIFT = 4;
-	public static final byte SERILIZABLE_NO = 5;
 	public static final byte SERILIZABLE_HESSIAN1 = 6;		//hessian spec. 1.0, spec 2.0兼容1.0，但1.0不兼容2.0
 	
 	public static final int CALLTYPE_REPLY = 1;
@@ -57,7 +57,6 @@ public class Constants {
 	public static final int ATTACHMENT_RETRY = 1;
 	public static final int ATTACHMENT_BYTEBUFFER = 2;
 	public static final int ATTACHMENT_IS_TELNET = 3;
-	public static final int ATTACHMENT_CURRENT_INDEX = 4;
 	public static final int ATTACHMENT_TELNET_INFO = 5;
 	public static final int ATTACHMENT_REQUEST_SEQ = 11;
 	
@@ -66,7 +65,6 @@ public class Constants {
 	public static final String TELNET_CHARSET = "UTF-8";
 	
 	public static final String REQ_ATTACH_FLOW = "FLOW";
-	public static final String REQ_ATTACH_CLIENT_WEIGHT = "CLIENT_WEIGHT";
 	public static final String REQ_ATTACH_WRITE_BUFF_LIMIT = "WRITE_BUFF_LIMIT";
 	
 	public static final int VERSION_150 = 150;
@@ -75,5 +73,12 @@ public class Constants {
 	public static final String REQUEST_TIMEOUT = "requestTimeout";
 
     public static final String ECHO_METHOD = "$echo";
-	
+
+    public static final int DEFAULT_FAILOVER_RETRY = 1;
+    public static final boolean DEFAULT_FAILOVER_TIMEOUT_RETRY = false;
+
+    public static final String CONFIG_CLUSTER_CLUSTER = "cluster";
+    public static final String CONFIG_CLUSTER_RETRY = "retry";
+    public static final String CONFIG_CLUSTER_TIMEOUT_RETRY = "timeout-retry";
+
 }

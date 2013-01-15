@@ -16,4 +16,8 @@ public abstract class InvocationInvokeFilter extends RemoteInvocationFilter<Invo
         super(order);
     }
 
+    public static enum InvokePhase {
+        Call, Before_Call, Cluster, Before_Cluster, Error_Handle, Finalize;
+    }
+
 }

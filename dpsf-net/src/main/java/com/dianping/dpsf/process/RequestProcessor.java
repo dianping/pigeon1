@@ -46,7 +46,7 @@ import com.dianping.dpsf.thread.ExeThreadPool;
 public class RequestProcessor {
 	
 	private static Logger logger = DPSFLog.getLogger();
-	private static Logger log = Logger.getLogger(RequestProcessor.class);   //TODO Why? by danson.liu
+	private static Logger log = Logger.getLogger(RequestProcessor.class);
 	
     private int port;
 

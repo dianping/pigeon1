@@ -19,6 +19,8 @@ import com.dianping.dpsf.process.filter.InvocationProcessFilter;
 
 import java.util.*;
 
+import static com.dianping.dpsf.process.filter.InvocationProcessFilter.ProcessPhase;
+
 /**
  * TODO Comment of The Class
  *
@@ -26,32 +28,33 @@ import java.util.*;
  */
 public class RemoteInvocationHandlerFactory {
 
-    private static List<InvocationInvokeFilter>     internalInvokeFilters       =   new ArrayList<InvocationInvokeFilter>();
-    private static List<InvocationProcessFilter>    internalProcessFilters      =   new ArrayList<InvocationProcessFilter>();
+    private static Map<InvocationInvokeFilter.InvokePhase, List<InvocationInvokeFilter>>        internalInvokeFilters
+            =   new LinkedHashMap<InvocationInvokeFilter.InvokePhase, List<InvocationInvokeFilter>>();
+    private static Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>>     internalProcessFilters
+            =   new LinkedHashMap<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>>();
 
-    public static RemoteInvocationHandler createInvokeHandler(List<? extends RemoteInvocationFilter> filters) {
+    public static RemoteInvocationHandler createInvokeHandler(Map<InvocationInvokeFilter.InvokePhase, List<InvocationInvokeFilter>> filters) {
         return createHandler(internalInvokeFilters, filters);
     }
 
-    public static RemoteInvocationHandler createProcessHandler(List<? extends RemoteInvocationFilter> filters) {
+    public static RemoteInvocationHandler createProcessHandler(Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>> filters) {
         return createHandler(internalProcessFilters, filters);
     }
 
-    private static RemoteInvocationHandler createHandler(List<? extends RemoteInvocationFilter> internalFilters, List<? extends RemoteInvocationFilter> filters) {
-        Map<Integer, RemoteInvocationFilter> filterMap = new HashMap<Integer, RemoteInvocationFilter>();
-        for (RemoteInvocationFilter filter : internalFilters) {
-            filterMap.put(filter.order(), filter);
-        }
-        if (filters != null && !filters.isEmpty()) {
-            for (RemoteInvocationFilter filter : filters) {
-                filterMap.put(filter.order(), filter);
+    private static <K, V extends RemoteInvocationFilter> RemoteInvocationHandler createHandler(Map<K, List<V>> internalFilters, Map<K, List<V>> filters) {
+        Map<K, List<V>> mergedFilters = new LinkedHashMap<K, List<V>>(internalFilters);
+        if (filters != null) {
+            for (Map.Entry<K, List<V>> entry : filters.entrySet()) {
+                mergedFilters.get(entry.getKey()).addAll(0, entry.getValue());
             }
         }
-        List<RemoteInvocationFilter> filterList = new ArrayList<RemoteInvocationFilter>(filterMap.values());
-        Collections.sort(filterList);
         RemoteInvocationHandler last = null;
+        List<V> filterList = new ArrayList<V>();
+        for (Map.Entry<K, List<V>> entry : mergedFilters.entrySet()) {
+            filterList.addAll(entry.getValue());
+        }
         for (int i = filterList.size() - 1; i >= 0; i--) {
-            final RemoteInvocationFilter filter = filterList.get(i);
+            final V filter = filterList.get(i);
             final RemoteInvocationHandler next = last;
             last = new RemoteInvocationHandler() {
                 @Override
@@ -63,11 +66,21 @@ public class RemoteInvocationHandlerFactory {
         return last;
     }
 
-    public static void registerInternalInvokeFilter(InvocationInvokeFilter filter) {
-        internalInvokeFilters.add(filter);
+    public static void registerInternalInvokeFilter(InvocationInvokeFilter.InvokePhase phase, InvocationInvokeFilter filter) {
+        List<InvocationInvokeFilter> filters = internalInvokeFilters.get(phase);
+        if (filters == null) {
+            filters = new ArrayList<InvocationInvokeFilter>();
+            internalInvokeFilters.put(phase, filters);
+        }
+        filters.add(filter);
     }
 
-    public static void registerInternalProcessFilter(InvocationProcessFilter filter) {
-        internalProcessFilters.add(filter);
+    public static void registerInternalProcessFilter(InvocationProcessFilter.ProcessPhase phase, InvocationProcessFilter filter) {
+        List<InvocationProcessFilter> filters = internalProcessFilters.get(phase);
+        if (filters == null) {
+            filters = new ArrayList<InvocationProcessFilter>();
+            internalProcessFilters.put(phase, filters);
+        }
+        filters.add(filter);
     }
 }
