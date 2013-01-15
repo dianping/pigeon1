@@ -27,6 +27,7 @@ import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.invoke.RemoteInvocationRepository;
 import com.dianping.dpsf.net.channel.Client;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -91,9 +92,9 @@ public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
         Client remoteClient = invocationContext.getRemoteClient();
         Object contextHolder = ContextUtil.createContext(metaData.getServiceName(), invocationContext.getMethod().getName(),
                 remoteClient.getHost(), remoteClient.getPort());
-        Map<String,String> contextValues = invocationContext.getContextValues();
+        Map<String,Serializable> contextValues = invocationContext.getContextValues();
         if (contextValues != null) {
-            for (Map.Entry<String, String> entry : contextValues.entrySet()) {
+            for (Map.Entry<String, Serializable> entry : contextValues.entrySet()) {
                 ContextUtil.putContextValue(contextHolder, entry.getKey(), entry.getValue());
             }
         }

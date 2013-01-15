@@ -39,7 +39,6 @@ import com.dianping.dpsf.control.PigeonConfig;
 
 /**
  * Remote procedure call statistics pool
- * @TODO 暂不使用CentralStatService类, 埋的点不太符合这边的要求, 重构时考虑整合方案
  * @author danson.liu
  *
  */

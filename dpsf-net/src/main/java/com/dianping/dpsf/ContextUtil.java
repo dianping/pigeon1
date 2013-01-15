@@ -6,6 +6,7 @@ package com.dianping.dpsf;
 import com.dianping.dpsf.exception.NetException;
 import org.apache.log4j.Logger;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -174,7 +175,7 @@ public class ContextUtil {
         }
     }
 
-    public static void putContextValue(Object context, String key, String value) {
+    public static void putContextValue(Object context, String key, Serializable value) {
         if (flag && context != null) {
             try {
                 addExtensionMethod.invoke(context, new Object[]{key, value});
@@ -184,10 +185,10 @@ public class ContextUtil {
         }
     }
 
-    public static String getContextValue(Object context, String key) {
+    public static <T> T getContextValue(Object context, String key) {
         if (flag && context != null) {
             try {
-                return (String) getExtensionMethod.invoke(context, new Object[]{key});
+                return (T) getExtensionMethod.invoke(context, new Object[]{key});
             } catch (Exception e) {
                 throw new NetException(e);
             }

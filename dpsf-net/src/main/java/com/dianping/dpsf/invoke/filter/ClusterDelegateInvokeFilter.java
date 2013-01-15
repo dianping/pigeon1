@@ -21,6 +21,7 @@ import com.dianping.dpsf.invoke.filter.cluster.ClusterInvokeFilter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Service Cluster实现的Delegate
@@ -38,12 +39,13 @@ public class ClusterDelegateInvokeFilter extends InvocationInvokeFilter {
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
         ClusterMeta clusterMeta = invocationContext.getMetaData().getClusterMeta();
-        String cluster = clusterMeta.getName();
-        ClusterInvokeFilter filter = clusterFilters.get(cluster);
+        ClusterMeta.ClusterMetaItem clusterMetaItem = clusterMeta.matchCluster(invocationContext.getMethod().getName());
+        ClusterInvokeFilter filter = clusterFilters.get(clusterMetaItem.getName());
         if (filter == null) {
-            throw new DPSFException("Cluster[" + cluster + "] is not supported.");
+            throw new DPSFException("Cluster[" + clusterMetaItem.getName() + "] is not supported.");
         }
         try {
+            invocationContext.putTransientContextValue(ClusterInvokeFilter.CONTEXT_CLUSTER_ITEM, clusterMetaItem);
             return filter.invoke(handler, invocationContext);
         } catch (Exception e) {
             logger.error("Invoke remote call failed.", e);
@@ -53,6 +55,10 @@ public class ClusterDelegateInvokeFilter extends InvocationInvokeFilter {
 
     public static void registerCluster(ClusterInvokeFilter cluster) {
         clusterFilters.put(cluster.name(), cluster);
+    }
+
+    public static Set<String> getSupportedCluster() {
+        return clusterFilters.keySet();
     }
 
 }

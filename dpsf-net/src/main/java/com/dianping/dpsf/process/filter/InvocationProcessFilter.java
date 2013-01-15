@@ -16,4 +16,8 @@ public abstract class InvocationProcessFilter extends RemoteInvocationFilter<Inv
         super(order);
     }
 
+    public static enum ProcessPhase {
+        Execute, Before_Execute, Write, Before_Write;
+    }
+
 }

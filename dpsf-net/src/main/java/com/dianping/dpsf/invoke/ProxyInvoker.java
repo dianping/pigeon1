@@ -60,16 +60,16 @@ public class ProxyInvoker implements InvocationHandler {
             String methodName = method.getName();
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (method.getDeclaringClass() == Object.class) {
-                return method.invoke(metaData, args);
+                return method.invoke(handler, args);
             }
             if ("toString".equals(methodName) && parameterTypes.length == 0) {
-                return metaData.toString();
+                return handler.toString();
             }
             if ("hashCode".equals(methodName) && parameterTypes.length == 0) {
-                return metaData.hashCode();
+                return handler.hashCode();
             }
             if ("equals".equals(methodName) && parameterTypes.length == 1) {
-                return metaData.equals(args[0]);
+                return handler.equals(args[0]);
             }
             return extractResult(handler.handle(new InvocationInvokeContext(metaData, method, args)), method.getReturnType());
         } else {

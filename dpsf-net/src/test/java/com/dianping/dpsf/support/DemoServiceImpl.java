@@ -22,10 +22,12 @@ package com.dianping.dpsf.support;
 public class DemoServiceImpl implements DemoService {
 	
 	private int sleepMsecond;
-	
-	public DemoServiceImpl(int sleepMsecond) {
+    private boolean sayEvenError;
+
+    public DemoServiceImpl(int sleepMsecond, boolean sayEvenError) {
 		this.sleepMsecond = sleepMsecond;
-	}
+        this.sayEvenError = sayEvenError;
+    }
 
 	@Override
 	public String echo(String message) {
@@ -34,11 +36,17 @@ public class DemoServiceImpl implements DemoService {
 	
 	public void echoWithError(boolean runtimeError) throws BusinessException {
 		if (runtimeError) {
-			throw new RuntimeException("runtime error happend");
+			throw new RuntimeException("runtime error happen");
 		} else {
-			throw new BusinessException("error happend");
+			throw new BusinessException("error happen");
 		}
 	}
+
+    public void say(int num) throws BusinessException {
+        if ((sayEvenError && num % 2 == 0) || (!sayEvenError && num % 2 == 1)) {
+            throw new BusinessException("error happen when say num[" + num + "].");
+        }
+    }
 	
 	public void sleep() {
 		try {

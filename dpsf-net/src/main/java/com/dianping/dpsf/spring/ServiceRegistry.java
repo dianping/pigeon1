@@ -60,7 +60,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 	private int corePoolSize = 200;
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 300;
-    private List<InvocationProcessFilter> customizedInvocationFilters;
+    private Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>> customizedInvocationFilters;
 	private boolean enableEngine = true;
 
 	public ServiceRegistry() {
@@ -278,7 +278,7 @@ public class ServiceRegistry implements ApplicationContextAware {
 		this.enginePort = enginePort;
 	}
 
-    public void setCustomizedInvocationFilters(List<InvocationProcessFilter> customizedInvocationFilters) {
+    public void setCustomizedInvocationFilters(Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
     }
 }

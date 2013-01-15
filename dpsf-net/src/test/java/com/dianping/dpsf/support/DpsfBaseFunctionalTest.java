@@ -72,8 +72,8 @@ public abstract class DpsfBaseFunctionalTest {
 	public static void setUp() {
 		try {
 			setUpLionEnvironment();
-			setUpPigeonTestService(TEST_SERVICE_PORT1, 1);
-			setUpPigeonTestService(TEST_SERVICE_PORT2, 1000);
+			setUpPigeonTestService(TEST_SERVICE_PORT1, 1, true);
+			setUpPigeonTestService(TEST_SERVICE_PORT2, 1000, false);
 		} catch (Exception e) {
 			throw new RuntimeException("Setup PigeonTestService failed.", e);
 		}
@@ -91,11 +91,11 @@ public abstract class DpsfBaseFunctionalTest {
 		new PigeonClientMock(new ServiceChangeMock());
 	}
 
-	private static void setUpPigeonTestService(int port, int demoSleepMs) throws Exception {
+	private static void setUpPigeonTestService(int port, int demoSleepMs, boolean demoSayEvenError) throws Exception {
 		ServiceRegistry serviceRegistry = new ServiceRegistry();
 		serviceRegistry.setPort(port);
 		Map<String, Object> services = new HashMap<String, Object>();
-		DemoService demoService = new DemoServiceImpl(demoSleepMs);
+		DemoService demoService = new DemoServiceImpl(demoSleepMs, demoSayEvenError);
 		services.put(DEMO_SERVICE_1_0_0, demoService);
 		OrderServiceImpl orderService = new OrderServiceImpl();
 		services.put(ORDER_SERVICE_1_0_0, orderService);
@@ -120,27 +120,33 @@ public abstract class DpsfBaseFunctionalTest {
 	protected <T> T createServiceStub(String serviceName, Class<?> iface, String serialize, String callMethod, int timeout, String loadbalance, 
 		ServiceCallback callback, boolean useLion, String hosts, String weights) {
 		try {
-			ProxyBeanFactory beanFactory = new ProxyBeanFactory();
-			beanFactory.setServiceName(serviceName);
-			beanFactory.setIface(iface.getName());
-			beanFactory.setSerialize(serialize);
-			beanFactory.setCallMethod(callMethod);
-			beanFactory.setCallback(callback);
-			beanFactory.setTimeout(timeout);
-			beanFactory.setLoadBalance(loadbalance);
-			if (!useLion) {
-				beanFactory.setIsTest(true);
-				beanFactory.setHosts(hosts);
-				beanFactory.setWeight(weights);
-			}
+            ProxyBeanFactory beanFactory = createServiceStubFactory(serviceName, iface, serialize, callMethod, timeout, loadbalance, callback, useLion, hosts, weights);
 			initInitializableObject(beanFactory);
 			return (T) beanFactory.getObject();
 		} catch (Exception e) {
 			throw new RuntimeException("Create service stub[" + serviceName + "] failed.", e);
 		}
 	}
-	
-	protected DemoService createDemoServiceStub(String serialize, String callMethod, String hosts, String weights) {
+
+    protected ProxyBeanFactory createServiceStubFactory(String serviceName, Class<?> iface, String serialize, String callMethod, int timeout, String loadbalance,
+        ServiceCallback callback, boolean useLion, String hosts, String weights) {
+        ProxyBeanFactory beanFactory = new ProxyBeanFactory();
+        beanFactory.setServiceName(serviceName);
+        beanFactory.setIface(iface.getName());
+        beanFactory.setSerialize(serialize);
+        beanFactory.setCallMethod(callMethod);
+        beanFactory.setCallback(callback);
+        beanFactory.setTimeout(timeout);
+        beanFactory.setLoadBalance(loadbalance);
+        if (!useLion) {
+            beanFactory.setIsTest(true);
+            beanFactory.setHosts(hosts);
+            beanFactory.setWeight(weights);
+        }
+        return beanFactory;
+    }
+
+    protected DemoService createDemoServiceStub(String serialize, String callMethod, String hosts, String weights) {
 		return createDemoServiceStub(serialize, callMethod, 2000, hosts, weights);
 	}
 	

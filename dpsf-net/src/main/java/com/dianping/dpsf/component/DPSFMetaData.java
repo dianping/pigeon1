@@ -31,7 +31,7 @@ public class DPSFMetaData {
 	
 	private String group;
 
-    private ClusterMeta clusterMeta = new ClusterMeta();
+    private ClusterMeta clusterMeta;
 
 	private boolean writeBufferLimit;
 	
