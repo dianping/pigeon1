@@ -23,6 +23,7 @@ import com.dianping.dpsf.channel.protobuf.DefaultRpcController;
 import com.dianping.dpsf.context.ClientContext;
 import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetTimeoutException;
+import com.dianping.dpsf.invoke.filter.cluster.FailoverClusterInvokeFilter;
 import com.dianping.dpsf.net.channel.cluster.loadbalance.LoadAutoawareLoadBalance;
 import com.dianping.dpsf.net.channel.cluster.loadbalance.RandomLoadBalance;
 import com.dianping.dpsf.protocol.protobuf.DpsfTestMessages.CreateOrderRequest;
@@ -31,6 +32,7 @@ import com.dianping.dpsf.protocol.protobuf.DpsfTestMessages.OrderID;
 import com.dianping.dpsf.protocol.protobuf.DpsfTestMessages.OrderService.BlockingInterface;
 import com.dianping.dpsf.protocol.thrift.Customer;
 import com.dianping.dpsf.protocol.thrift.CustomerService.Iface;
+import com.dianping.dpsf.spring.ProxyBeanFactory;
 import com.dianping.dpsf.support.BusinessException;
 import com.dianping.dpsf.support.DemoService;
 import com.dianping.dpsf.support.DpsfBaseFunctionalTest;
@@ -39,6 +41,7 @@ import org.apache.thrift.TException;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
@@ -224,7 +227,7 @@ public class DpsfGeneralInvocationNoLionTest extends DpsfBaseFunctionalTest {
         } catch (TException e) {
             String errorMsg = e.getMessage();
             assertTrue(errorMsg.contains("ServiceException") && errorMsg.contains("code:20")
-                    && errorMsg.contains("name field not setted"));
+                    && errorMsg.contains("name field not set"));
         }
     }
 

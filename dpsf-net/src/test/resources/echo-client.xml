@@ -13,14 +13,20 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="group" value="echo.IEcho_1"/>
 		<!-- 单位毫秒 default:2000 -->
 		<property name="timeout" value="2000"/>
-        <!--
-        <property name="cluster">
+        <!--<property name="customizedInvocationFilters">-->
+            <!--<map>-->
+                <!--<entry key="Before_Call">-->
+                    <!--<list>-->
+                        <!--<bean class="com.dianping.dpsf.functional.DemoInvokeFilter"/>-->
+                    <!--</list>-->
+                <!--</entry>-->
+            <!--</map>-->
+        <!--</property>-->
+        <property name="clusterConfig">
             <map>
-                <entry key="echo" value="cluster:fail-over,retry:3"/>
-                <entry key="*" value="cluster:fail-fast"/>
+                <entry key="getorder" value="cluster:fail-over,retry:2,timeout-retry:0"/>
             </map>
         </property>
-        -->
 	</bean>
 	
 <!--	<bean id="echoV2" class="com.dianping.dpsf.spring.ProxyBeanFactory" init-method="init">-->

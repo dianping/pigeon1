@@ -226,7 +226,12 @@ public class HeartBeatTask implements Runnable, ClusterListener {
 			Set<HostInfo> hostInfos = hostsEntry.getValue();
 			if (hostInfos.contains(hostInfo)) {
 				int total = hostInfos.size();
-				int leastAvailable = total - (int) Math.floor(total / 3);
+                /**
+                 * 目前自动摘除策略：
+                 * 1. 确保2/3该Service的机器正常可用的前提下，可摘除探测到的不健康的机器
+                 * 2. 特例：当只有两台机器时，确保该Service一台机器正常可用即可
+                 */
+				int leastAvailable = total != 2 ? total - (int) Math.floor(total / 3) : 1;
 				List<Client> workingClients_ = workingClients.get(serviceName);
 				int working = 0;
 				if (workingClients_ != null) {

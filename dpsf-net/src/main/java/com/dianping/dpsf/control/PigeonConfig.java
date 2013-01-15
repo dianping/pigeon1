@@ -72,7 +72,7 @@ public class PigeonConfig {
     private static final int DEFAULT_WRITE_BUFFER_LOW_WATER = 25 * 1024 * 1024;
     private static final boolean DEFAULT_WRITE_BUFF_LIMIT = false;
     private static final Boolean DEFAULT_PIGEON_USE_NEW_INVOKE = false;
-    private static final Boolean DEFAULT_PIGEON_USE_NEW_PROCESS = true;     //TODO change me to false
+    private static final Boolean DEFAULT_PIGEON_USE_NEW_PROCESS = false;
 
 	private PigeonConfig() {
 		checkHawkAndLionStatus();
@@ -221,47 +221,6 @@ public class PigeonConfig {
 		return LoadBalanceManager.builtInBalances.keySet().toString();
 	}
 
-	public String clearLoadBalanceSetByJmx() {
-		this.loadBalanceSetByJmx = null;
-		return "Succeed";
-	}
-
-	public void setPigeonSpeedEnabledByJmx() {
-		this.pigeonSpeedEnabledSetByJmx = true;
-	}
-
-	public void setPigeonSpeedDisabledByJmx() {
-		this.pigeonSpeedEnabledSetByJmx = false;
-	}
-
-	public void clearPigeonSpeedEnabledByJmx() {
-		this.pigeonSpeedEnabledSetByJmx = null;
-	}
-
-	public void setHeartBeatResponseEnabledByJmx() {
-		this.isHeartBeatResponseSetByJmx = true;
-	}
-
-	public void setHeartBeatResponseDisabledByJmx() {
-		this.isHeartBeatResponseSetByJmx = false;
-	}
-
-    public void setUseNewInvokeEnabledByJmx() {
-        this.useNewInvokeSetByJmx = true;
-    }
-
-    public void setUseNewInvokeDisabledByJmx() {
-        this.useNewInvokeSetByJmx = false;
-    }
-
-    public void setUseNewProcessEnabledByJmx() {
-        this.useNewProcessSetByJmx = true;
-    }
-
-    public void setUseNewProcessDisabledByJmx() {
-        this.useNewProcessSetByJmx = false;
-    }
-
 	public static String getStringValueFromLion(String config, String defaultValue) {
 		String configVal = null;
 		if (isLionApiValid()) {
@@ -309,6 +268,63 @@ public class PigeonConfig {
 		}
 		return configVal != null ? configVal : defaultValue;
 	}
+
+    public String clearLoadBalanceSetByJmx() {
+        this.loadBalanceSetByJmx = null;
+        return "Succeed";
+    }
+
+    public void setPigeonSpeedEnabledByJmx() {
+        this.pigeonSpeedEnabledSetByJmx = true;
+    }
+
+    public void setPigeonSpeedDisabledByJmx() {
+        this.pigeonSpeedEnabledSetByJmx = false;
+    }
+
+    public void clearPigeonSpeedEnabledByJmx() {
+        this.pigeonSpeedEnabledSetByJmx = null;
+    }
+
+    public void setHeartBeatResponseEnabledByJmx() {
+        this.isHeartBeatResponseSetByJmx = true;
+    }
+
+    public void setHeartBeatResponseDisabledByJmx() {
+        this.isHeartBeatResponseSetByJmx = false;
+    }
+
+    public void setUseNewInvokeEnabledByJmx() {
+        this.useNewInvokeSetByJmx = true;
+    }
+
+    public void setUseNewInvokeDisabledByJmx() {
+        this.useNewInvokeSetByJmx = false;
+    }
+
+    public void setUseNewInvokeSetByJmx(Boolean useNewInvoke) {
+        this.useNewInvokeSetByJmx = useNewInvoke;
+    }
+
+    public Boolean getUseNewInvokeSetByJmx() {
+        return this.useNewInvokeSetByJmx;
+    }
+
+    public void setUseNewProcessEnabledByJmx() {
+        this.useNewProcessSetByJmx = true;
+    }
+
+    public void setUseNewProcessDisabledByJmx() {
+        this.useNewProcessSetByJmx = false;
+    }
+
+    public void setUseNewProcessSetByJmx(Boolean useNewProcess) {
+        this.useNewProcessSetByJmx = useNewProcess;
+    }
+
+    public Boolean getUseNewProcessSetByJmx() {
+        return this.useNewProcessSetByJmx;
+    }
 
 	private void checkHawkAndLionStatus() {
 		try {

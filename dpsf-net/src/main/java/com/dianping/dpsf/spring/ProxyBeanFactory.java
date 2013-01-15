@@ -5,8 +5,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.dianping.dpsf.component.ClusterMetaParser;
+import com.dianping.dpsf.component.impl.DefaultClusterMetaParser;
 import com.dianping.dpsf.invoke.ProxyInvoker;
 import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
 import com.dianping.dpsf.invoke.ThriftProxyInvoker;
@@ -26,6 +29,8 @@ import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.net.channel.cluster.LoadBalance;
 import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
 import com.dianping.dpsf.net.channel.manager.LoadBalanceManager;
+
+import static com.dianping.dpsf.invoke.filter.InvocationInvokeFilter.InvokePhase;
 
 public class ProxyBeanFactory implements FactoryBean {
 
@@ -64,12 +69,11 @@ public class ProxyBeanFactory implements FactoryBean {
 	private String group;
 
 	private String loadBalance;
-
 	private Class<? extends LoadBalance> loadBalanceClass;
-
 	private LoadBalance loadBalanceObj;
-
-    private List<InvocationInvokeFilter> customizedInvocationFilters;
+    private Map<InvokePhase, List<InvocationInvokeFilter>> customizedInvocationFilters;
+    private Map<String, String> clusterConfig;
+    private ClusterMetaParser clusterMetaParser = new DefaultClusterMetaParser();
 
 	private boolean isTest = false;
 
@@ -198,6 +202,7 @@ public class ProxyBeanFactory implements FactoryBean {
 	private void initJavaAndHessian() throws ClassNotFoundException {
 		this.objType = Class.forName(this.iface);
         DPSFMetaData metadata = new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize, this.callback, this.group, this.writeBufferLimit);
+        metadata.setClusterMeta(clusterMetaParser.parse(clusterConfig));
         this.obj = Proxy.newProxyInstance(ProxyBeanFactory.class.getClassLoader(), new Class[] { this.objType },
                 new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createInvokeHandler(customizedInvocationFilters)));
 	}
@@ -360,7 +365,11 @@ public class ProxyBeanFactory implements FactoryBean {
 		this.interfaceName = interfaceName;
 	}
 
-    public void setCustomizedInvocationFilters(List<InvocationInvokeFilter> customizedInvocationFilters) {
+    public void setCustomizedInvocationFilters(Map<InvokePhase, List<InvocationInvokeFilter>> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
+    }
+
+    public void setClusterConfig(Map<String, String> clusterConfig) {
+        this.clusterConfig = clusterConfig;
     }
 }

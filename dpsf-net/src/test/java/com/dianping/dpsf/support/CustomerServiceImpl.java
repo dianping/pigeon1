@@ -36,7 +36,7 @@ public class CustomerServiceImpl implements Iface {
 	@Override
 	public void createCustomer(Customer customer) throws ServiceException, TException {
 		if (!customer.isSetName()) {
-			throw new ServiceException(20, "name field not setted");
+			throw new ServiceException(20, "name field not set.");
 		}
 	}
 

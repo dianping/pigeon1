@@ -21,6 +21,8 @@ public class InvocationInvokeContext extends InvocationContext {
     private DPSFMetaData                    metaData;
     private Client                          remoteClient;
     private Map<String, Serializable>       contextValues;
+    //不会通过request传递到服务端，可用于filter之间传递参数
+    private Map<String, Object>             transientContextValues;
 
     public InvocationInvokeContext(DPSFMetaData metaData, Method method, Object[] arguments) {
         this.metaData = metaData;
@@ -57,5 +59,25 @@ public class InvocationInvokeContext extends InvocationContext {
 
     public Map<String, Serializable> getContextValues() {
         return contextValues;
+    }
+
+    public void putTransientContextValue(String key, Object value) {
+        if (transientContextValues == null) {
+            transientContextValues = new HashMap<String, Object>();
+        }
+        transientContextValues.put(key, value);
+    }
+
+    public Object getTransientContextValue(String key) {
+        if (transientContextValues == null) {
+            return null;
+        }
+        return transientContextValues.get(key);
+    }
+
+    public void removeTransientContextValue(String key) {
+        if (transientContextValues != null) {
+            transientContextValues.remove(key);
+        }
     }
 }

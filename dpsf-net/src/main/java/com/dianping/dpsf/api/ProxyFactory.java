@@ -2,9 +2,12 @@ package com.dianping.dpsf.api;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.dianping.dpsf.component.ClusterMetaParser;
+import com.dianping.dpsf.component.impl.DefaultClusterMetaParser;
 import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
 import com.dianping.dpsf.invoke.filter.InvocationInvokeFilter;
@@ -57,11 +60,11 @@ public class ProxyFactory<IFACE>{
 	private boolean writeBufferLimit = PigeonConfig.getDefaultWriteBufferLimit();
 
 	private String loadBalance;
-
 	private Class<? extends LoadBalance> loadBalanceClass;
-
 	private LoadBalance loadBalanceObj;
-    private List<InvocationInvokeFilter> customizedInvocationFilters;
+    private Map<InvocationInvokeFilter.InvokePhase, List<InvocationInvokeFilter>> customizedInvocationFilters;
+    private Map<String, String> clusterConfig;
+    private ClusterMetaParser clusterMetaParser = new DefaultClusterMetaParser();
 
     public void init() {
         PigeonBootStrap.setupClient();
@@ -128,6 +131,7 @@ public class ProxyFactory<IFACE>{
 	private void initJavaAndHessian() {
         DPSFMetaData metadata = new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize,
                 this.callback, this.group, this.writeBufferLimit);
+        metadata.setClusterMeta(clusterMetaParser.parse(clusterConfig));
         this.obj = (IFACE)Proxy.newProxyInstance(ProxyFactory.class.getClassLoader(), new Class[]{this.iface},
                 new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createInvokeHandler(customizedInvocationFilters)));
 	}
@@ -234,7 +238,11 @@ public class ProxyFactory<IFACE>{
 		this.writeBufferLimit = writeBufferLimit;
 	}
 
-    public void setCustomizedInvocationFilters(List<InvocationInvokeFilter> customizedInvocationFilters) {
+    public void setCustomizedInvocationFilters(Map<InvocationInvokeFilter.InvokePhase, List<InvocationInvokeFilter>> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
+    }
+
+    public void setClusterConfig(Map<String, String> clusterConfig) {
+        this.clusterConfig = clusterConfig;
     }
 }
