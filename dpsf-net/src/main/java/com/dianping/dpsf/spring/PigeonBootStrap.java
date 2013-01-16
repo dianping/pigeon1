@@ -51,7 +51,7 @@ public class PigeonBootStrap {
     }
 
     private static void setupInvocationInvokeFilters() {
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new FinalizeInvokeFilter(10));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new GatewayInvokeFilter(10));
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new MockInvokeFilter(20));
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new ServiceCallMonitorInvokeFilter(30));
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(new ClusterDelegateInvokeFilter(40));
