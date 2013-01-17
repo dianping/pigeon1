@@ -35,7 +35,7 @@ public class FailfastClusterInvokeFilter extends ClusterInvokeFilter {
         DPSFMetaData metaData = invocationContext.getMetaData();
         DPSFRequest request = createRemoteCallRequest(invocationContext, metaData);
         Client remoteClient = clientManager.getClient(metaData.getServiceName(), metaData.getGroup(), request, null);
-        invocationContext.setRemoteClient(remoteClient);
+        invocationContext.setClient(remoteClient);
         return handler.handle(invocationContext);
     }
 

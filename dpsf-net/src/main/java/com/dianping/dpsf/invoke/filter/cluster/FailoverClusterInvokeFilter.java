@@ -53,7 +53,7 @@ public class FailoverClusterInvokeFilter extends ClusterInvokeFilter {
             selectedClients.add(clientSelected);
             try {
                 invokeTimes++;
-                invocationContext.setRemoteClient(clientSelected);
+                invocationContext.setClient(clientSelected);
                 DPSFResponse response = handler.handle(invocationContext);
                 if (lastError != null) {
                     logger.warn("Retry method[" + invocationContext.getMethod().getName() + "] on service[" + metaData.getServiceName()

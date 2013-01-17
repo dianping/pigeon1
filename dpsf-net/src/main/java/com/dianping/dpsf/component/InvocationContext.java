@@ -12,21 +12,32 @@
  */
 package com.dianping.dpsf.component;
 
+import java.io.Serializable;
+import java.util.Map;
+
 
 /**
  * TODO Comment of The Class
  *
  * @author danson.liu
  */
-public class InvocationContext {
+public interface InvocationContext {
 
-    protected DPSFRequest request;
+    public DPSFRequest getRequest();
+    
+    public void setRequest(DPSFRequest request);
 
-    public DPSFRequest getRequest() {
-        return request;
-    }
+	public DPSFResponse getResponse();
+	
+	public void setResponse(DPSFResponse response);
+	
+	public void putContextValue(String key, Serializable value);
+	
+	public Serializable getContextValue(String key);
+	
+	public Map<String, Serializable> getContextValues();
 
-    public void setRequest(DPSFRequest request) {
-        this.request = request;
-    }
+    public void putTransientContextValue(String key, Object value);
+
+    public Object getTransientContextValue(String key);
 }

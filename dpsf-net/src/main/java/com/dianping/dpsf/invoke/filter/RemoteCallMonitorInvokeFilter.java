@@ -49,8 +49,8 @@ public class RemoteCallMonitorInvokeFilter extends InvocationInvokeFilter {
 
         if (cat != null) {
             try {
-                Client remoteClient = invocationContext.getRemoteClient();
-                Event event = cat.newEvent("PigeonCall.server", remoteClient.getHost() + ":" + remoteClient.getPort());
+                Client client = invocationContext.getClient();
+                Event event = cat.newEvent("PigeonCall.server", client.getAddress());
                 try {
                     event.addData(Stringizers.forJson().from(invocationContext.getArguments(), CatConstants.MAX_LENGTH, CatConstants.MAX_ITEM_LENGTH));
                     event.setStatus(Event.SUCCESS);

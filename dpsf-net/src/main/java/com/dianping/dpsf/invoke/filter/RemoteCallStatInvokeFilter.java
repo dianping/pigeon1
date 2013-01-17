@@ -39,10 +39,10 @@ public class RemoteCallStatInvokeFilter extends InvocationInvokeFilter {
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
         DPSFRequest request = invocationContext.getRequest();
-        Client remoteClient = invocationContext.getRemoteClient();
+        Client client = invocationContext.getClient();
         DPSFMetaData metaData = invocationContext.getMetaData();
 
-        RpcStatsPool.flowIn(request, remoteClient.getAddress());
+        RpcStatsPool.flowIn(request, client.getAddress());
         try {
             DPSFResponse result = handler.handle(invocationContext);
             clientServiceStat.countService(request.getServiceName());
@@ -52,7 +52,7 @@ public class RemoteCallStatInvokeFilter extends InvocationInvokeFilter {
                     && e instanceof NetTimeoutException) {
                 clientServiceStat.failCountService(request.getServiceName());
             }
-            RpcStatsPool.flowOut(request, remoteClient.getAddress());
+            RpcStatsPool.flowOut(request, client.getAddress());
             throw e;
         }
     }

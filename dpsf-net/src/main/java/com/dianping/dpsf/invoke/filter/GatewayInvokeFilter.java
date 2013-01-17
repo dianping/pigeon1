@@ -14,9 +14,9 @@ import com.dianping.dpsf.invoke.RemoteInvocationHandler;
  * Time: 下午4:50
  * To change this template use File | Settings | File Templates.
  */
-public class FinalizeInvokeFilter extends InvocationInvokeFilter {
+public class GatewayInvokeFilter extends InvocationInvokeFilter {
 
-    public FinalizeInvokeFilter(int order) {
+    public GatewayInvokeFilter(int order) {
         super(order);
     }
 

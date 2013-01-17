@@ -22,6 +22,7 @@ import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.ContextUtil;
 import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.component.DPSFRequest;
+import com.dianping.dpsf.component.impl.InvocationProcessContextImpl;
 import com.dianping.dpsf.exception.DPSFTimeoutException;
 import com.dianping.dpsf.jmx.DpsfResponsorMonitor;
 import com.dianping.dpsf.jmx.ManagementContext;
@@ -97,11 +98,12 @@ public class RequestProcessor {
                 @Override
                 public void run() {
                     try {
-                        InvocationProcessContext invocationContext = new InvocationProcessContext(request, channel, serviceRepository);
-                        invocationContext.addProcessListener(listener);
+                        InvocationProcessContext invocationContext = new InvocationProcessContextImpl(request, channel, serviceRepository);
                         invocationHandler.handle(invocationContext);
                     } catch (Throwable t) {
                         logger.error("Process request failed with invocation handler, you should never be here.", t);
+                    }finally{
+                    	listener.executorCompleted(request);
                     }
                 }
             };
