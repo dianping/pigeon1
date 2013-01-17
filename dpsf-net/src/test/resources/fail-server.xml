@@ -22,22 +22,36 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
 				<entry key="http://service.dianping.com/failService1" value-ref="failTimeoutImpl1"/>
 				<entry key="http://service.dianping.com/failService2" value-ref="failTimeoutImpl2"/>
 				<entry key="http://service.dianping.com/failService3" value-ref="failTimeoutImpl3"/>
+
+				<entry key="http://service.dianping.com/failService4" value-ref="failTimeoutImpl4"/>
+				<entry key="http://service.dianping.com/failService5" value-ref="failTimeoutImpl5"/>
+				<entry key="http://service.dianping.com/failService6" value-ref="failTimeoutImpl6"/>
 			</map>
 		</property>
 	</bean>
 	<context:annotation-config />
 	<bean id="failImpl" class="com.dianping.dpsf.fail.FailImpl">
-		
+
 	</bean>
-	
+
 	<bean id="failTimeoutImpl1" class="com.dianping.dpsf.fail.FailTimeoutImpl">
 		<property name="failTimeout" ref="fail2"/>
 	</bean>
-	
+
 	<bean id="failTimeoutImpl2" class="com.dianping.dpsf.fail.FailTimeoutImpl">
 		<property name="failTimeout" ref="fail3"/>
 	</bean>
-	
+
 	<bean id="failTimeoutImpl3" class="com.dianping.dpsf.fail.FailTimeoutImpl"/>
+
+	<bean id="failTimeoutImpl4" class="com.dianping.dpsf.fail.FailTimeoutImpl">
+		<property name="failTimeout" ref="fail5"/>
+	</bean>
+
+	<bean id="failTimeoutImpl5" class="com.dianping.dpsf.fail.FailTimeoutImpl">
+		<property name="failTimeout" ref="fail6"/>
+	</bean>
+
+	<bean id="failTimeoutImpl6" class="com.dianping.dpsf.fail.FailTimeoutImpl"/>
 	
 </beans>

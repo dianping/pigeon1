@@ -31,6 +31,7 @@ public abstract class ClusterInvokeFilter extends InvocationInvokeFilter {
     protected ClientManager clientManager;
 
     private static AtomicLong requestSequenceMaker = new AtomicLong();
+    public static final String CONTEXT_CLUSTER_ITEM = "context-cluster-item";
 
     protected ClusterInvokeFilter(ClientManager clientManager) {
         super(0);

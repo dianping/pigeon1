@@ -8,7 +8,7 @@ import com.dianping.dpsf.component.InvocationContext;
  *
  * @author danson.liu
  */
-public interface RemoteInvocationHandler {
+public interface RemoteInvocationHandler{
 
     DPSFResponse handle(InvocationContext invocationContext) throws Throwable;
 

@@ -30,7 +30,7 @@ import com.dianping.dpsf.repository.ServiceRepository;
  * @version 1.0    
  * @created 2010-8-26 上午10:43:19   
  */
-public class ServiceRegistry{
+public class ServiceRegistry {
 	
 	private static Logger logger = DPSFLog.getLogger();
 	
@@ -47,7 +47,7 @@ public class ServiceRegistry{
 	private int corePoolSize = 100;
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 100;
-    private List<InvocationProcessFilter> customizedInvocationFilters;
+    private Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>> customizedInvocationFilters;
 	
 	public ServiceRegistry(){
 		
@@ -179,7 +179,7 @@ public class ServiceRegistry{
 		this.workQueueSize = workQueueSize;
 	}
 
-    public void setCustomizedInvocationFilters(List<InvocationProcessFilter> customizedInvocationFilters) {
+    public void setCustomizedInvocationFilters(Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
     }
 }

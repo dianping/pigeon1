@@ -18,7 +18,7 @@ import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
 
 /**
- * TODO Comment of The Class
+ * 调用出错立即失败
  *
  * @author danson.liu
  */
@@ -35,7 +35,7 @@ public class FailfastClusterInvokeFilter extends ClusterInvokeFilter {
         DPSFMetaData metaData = invocationContext.getMetaData();
         DPSFRequest request = createRemoteCallRequest(invocationContext, metaData);
         Client remoteClient = clientManager.getClient(metaData.getServiceName(), metaData.getGroup(), request, null);
-        invocationContext.setRemoteClient(remoteClient);
+        invocationContext.setClient(remoteClient);
         return handler.handle(invocationContext);
     }
 
