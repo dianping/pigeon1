@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
  *
  * @author danson.liu
  */
-public abstract class RemoteInvocationFilter<I extends InvocationContext> implements Comparable<RemoteInvocationFilter> {
+public abstract class RemoteInvocationFilter<I extends InvocationContext> implements Comparable<RemoteInvocationFilter<? extends I>> {
 
     protected final Logger logger = DPSFLog.getLogger();
 
@@ -21,13 +21,18 @@ public abstract class RemoteInvocationFilter<I extends InvocationContext> implem
     }
 
     public abstract DPSFResponse invoke(RemoteInvocationHandler handler, I invocationContext) throws Throwable;
-
+    
+    @SuppressWarnings("unchecked")
+	DPSFResponse innerInvoke(RemoteInvocationHandler handler, InvocationContext invocationContext) throws Throwable{
+    	return invoke(handler,(I)invocationContext);
+    }
+    
     public int order() {
         return order;
     }
 
     @Override
-    public int compareTo(RemoteInvocationFilter o) {
+    public int compareTo(RemoteInvocationFilter<? extends I> o) {
         if (o == null) {
             return -1;
         }

@@ -52,7 +52,7 @@ public class PigeonBootStrap {
     }
 
     private static void setupInvocationInvokeFilters() {
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvocationInvokeFilter.InvokePhase.Finalize, new FinalizeInvokeFilter(10));
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvocationInvokeFilter.InvokePhase.Finalize, new GatewayInvokeFilter(10));
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvocationInvokeFilter.InvokePhase.Error_Handle, new MockInvokeFilter(20));
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvocationInvokeFilter.InvokePhase.Before_Cluster, new ServiceCallMonitorInvokeFilter(30));
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvocationInvokeFilter.InvokePhase.Cluster, new ClusterDelegateInvokeFilter(40));

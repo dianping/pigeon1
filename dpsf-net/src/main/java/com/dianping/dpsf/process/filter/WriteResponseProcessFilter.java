@@ -31,7 +31,6 @@ public class WriteResponseProcessFilter extends InvocationProcessFilter {
             if (request.getCallType() != Constants.CALLTYPE_NOREPLY && (request.getMessageType() != Constants.MESSAGE_TYPE_HEART || PigeonConfig.isHeartBeatResponse())) {
                 channel.write(response);
             }
-            invocationContext.processComplete();
             return response;
         } finally {
             ContextUtil.clearContext();

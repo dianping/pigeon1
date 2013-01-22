@@ -17,5 +17,3 @@ target/
 work/
 
 .DS_Store
-bin/
-*/bin/
