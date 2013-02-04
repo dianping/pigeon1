@@ -30,6 +30,10 @@ public class LionNotifier {
 	public synchronized static void addListener(ServiceProviderChangeListener listener) {
 		listeners.add(listener);
 	}
+	
+	public synchronized static void removeListener(ServiceProviderChangeListener listener) {
+	    listeners.remove(listener);
+	}
 
 	public static void providerRemoved(String serviceName, String host, int port) {
 		for (ServiceProviderChangeListener listener : listeners) {

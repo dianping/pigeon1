@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,6 +25,7 @@ import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.cluster.WeightAccessor;
 import com.dianping.dpsf.net.channel.config.ClusterConfigure;
 import com.dianping.dpsf.net.channel.config.ClusterListener;
+import com.dianping.dpsf.net.channel.config.Configure;
 import com.dianping.dpsf.net.channel.config.ConnectMetaData;
 import com.dianping.dpsf.net.channel.config.HostInfo;
 import com.dianping.dpsf.process.ResponseFactory;
@@ -59,10 +60,13 @@ public class HeartBeatTask implements Runnable, ClusterListener {
 	private static AtomicLong heartBeatSeq = new AtomicLong();
 	
 	private static ConcurrentMap<String, HeartBeatStat> heartBeatStats = new ConcurrentHashMap<String, HeartBeatStat>();
+
+    private final Configure clusterConfigure;
 	
-	public HeartBeatTask(ClientManager clientManager, WeightAccessor weightAccessor) {
+	public HeartBeatTask(ClientManager clientManager, WeightAccessor weightAccessor, Configure clusterConfigure) {
 		this.clientManager = clientManager;
 		this.weightAccessor = weightAccessor;
+        this.clusterConfigure = clusterConfigure;
 	}
 
 	public void run() {
@@ -96,7 +100,7 @@ public class HeartBeatTask implements Runnable, ClusterListener {
 								}
 							}
 						} else {
-							ClusterConfigure.getInstance().removeConnect(client.getAddress());
+						    clusterConfigure.removeConnect(client.getAddress());
 						}
 					}
 				}
@@ -192,6 +196,7 @@ public class HeartBeatTask implements Runnable, ClusterListener {
 				if (client.isActive()) {
 					if (PigeonConfig.isHeartBeatAutoPickOff() && canPickOff(client)) {
 						client.setActive(false);
+						//TODO refactor me!
 						DPSFLog.centralLogWarn("@service-deactivate", client.getAddress(), getServiceName(client));
 					} else {
 						DPSFLog.centralLogError("@service-dieaway", client.getAddress(), getServiceName(client));
@@ -267,7 +272,7 @@ public class HeartBeatTask implements Runnable, ClusterListener {
 		String address;
 		DPSFRequest currentHeartRequest;
 		AtomicLong succeedCounter = new AtomicLong();	//连续成功计数器
-		AtomicLong failedCounter = new AtomicLong();		//连续失败计数器
+		AtomicLong failedCounter = new AtomicLong();	//连续失败计数器
 		public HeartBeatStat(String address) {
 			this.address = address;
 		}

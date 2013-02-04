@@ -10,6 +10,7 @@ import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.process.ResponseFactory;
 import com.dianping.dpsf.repository.DPSFMethod;
 import com.dianping.dpsf.repository.ServiceRepository;
+import com.dianping.dpsf.spi.InvocationProcessFilter;
 import com.dianping.dpsf.stat.ServiceStat;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,10 +26,6 @@ import java.lang.reflect.Method;
 public class BusinessProcessFilter extends InvocationProcessFilter {
 
     private ServiceStat serverServiceStat = ServiceStat.getServerServiceStat();
-
-    public BusinessProcessFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationProcessContext invocationContext) throws Throwable {

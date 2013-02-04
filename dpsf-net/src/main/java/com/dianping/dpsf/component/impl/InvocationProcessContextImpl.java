@@ -16,9 +16,9 @@ import com.dianping.dpsf.repository.ServiceRepository;
  */
 public class InvocationProcessContextImpl extends AbstractInvocationContext implements InvocationProcessContext{
 
-	private ServiceRepository serviceRepository;
-	private Throwable serviceError;
-	private Channel channel;
+	private ServiceRepository      serviceRepository;
+	private Throwable              serviceError;
+	private Channel                channel;
 
 	public InvocationProcessContextImpl(DPSFRequest request, Channel channel,
 			ServiceRepository serviceRepository) {

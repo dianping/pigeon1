@@ -19,6 +19,7 @@ import com.dianping.dpsf.component.DPSFMetaData;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 
 import java.lang.reflect.Method;
 
@@ -30,10 +31,6 @@ import java.lang.reflect.Method;
 public class ServiceCallMonitorInvokeFilter extends InvocationInvokeFilter {
 
     private CatMonitorSupport monitorSupport = new CatMonitorSupport();
-
-    public ServiceCallMonitorInvokeFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {

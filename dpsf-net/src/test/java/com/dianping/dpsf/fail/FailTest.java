@@ -9,8 +9,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.Assert;
 
-import com.dianping.dpsf.component.impl.DefaultInvoker;
-import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
+import com.dianping.dpsf.PigeonBootStrap;
 import com.dianping.dpsf.net.channel.protocol.DPSFDecoder;
 
 public class FailTest {
@@ -47,9 +46,8 @@ public class FailTest {
 		}
 	}
 	@AfterClass
-	public static void done(){
-		DefaultInvoker.setInvoker(null);
-		ClientManagerFactory.setManager(null);
+	public static void done() {
+	    PigeonBootStrap.shutdown();
 	}
 	
 	@Test
@@ -58,6 +56,7 @@ public class FailTest {
 		Assert.isTrue(p+1==fail.testSuccess(new TestParameter(p)).getResult());
 		Assert.isTrue(p+2==fail.testSuccess(new TestParameter(p+1)).getResult());
 	}
+	
 	@Test
 	public void testClientSerializeFail(){
 		int p = 5;
@@ -70,6 +69,7 @@ public class FailTest {
 		}
 		Assert.isTrue(false);
 	}
+	
 	@Test
 	public void testServerSerializeFail(){
 		int p = 5;
@@ -82,6 +82,7 @@ public class FailTest {
 		}
 		Assert.isTrue(false);
 	}
+	
 	@Test
 	public void testClientDeserializeFail(){
 		int p = 5;
@@ -100,6 +101,7 @@ public class FailTest {
 		}
 		Assert.isTrue(false);
 	}
+	
 	@Test
 	public void testServerDeserializeFail(){
 		int p = 5;
@@ -116,6 +118,7 @@ public class FailTest {
 		}
 		Assert.isTrue(false);
 	}
+	
 	@Test
 	public void testException(){
 		try {
@@ -144,6 +147,7 @@ public class FailTest {
 				&& this.failTimeout3.getTimeout() == 4000);
 
 	}
+	
 	//串联测试
 	@Test
 	public void testTimeoutException(){
@@ -160,6 +164,7 @@ public class FailTest {
 				&& this.failTimeout3.getTimeout() == 4000);
 
 	}
+	
 	//串联并联混合测试
 	@Test
 	public void testTimeoutNormal1(){
@@ -172,11 +177,11 @@ public class FailTest {
 //		try{
 		int p = 5;
 		Assert.isTrue(2*(p+2)+1 == this.fail4.testCallNormal4(p));
-		Assert.isTrue(this.failTimeout4.getCreateTime() == this.failTimeout5.getCreateTime()
-				&& this.failTimeout5.getCreateTime() < this.failTimeout6.getCreateTime());
-		Assert.isTrue(this.failTimeout4.getTimeout() == 9000
-				&& this.failTimeout5.getTimeout() == 4000
-				&& this.failTimeout6.getTimeout() == 3000);
+		Assert.isTrue(this.failTimeout4.getCreateTime() == this.failTimeout5.getCreateTime());
+		Assert.isTrue(this.failTimeout5.getCreateTime() < this.failTimeout6.getCreateTime());
+		Assert.isTrue(this.failTimeout4.getTimeout() == 9000);
+		Assert.isTrue(this.failTimeout5.getTimeout() == 4000);
+		Assert.isTrue(this.failTimeout6.getTimeout() == 3000);
 //		}catch(Exception e){
 //			try {
 //				Thread.sleep(500000);
@@ -186,6 +191,7 @@ public class FailTest {
 //			}
 //		}
 	}
+	
 	//串联并联混合测试
 	@Test
 	public void testTimeoutException2(){

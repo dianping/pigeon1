@@ -3,6 +3,12 @@
  */
 package com.dianping.dpsf.invoke;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import com.dianping.cat.Cat;
 import com.dianping.cat.message.MessageProducer;
 import com.dianping.cat.message.Transaction;
@@ -11,9 +17,11 @@ import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.async.ServiceFuture;
 import com.dianping.dpsf.async.ServiceFutureFactory;
 import com.dianping.dpsf.async.ServiceFutureImpl;
-import com.dianping.dpsf.component.*;
+import com.dianping.dpsf.component.DPSFMetaData;
+import com.dianping.dpsf.component.DPSFRequest;
+import com.dianping.dpsf.component.DPSFResponse;
+import com.dianping.dpsf.component.Invoker;
 import com.dianping.dpsf.component.impl.CallbackFuture;
-import com.dianping.dpsf.component.impl.DefaultInvoker;
 import com.dianping.dpsf.component.impl.InvocationInvokeContextImpl;
 import com.dianping.dpsf.component.impl.ServiceWarpCallback;
 import com.dianping.dpsf.control.PigeonConfig;
@@ -21,11 +29,6 @@ import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.protocol.DefaultRequest;
 import com.site.helper.Splitters;
-import org.apache.log4j.Logger;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * <p>
@@ -42,22 +45,17 @@ import java.util.List;
  */
 public class ProxyInvoker implements InvocationHandler {
 
-	private static Logger log = DPSFLog.getLogger();
+	private Logger                     logger                 = DPSFLog.getLogger();
+	private DPSFMetaData               metaData;
+	private RemoteInvocationHandler    handler;
+    private Invoker                    deprecatedInvoker;
 
-	private DPSFMetaData metaData;
-	private RemoteInvocationHandler handler;
-
-	public ProxyInvoker(DPSFMetaData metaData, RemoteInvocationHandler handler) {
-		this.metaData = metaData;
+	public ProxyInvoker(DPSFMetaData metaData, RemoteInvocationHandler handler, Invoker deprecatedInvoker) {
+        this.metaData = metaData;
 		this.handler = handler;
+		this.deprecatedInvoker = deprecatedInvoker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
-	 * java.lang.reflect.Method, java.lang.Object[])
-	 */
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		if (PigeonConfig.isUseNewInvokeLogic()) {
@@ -75,16 +73,13 @@ public class ProxyInvoker implements InvocationHandler {
 			if ("equals".equals(methodName) && parameterTypes.length == 1) {
 				return handler.equals(args[0]);
 			}
-			return extractResult(
-					handler.handle(new InvocationInvokeContextImpl(metaData,
-							method, args)), method.getReturnType());
+			return extractResult(handler.handle(new InvocationInvokeContextImpl(metaData, method, args)), method.getReturnType());
 		} else {
 			return oldInvoke(proxy, method, args);
 		}
 	}
 
-	private Object extractResult(DPSFResponse response, Class<?> returnType)
-			throws Throwable {
+	private Object extractResult(DPSFResponse response, Class<?> returnType) throws Throwable {
 		Object responseReturn = response.getReturn();
 		if (responseReturn != null) {
 			int messageType = response.getMessageType();
@@ -95,8 +90,7 @@ public class ProxyInvoker implements InvocationHandler {
 				throw (Throwable) responseReturn;
 			}
 			throw new DPSFException(
-					"Unsupported response to extract result with type["
-							+ messageType + "].");
+					"Unsupported response to extract result with type[" + messageType + "].");
 		}
 		return getReturn(returnType);
 	}
@@ -146,32 +140,29 @@ public class ProxyInvoker implements InvocationHandler {
 			return method.hashCode();
 		}
 		long now = 0;
-		if (log.isDebugEnabled()) {
+		if (logger.isDebugEnabled()) {
 			now = System.nanoTime();
 		}
-		DPSFRequest request = new DefaultRequest(
-				this.metaData.getServiceName(), method.getName(), args,
+		DPSFRequest request = new DefaultRequest(this.metaData.getServiceName(), method.getName(), args,
 				this.metaData.getSerialize(), Constants.MESSAGE_TYPE_SERVICE,
 				this.metaData.getTimeout(), method.getParameterTypes());
 		try {
 			t.addData("CallType", this.metaData.getCallMethod());
-			if (Constants.CALL_SYNC.equalsIgnoreCase(this.metaData
-					.getCallMethod())) {
+			if (Constants.CALL_SYNC.equalsIgnoreCase(this.metaData.getCallMethod())) {
 				DPSFResponse res = null;
 				try {
-					res = DefaultInvoker.getInstance().invokeSync(request,
-							metaData, null);
+					res = deprecatedInvoker.invokeSync(request, metaData, null);
 				} catch (NetException e) {
-					log.error(e.getMessage(), e);
+					logger.error(e.getMessage(), e);
 					throw e;
 				}
 				if (now > 0) {
-					if (log.isDebugEnabled()) {
-						log.debug("service:" + this.metaData.getServiceName()
+					if (logger.isDebugEnabled()) {
+						logger.debug("service:" + this.metaData.getServiceName()
 								+ "_" + method.getName());
-						log.debug("execute time(microsecond):"
+						logger.debug("execute time(microsecond):"
 								+ (System.nanoTime() - now) / 1000);
-						log.debug("RequestId:" + res.getSequence());
+						logger.debug("RequestId:" + res.getSequence());
 					}
 				}
 				if (res.getMessageType() == Constants.MESSAGE_TYPE_SERVICE) {
@@ -179,49 +170,43 @@ public class ProxyInvoker implements InvocationHandler {
 				} else if (res.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION
 						|| res.getMessageType() == Constants.MESSAGE_TYPE_SERVICE_EXCEPTION) {
 					Throwable cause = (Throwable) res.getReturn();
-					log.error(cause.getMessage(), cause);
+					logger.error(cause.getMessage(), cause);
 					throw cause;
 				}
 				throw new DPSFException("no result to call");
 			} else if (Constants.CALL_CALLBACK.equals(this.metaData
 					.getCallMethod())) {
 				try {
-					DefaultInvoker.getInstance().invokeCallback(request,
-							metaData, null,
+				    deprecatedInvoker.invokeCallback(request, metaData, null,
 							new ServiceWarpCallback(metaData.getCallback()));
 				} catch (NetException e) {
-					log.error(e.getMessage(), e);
+					logger.error(e.getMessage(), e);
 					throw e;
 				}
 				return getReturn(method.getReturnType());
 			} else if (Constants.CALL_FUTURE.equals(this.metaData
 					.getCallMethod())) {
 				try {
-					CallbackFuture future = new ServiceFutureImpl(
-							this.metaData.getTimeout());
+					CallbackFuture future = new ServiceFutureImpl(this.metaData.getTimeout());
 					ServiceFutureFactory.setFuture((ServiceFuture) future);
-					DefaultInvoker.getInstance().invokeCallback(request,
-							metaData, null, future);
+					deprecatedInvoker.invokeCallback(request, metaData, null, future);
 				} catch (Exception e) {
 					ServiceFutureFactory.remove();
-					log.error(e.getMessage(), e);
+					logger.error(e.getMessage(), e);
 					throw e;
 				}
 				return getReturn(method.getReturnType());
-			} else if (Constants.CALL_ONEWAY.equals(this.metaData
-					.getCallMethod())) {
+			} else if (Constants.CALL_ONEWAY.equals(this.metaData.getCallMethod())) {
 				try {
-					DefaultInvoker.getInstance().invokeOneway(request,
-							metaData, null);
+				    deprecatedInvoker.invokeOneway(request, metaData, null);
 				} catch (NetException e) {
-					log.error(e.getMessage(), e);
+					logger.error(e.getMessage(), e);
 					throw e;
 				}
 				return getReturn(method.getReturnType());
 			}
 			DPSFException dpsfException = new DPSFException(
-					"callmethod configure is error:"
-							+ this.metaData.getCallMethod());
+					"callmethod configure is error:" + this.metaData.getCallMethod());
 			throw dpsfException;
 		} catch (Exception e) {
 			t.setStatus(e);

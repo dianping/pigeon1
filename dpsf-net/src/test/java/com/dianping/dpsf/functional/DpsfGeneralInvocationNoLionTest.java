@@ -19,29 +19,17 @@ import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.async.ServiceCallback;
 import com.dianping.dpsf.async.ServiceFuture;
 import com.dianping.dpsf.async.ServiceFutureFactory;
-import com.dianping.dpsf.channel.protobuf.DefaultRpcController;
 import com.dianping.dpsf.context.ClientContext;
 import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetTimeoutException;
-import com.dianping.dpsf.invoke.filter.cluster.FailoverClusterInvokeFilter;
 import com.dianping.dpsf.net.channel.cluster.loadbalance.LoadAutoawareLoadBalance;
 import com.dianping.dpsf.net.channel.cluster.loadbalance.RandomLoadBalance;
-import com.dianping.dpsf.protocol.protobuf.DpsfTestMessages.CreateOrderRequest;
-import com.dianping.dpsf.protocol.protobuf.DpsfTestMessages.CreateOrderResponse;
-import com.dianping.dpsf.protocol.protobuf.DpsfTestMessages.OrderID;
-import com.dianping.dpsf.protocol.protobuf.DpsfTestMessages.OrderService.BlockingInterface;
-import com.dianping.dpsf.protocol.thrift.Customer;
-import com.dianping.dpsf.protocol.thrift.CustomerService.Iface;
-import com.dianping.dpsf.spring.ProxyBeanFactory;
 import com.dianping.dpsf.support.BusinessException;
 import com.dianping.dpsf.support.DemoService;
 import com.dianping.dpsf.support.DpsfBaseFunctionalTest;
-import com.google.protobuf.ServiceException;
-import org.apache.thrift.TException;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
@@ -191,44 +179,6 @@ public class DpsfGeneralInvocationNoLionTest extends DpsfBaseFunctionalTest {
         DemoService demoServiceStub = createDemoServiceStub(Constants.SERIALIZE_HESSIAN, Constants.CALL_SYNC, DEMO_SERVICE_HOSTS_WITH_INVALID, "1,1");
         String echoReturn = demoServiceStub.echo(DEMO_MESSAGE);
         assertEquals(DEMO_EXPECT_RETURN, echoReturn);
-    }
-
-    @Test
-    public void testSyncWithProtobuf() throws ServiceException {
-        BlockingInterface orderServiceStub = createOrderServiceStub(Constants.CALL_SYNC, DEMO_SERVICE_HOST1, "1");
-        CreateOrderRequest request = CreateOrderRequest.newBuilder().setProductName("mp3").setCount(3).build();
-        CreateOrderResponse response = orderServiceStub.createOrder(new DefaultRpcController(), request);
-        assertEquals(true, response.getSucceed());
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testSyncWithProtobufAndError() throws ServiceException {
-        BlockingInterface orderServiceStub = createOrderServiceStub(Constants.CALL_SYNC, DEMO_SERVICE_HOST1, "1");
-        OrderID request2 = OrderID.newBuilder().setId(3).build();
-        orderServiceStub.getOrder(new DefaultRpcController(), request2);
-    }
-
-    @Test
-    public void testSyncWithThrift() throws com.dianping.dpsf.protocol.thrift.ServiceException, TException {
-        Iface customerServiceStub = createCustomerServiceStub(Constants.CALL_SYNC, DEMO_SERVICE_HOST1, "1");
-        int customerId = 3;
-        Customer customer = customerServiceStub.getCustomer(customerId);
-        assertNotNull(customer);
-        assertEquals("pigeon", customer.getName());
-        assertEquals(customerId, customer.getAge());
-    }
-
-    @Test
-    public void testSyncWithThriftAndError() throws com.dianping.dpsf.protocol.thrift.ServiceException, TException {
-        Iface customerServiceStub = createCustomerServiceStub(Constants.CALL_SYNC, DEMO_SERVICE_HOST1, "1");
-        Customer customer = new Customer(null, 3);
-        try {
-            customerServiceStub.createCustomer(customer);
-        } catch (TException e) {
-            String errorMsg = e.getMessage();
-            assertTrue(errorMsg.contains("ServiceException") && errorMsg.contains("code:20")
-                    && errorMsg.contains("name field not set"));
-        }
     }
 
     @Test(expected = NetTimeoutException.class)

@@ -12,12 +12,19 @@
  */
 package com.dianping.dpsf.invoke.filter;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.ContextUtil;
 import com.dianping.dpsf.async.ServiceFuture;
 import com.dianping.dpsf.async.ServiceFutureFactory;
 import com.dianping.dpsf.async.ServiceFutureImpl;
-import com.dianping.dpsf.component.*;
+import com.dianping.dpsf.component.DPSFCallback;
+import com.dianping.dpsf.component.DPSFMetaData;
+import com.dianping.dpsf.component.DPSFRequest;
+import com.dianping.dpsf.component.DPSFResponse;
+import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.component.impl.CallbackFuture;
 import com.dianping.dpsf.component.impl.ServiceWarpCallback;
 import com.dianping.dpsf.exception.DPSFException;
@@ -26,9 +33,7 @@ import com.dianping.dpsf.exception.ServiceException;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.invoke.RemoteInvocationRepository;
 import com.dianping.dpsf.net.channel.Client;
-
-import java.io.Serializable;
-import java.util.Map;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 
 /**
  * 执行实际的Remote Call，包括Sync, Future，Callback，Oneway
@@ -37,11 +42,11 @@ import java.util.Map;
  */
 public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
 
-    private RemoteInvocationRepository remoteInvocationRepository = RemoteInvocationRepository.INSTANCE;
-    private static final DPSFResponse NO_RETURN_RESPONSE = new NoReturnResponse();
-
-    public RemoteCallInvokeFilter(int order) {
-        super(order);
+    private RemoteInvocationRepository  remoteInvocationRepository;
+    private static final DPSFResponse   NO_RETURN_RESPONSE          = new NoReturnResponse();
+    
+    public RemoteCallInvokeFilter(RemoteInvocationRepository remoteInvocationRepository) {
+        this.remoteInvocationRepository = remoteInvocationRepository;
     }
 
     @Override
@@ -99,10 +104,6 @@ public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
             }
         }
         request.setContext(contextHolder);
-    }
-
-    public void setRemoteInvocationRepository(RemoteInvocationRepository remoteInvocationRepository) {
-        this.remoteInvocationRepository = remoteInvocationRepository;
     }
 
     static class NoReturnResponse implements DPSFResponse {

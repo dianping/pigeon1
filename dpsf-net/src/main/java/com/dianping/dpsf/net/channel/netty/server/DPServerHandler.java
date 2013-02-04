@@ -10,6 +10,7 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.jboss.netty.channel.group.ChannelGroup;
 
 import com.dianping.cat.Cat;
 import com.dianping.dpsf.Constants;
@@ -34,10 +35,12 @@ public class DPServerHandler extends SimpleChannelUpstreamHandler{
 	
 	private static Logger log = DPSFLog.getLogger();
 	
-	 private RequestProcessor processor = null;
+	private RequestProcessor       processor;
+    private ChannelGroup           channelGroup;
 	 
-	 public DPServerHandler(RequestProcessor processor){
-		 this.processor = processor;
+	 public DPServerHandler(ChannelGroup channelGroup, RequestProcessor processor){
+         this.channelGroup = channelGroup;
+         this.processor = processor;
 	 }
 	 
 	 @Override
@@ -75,7 +78,8 @@ public class DPServerHandler extends SimpleChannelUpstreamHandler{
 	 
 	 @Override 
 
-	 public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {  
+	 public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {
+	     this.channelGroup.add(e.getChannel());
 		 this.processor.addChannel(new NettyChannel(e.getChannel()));
 	 }
 	 

@@ -20,6 +20,7 @@ import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.context.ClientContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 
 /**
  * 关于Service调用上下文的设置
@@ -27,10 +28,6 @@ import com.dianping.dpsf.net.channel.Client;
  * @author danson.liu
  */
 public class ContextPrepareInvokeFilter extends InvocationInvokeFilter {
-
-	public ContextPrepareInvokeFilter(int order) {
-		super(order);
-	}
 
 	@Override
 	public DPSFResponse invoke(RemoteInvocationHandler handler,
@@ -42,11 +39,9 @@ public class ContextPrepareInvokeFilter extends InvocationInvokeFilter {
 	}
 
 	private void initRequest(DPSFRequest request) {
-		Object createTime = ContextUtil
-				.getLocalContext(Constants.REQUEST_CREATE_TIME);
+		Object createTime = ContextUtil.getLocalContext(Constants.REQUEST_CREATE_TIME);
 		if (createTime != null) {
-			request.setCreateMillisTime(Long.parseLong(String
-					.valueOf(createTime)));
+			request.setCreateMillisTime(Long.parseLong(String.valueOf(createTime)));
 		} else {
 			request.setCreateMillisTime(System.currentTimeMillis());
 		}

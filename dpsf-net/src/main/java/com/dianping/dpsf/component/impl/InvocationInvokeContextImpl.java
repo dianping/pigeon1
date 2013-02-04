@@ -16,9 +16,9 @@ import com.dianping.dpsf.net.channel.Client;
 public class InvocationInvokeContextImpl extends AbstractInvocationContext implements InvocationInvokeContext{
 
     private DPSFMetaData                    metaData;
-    private Method 							method;
-    private Object[] 						arguments;
-    private Client 							client;
+    private Method                          method;
+    private Object[]                        arguments;
+    private Client                          client;
 
     public InvocationInvokeContextImpl(DPSFMetaData metaData,Method method,Object[] arguments) {
     	super(null);

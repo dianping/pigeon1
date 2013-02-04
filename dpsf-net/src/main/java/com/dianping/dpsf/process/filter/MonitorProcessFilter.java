@@ -12,6 +12,7 @@ import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.invoke.filter.CatMonitorSupport;
+import com.dianping.dpsf.spi.InvocationProcessFilter;
 import com.site.helper.Stringizers;
 import org.jboss.netty.channel.Channel;
 
@@ -27,10 +28,6 @@ import java.net.InetSocketAddress;
 public class MonitorProcessFilter extends InvocationProcessFilter {
 
     private CatMonitorSupport monitorSupport = new CatMonitorSupport();
-
-    public MonitorProcessFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationProcessContext invocationContext) throws Throwable {
