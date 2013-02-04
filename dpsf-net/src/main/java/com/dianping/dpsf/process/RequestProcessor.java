@@ -28,6 +28,7 @@ import com.dianping.dpsf.jmx.DpsfResponsorMonitor;
 import com.dianping.dpsf.jmx.ManagementContext;
 import com.dianping.dpsf.net.channel.DPSFChannel;
 import com.dianping.dpsf.repository.ServiceRepository;
+import com.dianping.dpsf.stat.ServiceStat;
 import com.dianping.dpsf.telnet.cmd.TelnetCommandState;
 import com.dianping.dpsf.thread.CycThreadPool;
 import com.dianping.dpsf.thread.DPSFThreadPool;
@@ -102,7 +103,7 @@ public class RequestProcessor {
                         invocationHandler.handle(invocationContext);
                     } catch (Throwable t) {
                         logger.error("Process request failed with invocation handler, you should never be here.", t);
-                    }finally{
+                    } finally{
                     	listener.executorCompleted(request);
                     }
                 }
@@ -186,7 +187,7 @@ public class RequestProcessor {
 								contexts.remove(request);
 							}
 							fail(request);
-							RequestExecutor.requestStat.failCountService(request.getServiceName());
+							ServiceStat.getServerServiceStat().failCountService(request.getServiceName());
 						}
 					}
 				} catch(Exception e) {

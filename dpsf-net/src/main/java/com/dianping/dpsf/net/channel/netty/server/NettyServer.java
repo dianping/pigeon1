@@ -6,9 +6,12 @@ import java.util.concurrent.Executors;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ServerBootstrap;
+import org.jboss.netty.channel.group.ChannelGroup;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 import com.dianping.dpsf.DPSFLog;
+import com.dianping.dpsf.Disposable;
 import com.dianping.dpsf.net.channel.Server;
 import com.dianping.dpsf.process.RequestProcessor;
 import com.dianping.dpsf.repository.ServiceRepository;
@@ -25,7 +28,7 @@ import com.dianping.dpsf.thread.DefaultThreadFactory;
   * @version 1.0    
   * @created 2010-8-3 上午10:47:33   
   */ 
-public class NettyServer implements Server{
+public class NettyServer implements Server, Disposable {
 	
 	private static Logger log = DPSFLog.getLogger();
 	
@@ -33,7 +36,8 @@ public class NettyServer implements Server{
 	
 	private int port = 20000;
 	
-	private ServerBootstrap bootstrap;
+	private ServerBootstrap    bootstrap;
+	private ChannelGroup       channelGroup = new DefaultChannelGroup();
 	
 	private boolean started = false;
 
@@ -48,7 +52,7 @@ public class NettyServer implements Server{
                 new NioServerSocketChannelFactory(
                 		Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Server-BossExecutor")),
                 		Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Server-WorkerExecutor"))));
-		this.bootstrap.setPipelineFactory(new DPServerChannelPipelineFactory(new RequestProcessor(sr, invocationHandler,this.port,corePoolSize,maxPoolSize,workQueueSize)));
+		this.bootstrap.setPipelineFactory(new DPServerChannelPipelineFactory(channelGroup, new RequestProcessor(sr, invocationHandler,this.port,corePoolSize,maxPoolSize,workQueueSize)));
 	}
 	
 
@@ -68,9 +72,17 @@ public class NettyServer implements Server{
 	}
 
 	public void stop() {
-		this.bootstrap.releaseExternalResources();
-		this.started = false;
+	    if (this.started) {
+	        this.channelGroup.close().awaitUninterruptibly();
+    		this.bootstrap.releaseExternalResources();
+    		this.started = false;
+	    }
 	}
+
+    @Override
+    public void destroy() throws Exception {
+        this.stop();
+    }
 
 
 }

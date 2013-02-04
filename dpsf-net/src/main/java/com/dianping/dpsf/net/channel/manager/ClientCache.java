@@ -20,6 +20,7 @@ import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.config.ClusterConfigure;
 import com.dianping.dpsf.net.channel.config.ClusterListener;
+import com.dianping.dpsf.net.channel.config.Configure;
 import com.dianping.dpsf.net.channel.config.ConnectMetaData;
 import com.dianping.dpsf.net.channel.netty.client.NettyClient;
 import com.dianping.dpsf.thread.DefaultThreadFactory;
@@ -50,11 +51,14 @@ public class ClientCache implements ClusterListener{
 	private ReconnectTask reconnectTask;
 
 	private ScheduledThreadPoolExecutor closeExecutor;
+
+    private Configure clusterConfigure;
 	
-	public ClientCache(ClientManager clientManager, HeartBeatTask heartTask, ReconnectTask reconnectTask){
+	public ClientCache(ClientManager clientManager, HeartBeatTask heartTask, ReconnectTask reconnectTask, Configure clusterConfigure){
 		this.clientManager = clientManager;
 		this.heartTask = heartTask;
 		this.reconnectTask = reconnectTask;
+        this.clusterConfigure = clusterConfigure;
 		this.heartTask.setWorkingClients(this.serviceClients);
 		closeExecutor = new ScheduledThreadPoolExecutor(5,new DefaultThreadFactory("ClientCache-CloseExecutor"));
 	}
@@ -115,8 +119,8 @@ public class ClientCache implements ClusterListener{
 					if(!clientList.contains(client))
 						clientList.add(client);
 				}
-			}else{
-				ClusterConfigure.getInstance().removeConnect(connect);
+			} else {
+			    clusterConfigure.removeConnect(connect);
 			}
 			
 		} catch (NetException e) {

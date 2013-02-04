@@ -17,6 +17,7 @@ import com.dianping.dpsf.exception.NetException;
  * @version 1.0
  * @created 2010-8-18 下午03:14:21
  */
+@Deprecated
 public interface Invoker {
 
  DPSFResponse invokeSync(DPSFRequest request, DPSFMetaData metaData, DPSFController controller) throws NetException, InterruptedException;

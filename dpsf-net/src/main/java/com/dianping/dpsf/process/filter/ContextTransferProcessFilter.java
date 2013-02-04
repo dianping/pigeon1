@@ -5,6 +5,7 @@ import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
+import com.dianping.dpsf.spi.InvocationProcessFilter;
 import com.dianping.dpsf.stat.ServiceStat;
 
 /**
@@ -17,10 +18,6 @@ import com.dianping.dpsf.stat.ServiceStat;
 public class ContextTransferProcessFilter extends InvocationProcessFilter {
 
     private ServiceStat serverServiceStat = ServiceStat.getServerServiceStat();
-
-    public ContextTransferProcessFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationProcessContext invocationContext) throws Throwable {

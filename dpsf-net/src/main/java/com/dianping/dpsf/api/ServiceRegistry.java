@@ -9,12 +9,14 @@ import java.util.Map;
 
 
 import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
-import com.dianping.dpsf.process.filter.InvocationProcessFilter;
-import com.dianping.dpsf.spring.PigeonBootStrap;
+import com.dianping.dpsf.spi.InvocationProcessFilter;
 import org.apache.log4j.Logger;
 
 import com.dianping.dpsf.DPSFLog;
+import com.dianping.dpsf.PigeonBootStrap;
+import com.dianping.dpsf.PigeonBootStrap.Container;
 import com.dianping.dpsf.exception.ServiceException;
+import com.dianping.dpsf.net.channel.Server;
 import com.dianping.dpsf.net.channel.netty.server.NettyServer;
 import com.dianping.dpsf.repository.ServiceRepository;
 
@@ -48,6 +50,9 @@ public class ServiceRegistry {
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 100;
     private Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>> customizedInvocationFilters;
+
+    private Container       container;
+    private Server          server;
 	
 	public ServiceRegistry(){
 		
@@ -60,10 +65,8 @@ public class ServiceRegistry {
 	public void init() throws ClassNotFoundException {
 		if("dp".equals(this.serviceType.trim().toLowerCase())){
 			initDPService();
-		}else if("ws".equals(this.serviceType.trim().toLowerCase())){
-			initWSService();
-		}else{
-			throw new RuntimeException("serviceType is error:"+this.serviceType);
+		} else{
+			throw new RuntimeException("serviceType is error:" + this.serviceType);
 		}
 		
 	}
@@ -78,11 +81,12 @@ public class ServiceRegistry {
 	
 	private void initDPService() throws ClassNotFoundException {
 		isInit = true;
-        PigeonBootStrap.setupServer();
+        initializeServerComponents();
 		this.sr = new ServiceRepository();
-		com.dianping.dpsf.net.channel.Server server = new NettyServer(port, corePoolSize, maxPoolSize, workQueueSize,
+		server = new NettyServer(port, corePoolSize, maxPoolSize, workQueueSize,
                 this.sr, RemoteInvocationHandlerFactory.createProcessHandler(customizedInvocationFilters));
 		server.start();
+		container.registerComponent(server);
 		logger.info("DPSF Server start ************");
 		
 		if(this.services != null){
@@ -91,19 +95,11 @@ public class ServiceRegistry {
 			}
 		}
 	}
-	
-	private void initWSService() {
-		
-//		Class wsClazz = Class.forName("com.dianping.dpsf.spring.WSInit");
-//		Method[] ms = wsClazz.getDeclaredMethods();
-//		Method initMethod = null;
-//		for(Method m : ms){
-//			if(m.getName().equals("init")){
-//				m.invoke(null, new Object[]{this.itemName,this.applicationContext,this.services,this.port});
-//			}
-//		}
-//        logger.info("Jetty Server start......");
-	}
+
+    private void initializeServerComponents() {
+        PigeonBootStrap.setupServer();
+        container = PigeonBootStrap.getContainer();
+    }
 
 	/**
 	 * @return the port

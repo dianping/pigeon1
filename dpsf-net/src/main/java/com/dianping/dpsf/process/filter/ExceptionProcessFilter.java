@@ -6,6 +6,7 @@ import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.process.ResponseFactory;
+import com.dianping.dpsf.spi.InvocationProcessFilter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,10 +16,6 @@ import com.dianping.dpsf.process.ResponseFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class ExceptionProcessFilter extends InvocationProcessFilter {
-
-    public ExceptionProcessFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationProcessContext invocationContext) throws Throwable {

@@ -23,21 +23,21 @@ import java.util.Map;
  */
 public interface InvocationContext {
 
-    public DPSFRequest getRequest();
+    public DPSFRequest                 getRequest();
     
-    public void setRequest(DPSFRequest request);
+    public void                        setRequest(DPSFRequest request);
 
-	public DPSFResponse getResponse();
+	public DPSFResponse                getResponse();
 	
-	public void setResponse(DPSFResponse response);
+	public void                        setResponse(DPSFResponse response);
 	
-	public void putContextValue(String key, Serializable value);
+	public void                        putContextValue(String key, Serializable value);
 	
-	public Serializable getContextValue(String key);
+	public Serializable                getContextValue(String key);
 	
-	public Map<String, Serializable> getContextValues();
+	public Map<String, Serializable>   getContextValues();
 
-    public void putTransientContextValue(String key, Object value);
+    public void                        putTransientContextValue(String key, Object value);
 
-    public Object getTransientContextValue(String key);
+    public Object                      getTransientContextValue(String key);
 }

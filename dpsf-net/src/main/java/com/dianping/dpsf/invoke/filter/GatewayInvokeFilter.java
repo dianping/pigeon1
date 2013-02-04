@@ -6,6 +6,7 @@ import com.dianping.dpsf.component.DPSFMetaData;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 
 /**
  * 对Service调用执行一些Finalize处理
@@ -15,10 +16,6 @@ import com.dianping.dpsf.invoke.RemoteInvocationHandler;
  * To change this template use File | Settings | File Templates.
  */
 public class GatewayInvokeFilter extends InvocationInvokeFilter {
-
-    public GatewayInvokeFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {

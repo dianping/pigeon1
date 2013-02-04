@@ -6,27 +6,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.dianping.dpsf.component.ClusterMetaParser;
-import com.dianping.dpsf.component.impl.DefaultClusterMetaParser;
-import com.dianping.dpsf.exception.DPSFException;
-import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
-import com.dianping.dpsf.invoke.filter.InvocationInvokeFilter;
-import com.dianping.dpsf.spring.PigeonBootStrap;
 import org.apache.log4j.Logger;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.DPSFLog;
+import com.dianping.dpsf.PigeonBootStrap;
+import com.dianping.dpsf.PigeonBootStrap.Container;
 import com.dianping.dpsf.async.ServiceCallback;
+import com.dianping.dpsf.component.ClusterMetaParser;
 import com.dianping.dpsf.component.DPSFMetaData;
+import com.dianping.dpsf.component.Invoker;
+import com.dianping.dpsf.component.impl.DefaultClusterMetaParser;
 import com.dianping.dpsf.control.PigeonConfig;
+import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetException;
+import com.dianping.dpsf.invoke.ProxyInvoker;
+import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
 import com.dianping.dpsf.net.channel.cluster.LoadBalance;
-import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
+import com.dianping.dpsf.net.channel.manager.ClientManager;
 import com.dianping.dpsf.net.channel.manager.LoadBalanceManager;
 import com.dianping.dpsf.net.channel.netty.NettyClientManager;
-import com.dianping.dpsf.invoke.ProxyInvoker;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 
-public class ProxyFactory<IFACE>{
+public class ProxyFactory<IFACE> {
 
 	private static Logger logger = DPSFLog.getLogger();
 
@@ -65,19 +67,21 @@ public class ProxyFactory<IFACE>{
     private Map<InvocationInvokeFilter.InvokePhase, List<InvocationInvokeFilter>> customizedInvocationFilters;
     private Map<String, String> clusterConfig;
     private ClusterMetaParser clusterMetaParser = new DefaultClusterMetaParser();
+    
+    private Container       container;
+    private ClientManager   clientManager;
+    private Invoker         deprecatedInvoker;
 
     public void init() {
-        PigeonBootStrap.setupClient();
+        initializeClientComponents();
 		if(this.group == null){
 			this.group = this.iface.getName()+"_"+groupId.incrementAndGet();
 		}
 
-		if(Constants.SERIALIZE_JAVA.equalsIgnoreCase(this.serialize)){
+		if(Constants.SERIALIZE_JAVA.equalsIgnoreCase(this.serialize) || Constants.SERIALIZE_HESSIAN.equalsIgnoreCase(this.serialize)){
 			initJavaAndHessian();
-		}else if(Constants.SERIALIZE_HESSIAN.equalsIgnoreCase(this.serialize)){
-			initJavaAndHessian();
-		}else {
-            throw new DPSFException("Only hessian and java serialize type supported!");
+		} else {
+            throw new DPSFException("Only hessian and java serialize type supported now!");
 		}
 
 		configLoadBalance();
@@ -104,15 +108,14 @@ public class ProxyFactory<IFACE>{
 			System.setProperty(NettyClientManager.DISABLE_DYNAMIC_SERVICE, "true");	//禁用动态服务
 			for(int i=0;i<hostArray.length;i++){
 				try {
-					ClientManagerFactory.getClientManager().registeClient(
-							this.serviceName,this.group, hostArray[i],weightArray[i]);
+				    clientManager.registeClient(this.serviceName,this.group, hostArray[i],weightArray[i]);
 				} catch (NetException e) {
 					logger.error(e.getMessage(),e);
 				}
 			}
 		} else {
 			logger.info("host list is not set, try to fetch from ZK");
-			ClientManagerFactory.getClientManager().findAndRegisterClientFor(serviceName, group);
+			clientManager.findAndRegisterClientFor(serviceName, group);
 		}
 
 	}
@@ -125,16 +128,24 @@ public class ProxyFactory<IFACE>{
 	}
 
 	public void setGroupRoute(String serviceName, String group, Set<String> connectSet) {
-		ClientManagerFactory.getClientManager().setGroupRoute(serviceName, group, connectSet);
+	    clientManager.setGroupRoute(serviceName, group, connectSet);
 	}
 
-	private void initJavaAndHessian() {
+	@SuppressWarnings("unchecked")
+    private void initJavaAndHessian() {
         DPSFMetaData metadata = new DPSFMetaData(this.serviceName, this.timeout, this.callMethod, this.serialize,
                 this.callback, this.group, this.writeBufferLimit);
         metadata.setClusterMeta(clusterMetaParser.parse(clusterConfig));
-        this.obj = (IFACE)Proxy.newProxyInstance(ProxyFactory.class.getClassLoader(), new Class[]{this.iface},
-                new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createInvokeHandler(customizedInvocationFilters)));
+        this.obj = (IFACE) Proxy.newProxyInstance(ProxyFactory.class.getClassLoader(), new Class[]{this.iface},
+                new ProxyInvoker(metadata, RemoteInvocationHandlerFactory.createInvokeHandler(customizedInvocationFilters), deprecatedInvoker));
 	}
+
+    private void initializeClientComponents() {
+        PigeonBootStrap.setupClient();
+        this.container = PigeonBootStrap.getContainer();
+        this.clientManager = container.getComponentByType(ClientManager.class);
+        this.deprecatedInvoker = container.getComponentByType(Invoker.class);
+    }
 
 	public IFACE getProxy() throws Exception {
 		return this.obj;

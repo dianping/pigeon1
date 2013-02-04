@@ -22,6 +22,7 @@ import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 import com.site.helper.Stringizers;
 
 /**
@@ -32,10 +33,6 @@ import com.site.helper.Stringizers;
 public class RemoteCallMonitorInvokeFilter extends InvocationInvokeFilter {
 
     private CatMonitorSupport monitorSupport = new CatMonitorSupport();
-
-    public RemoteCallMonitorInvokeFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {

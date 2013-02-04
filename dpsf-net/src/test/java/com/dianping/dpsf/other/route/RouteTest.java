@@ -24,19 +24,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.dianping.dpsf.Constants;
+import com.dianping.dpsf.PigeonBootStrap;
+import com.dianping.dpsf.PigeonBootStrap.Container;
 import com.dianping.dpsf.component.DPSFRequest;
-import com.dianping.dpsf.component.Invoker;
-import com.dianping.dpsf.component.impl.DefaultInvoker;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
-import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
 import com.dianping.dpsf.net.channel.netty.NettyClientManager;
 import com.dianping.dpsf.other.echo.EchoServer;
 import com.dianping.dpsf.other.echo.EchoServer2;
@@ -62,6 +59,9 @@ public class RouteTest {
 	static String add4 = "127.0.0.1:19996";
 	
 	static ProxyBeanFactory f;
+
+    static ClientManager clientManager;
+	
 	@BeforeClass
 	public static void setMock() throws Exception {
 		
@@ -75,14 +75,14 @@ public class RouteTest {
 		PigeonClientMock.setServiceAddress(SN, add1);
 		
 		f = createProxyBeanFactory(SN, IEcho.class.getName());
-		
+		Container container = PigeonBootStrap.getContainer();
+		clientManager = container.getComponentByType(ClientManager.class);
 		request = new DefaultRequest(SN, "", null, Constants.SERILIZABLE_HESSIAN, Constants.MESSAGE_TYPE_SERVICE, 1000, null);
 	}
 	@AfterClass
 	public static void releaseMock(){
 		System.clearProperty(NettyClientManager.LION_CLIENT_CLASS);
-		DefaultInvoker.setInvoker(null);
-		ClientManagerFactory.setManager(null);
+		PigeonBootStrap.shutdown();
 	}
 
 	private static ProxyBeanFactory createProxyBeanFactory(String sn, String iface) throws Exception {
@@ -115,7 +115,7 @@ public class RouteTest {
 		List addList = Arrays.asList(adds);
 		setHostList(adds);
 		for (int i = 0; i < CNT; i++) {
-			Client client = ClientManagerFactory.getClientManager().getClient(SN, IEcho.class.getName() + "_1", request);
+			Client client = clientManager.getClient(SN, IEcho.class.getName() + "_1", request);
 			cnts[addList.indexOf(client.getAddress())]++;
 			((IEcho)f.getObject()).echo("aa");
 		}
@@ -124,8 +124,7 @@ public class RouteTest {
 	
 	@Test
 	public void testAddSingleConnect() throws Exception {
-		
-		Client client = ClientManagerFactory.getClientManager().getClient(SN, IEcho.class.getName() + "_1", request);
+		Client client = clientManager.getClient(SN, IEcho.class.getName() + "_1", request);
 		assertEquals(add1, client.getAddress());
 		
 		IEcho ie = (IEcho) f.getObject();
