@@ -18,6 +18,7 @@ import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.invoke.filter.cluster.ClusterInvokeFilter;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +32,6 @@ import java.util.Set;
 public class ClusterDelegateInvokeFilter extends InvocationInvokeFilter {
 
 	private static final Map<String, ClusterInvokeFilter> clusterFilters = new HashMap<String, ClusterInvokeFilter>();
-
-	public ClusterDelegateInvokeFilter(int order) {
-		super(order);
-	}
 
 	@Override
 	public DPSFResponse invoke(RemoteInvocationHandler handler,

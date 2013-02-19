@@ -15,6 +15,7 @@ package com.dianping.dpsf.invoke.filter;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 
 /**
  * 用于对一些弱依赖的Service接口方法进行MOCK，一旦调用该接口方法出错时，返回mock对象，不影响
@@ -23,10 +24,6 @@ import com.dianping.dpsf.invoke.RemoteInvocationHandler;
  * @author danson.liu
  */
 public class MockInvokeFilter extends InvocationInvokeFilter {
-
-    public MockInvokeFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {

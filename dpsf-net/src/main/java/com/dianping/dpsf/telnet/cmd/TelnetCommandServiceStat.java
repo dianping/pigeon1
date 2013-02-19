@@ -6,8 +6,7 @@ package com.dianping.dpsf.telnet.cmd;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.dianping.dpsf.component.impl.DefaultInvoker;
-import com.dianping.dpsf.process.RequestExecutor;
+import com.dianping.dpsf.stat.ServiceStat;
 import com.dianping.dpsf.stat.StatBean;
 import com.dianping.dpsf.telnet.TelnetCommandExecutor;
 
@@ -26,8 +25,6 @@ public class TelnetCommandServiceStat implements TelnetCommandExecutor{
 	
 	private static TelnetCommandServiceStat stat = new TelnetCommandServiceStat();
 	
-	private DefaultInvoker invoker;
-	
 	private String cmd = "-service";
 	private String desc = "service DPSF service allCount failCount executeTime";
 	
@@ -38,19 +35,15 @@ public class TelnetCommandServiceStat implements TelnetCommandExecutor{
 	public String execute(String[] cmds) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("**********client Service stat************\r\n\r\n");
-		if(this.invoker != null){
-			Map<String,StatBean> requestStat = this.invoker.getRequestStat().getRequestStat();
-			for(Entry<String,StatBean> entry : requestStat.entrySet()){
-				sb.append(entry.getKey()).append("::::allCount:").append(entry.getValue().getCount())
-				.append("    timeoutCount:").append(entry.getValue().getFailCount())
-				.append("    lastExeTime:").append(entry.getValue().getLastExeTime()).append("ms\r\n");
-			}
-		}else{
-			sb.append("invoker is not init \r\n");
+		Map<String,StatBean> requestStat = ServiceStat.getClientServiceStat().getRequestStat();
+		for(Entry<String,StatBean> entry : requestStat.entrySet()){
+			sb.append(entry.getKey()).append("::::allCount:").append(entry.getValue().getCount())
+			.append("    timeoutCount:").append(entry.getValue().getFailCount())
+			.append("    lastExeTime:").append(entry.getValue().getLastExeTime()).append("ms\r\n");
 		}
 		sb.append("\r\n\r\n");
 		sb.append("**********server Service stat************\r\n\r\n");
-		Map<String,StatBean> requestStat = RequestExecutor.requestStat.getRequestStat();
+		requestStat = ServiceStat.getServerServiceStat().getRequestStat();
 		if(requestStat != null && requestStat.size() > 0){
 			for(Entry<String,StatBean> entry : requestStat.entrySet()){
 				sb.append(entry.getKey()).append("::::allCount:").append(entry.getValue().getCount())
@@ -61,20 +54,6 @@ public class TelnetCommandServiceStat implements TelnetCommandExecutor{
 			sb.append("RequestExecutor is not init \r\n");
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * @return the invoker
-	 */
-	public DefaultInvoker getInvoker() {
-		return invoker;
-	}
-
-	/**
-	 * @param invoker the invoker to set
-	 */
-	public void setInvoker(DefaultInvoker invoker) {
-		this.invoker = invoker;
 	}
 
 	/* (non-Javadoc)

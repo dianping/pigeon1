@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.DPSFLog;
+import com.dianping.dpsf.Disposable;
 import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.exception.DPSFRuntimeException;
 import com.dianping.dpsf.exception.NetException;
@@ -23,6 +24,7 @@ import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.cluster.LoadBalance;
 import com.dianping.dpsf.net.channel.cluster.WeightAccessor;
 import com.dianping.dpsf.net.channel.config.ClusterConfigure;
+import com.dianping.dpsf.net.channel.config.Configure;
 
 /**    
  * <p>    
@@ -35,7 +37,7 @@ import com.dianping.dpsf.net.channel.config.ClusterConfigure;
  * @version 1.0    
  * @created 2010-8-9 下午05:37:59   
  */
-public class RouteManager implements WeightAccessor {
+public class RouteManager implements WeightAccessor, Disposable {
 	
 	private static Logger logger = DPSFLog.getLogger();
 	
@@ -45,23 +47,14 @@ public class RouteManager implements WeightAccessor {
 	private Map<String,Set<String>> groupMap = new ConcurrentHashMap<String,Set<String>>();
 	
 	private Map<String,List<Integer>> weightCache = new ConcurrentHashMap<String,List<Integer>>();
+
+    private final Configure clusterConfigure;
+    
+    private ServiceProviderChangeListener providerChangeListener = new InnerServiceProviderChangeListener();
 	
-	public RouteManager() {
-		LionNotifier.addListener(new ServiceProviderChangeListener() {
-			
-			@Override
-			public void hostWeightChanged(ServiceProviderChangeEvent event) {
-				setWeight(event.getConnect(), event.getWeight());
-			}
-			
-			@Override
-			public void providerAdded(ServiceProviderChangeEvent event) {
-			}
-			
-			@Override
-			public void providerRemoved(ServiceProviderChangeEvent event) {
-			}
-		});
+	public RouteManager(Configure clusterConfigure) {
+		this.clusterConfigure = clusterConfigure;
+        LionNotifier.addListener(providerChangeListener);
 	}
 	
 	public boolean enableGroupRouteToHost(String group, String connect) {
@@ -109,7 +102,7 @@ public class RouteManager implements WeightAccessor {
 		
 		while (!selectedClient.isConnected()) {
 			logger.error("Client is disconnected " + selectedClient.getAddress());
-			ClusterConfigure.getInstance().removeConnect(selectedClient.getAddress());
+			clusterConfigure.removeConnect(selectedClient.getAddress());
 			availableClients.remove(selectedClient);
 			if (availableClients.isEmpty()) {
 				break;
@@ -259,5 +252,25 @@ public class RouteManager implements WeightAccessor {
 		Integer weight = getWeight(serviceName, address);
 		return weight != null ? weight : 1;
 	}
+
+    @Override
+    public void destroy() throws Exception {
+        LionNotifier.removeListener(providerChangeListener);
+    }
+    
+    class InnerServiceProviderChangeListener implements ServiceProviderChangeListener {
+        @Override
+        public void hostWeightChanged(ServiceProviderChangeEvent event) {
+            setWeight(event.getConnect(), event.getWeight());
+        }
+        
+        @Override
+        public void providerAdded(ServiceProviderChangeEvent event) {
+        }
+        
+        @Override
+        public void providerRemoved(ServiceProviderChangeEvent event) {
+        }
+    }
 
 }

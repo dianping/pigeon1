@@ -24,9 +24,8 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.dianping.dpsf.PigeonBootStrap;
 import com.dianping.dpsf.async.ServiceFutureFactory;
-import com.dianping.dpsf.component.impl.DefaultInvoker;
-import com.dianping.dpsf.net.channel.manager.ClientManagerFactory;
 import com.dianping.dpsf.net.channel.netty.NettyClientManager;
 
 /**
@@ -34,7 +33,7 @@ import com.dianping.dpsf.net.channel.netty.NettyClientManager;
  * 
  */
 public class CentralStatTestCase {
-	private static Logger				log	= Logger.getLogger(CentralStatTestCase.class);
+	private static Logger				log	      = Logger.getLogger(CentralStatTestCase.class);
 	private static ApplicationContext	context;
 
 	@BeforeClass
@@ -48,8 +47,7 @@ public class CentralStatTestCase {
 	@AfterClass
 	public static void destroy() throws Exception {
 		System.setProperty(NettyClientManager.DISABLE_DYNAMIC_SERVICE, "false");
-		DefaultInvoker.setInvoker(null);
-		ClientManagerFactory.setManager(null);
+		PigeonBootStrap.shutdown();
 	}
 
 	@Test

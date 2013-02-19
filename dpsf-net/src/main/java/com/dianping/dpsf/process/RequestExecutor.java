@@ -49,7 +49,7 @@ public class RequestExecutor implements Runnable {
 
     private final static Logger logger = DPSFLog.getLogger();
 
-    public static ServiceStat requestStat = new ServiceStat();
+    private ServiceStat requestStat = ServiceStat.getServerServiceStat();
 
     private DPSFRequest request;
     private Channel channel;

@@ -20,6 +20,7 @@ import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.exception.NetTimeoutException;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
 import com.dianping.dpsf.net.channel.Client;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 import com.dianping.dpsf.stat.RpcStatsPool;
 import com.dianping.dpsf.stat.ServiceStat;
 
@@ -31,10 +32,6 @@ import com.dianping.dpsf.stat.ServiceStat;
 public class RemoteCallStatInvokeFilter extends InvocationInvokeFilter {
 
     private ServiceStat clientServiceStat = ServiceStat.getClientServiceStat();
-
-    public RemoteCallStatInvokeFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {

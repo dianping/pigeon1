@@ -7,6 +7,7 @@ import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
 import com.dianping.dpsf.control.PigeonConfig;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
+import com.dianping.dpsf.spi.InvocationProcessFilter;
 import org.jboss.netty.channel.Channel;
 
 /**
@@ -17,10 +18,6 @@ import org.jboss.netty.channel.Channel;
  * To change this template use File | Settings | File Templates.
  */
 public class WriteResponseProcessFilter extends InvocationProcessFilter {
-
-    public WriteResponseProcessFilter(int order) {
-        super(order);
-    }
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationProcessContext invocationContext) throws Throwable {

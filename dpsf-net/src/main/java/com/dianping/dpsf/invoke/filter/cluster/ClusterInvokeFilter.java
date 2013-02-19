@@ -15,7 +15,7 @@ package com.dianping.dpsf.invoke.filter.cluster;
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.component.DPSFMetaData;
 import com.dianping.dpsf.component.InvocationInvokeContext;
-import com.dianping.dpsf.invoke.filter.InvocationInvokeFilter;
+import com.dianping.dpsf.spi.InvocationInvokeFilter;
 import com.dianping.dpsf.net.channel.manager.ClientManager;
 import com.dianping.dpsf.protocol.DefaultRequest;
 
@@ -34,7 +34,6 @@ public abstract class ClusterInvokeFilter extends InvocationInvokeFilter {
     public static final String CONTEXT_CLUSTER_ITEM = "context-cluster-item";
 
     protected ClusterInvokeFilter(ClientManager clientManager) {
-        super(0);
         this.clientManager = clientManager;
     }
 

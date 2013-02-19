@@ -14,11 +14,11 @@ import com.dianping.dpsf.component.InvocationContext;
  */
 public abstract class AbstractInvocationContext implements InvocationContext{
 	
-	protected DPSFRequest request;
-	protected DPSFResponse response;
-	private Map<String, Serializable>       contextValues;
+	protected DPSFRequest                      request;
+	protected DPSFResponse                     response;
+	private Map<String, Serializable>          contextValues;
     //不会通过request传递到服务端，可用于filter之间传递参数
-    private Map<String, Object>             transientContextValues;
+    private Map<String, Object>                transientContextValues;
     
     public AbstractInvocationContext(DPSFRequest request){
     	this.request = request;

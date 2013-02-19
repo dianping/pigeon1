@@ -4,14 +4,19 @@
 package com.dianping.dpsf.net.channel.netty;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 
-import com.dianping.dpsf.invoke.RemoteInvocationRepository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -19,17 +24,22 @@ import org.jboss.netty.util.ThreadNameDeterminer;
 import org.jboss.netty.util.ThreadRenamingRunnable;
 
 import com.dianping.dpsf.Constants;
+import com.dianping.dpsf.ContainerAware;
 import com.dianping.dpsf.DPSFLog;
+import com.dianping.dpsf.Disposable;
+import com.dianping.dpsf.PigeonBootStrap.Container;
 import com.dianping.dpsf.component.DPSFCallback;
 import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.Invoker;
 import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.exception.ServiceException;
+import com.dianping.dpsf.invoke.RemoteInvocationRepository;
 import com.dianping.dpsf.jmx.DpsfRequestorMonitor;
 import com.dianping.dpsf.jmx.ManagementContext;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.config.ClusterConfigure;
+import com.dianping.dpsf.net.channel.config.Configure;
 import com.dianping.dpsf.net.channel.config.ConnectMetaData;
 import com.dianping.dpsf.net.channel.config.HostInfo;
 import com.dianping.dpsf.net.channel.manager.ClientCache;
@@ -61,7 +71,7 @@ import com.dianping.lion.pigeon.ServiceChange;
  * @version 1.0    
  * @created 2010-8-9 下午02:14:02   
  */
-public class NettyClientManager implements ClientManager{
+public class NettyClientManager implements ClientManager, ContainerAware, Disposable {
 	
 	private static Logger logger = DPSFLog.getLogger();
 	
@@ -73,12 +83,13 @@ public class NettyClientManager implements ClientManager{
 	
 	private final static int WEIGHT_DEFAULT = 1;
 	
+	private Configure   clusterConfigure;
 	private ClientCache clientCache;
 	
 	private HeartBeatTask heartBeatTask;
 	private ReconnectTask reconnectTask;
 	
-	private RouteManager routerManager = new RouteManager();
+	private RouteManager routerManager;
 	
 	private Invoker invoker;
 	
@@ -90,16 +101,25 @@ public class NettyClientManager implements ClientManager{
 	private Map<String, String> serviceNameToGroup = new HashMap<String, String>();
 	private Map<String, Set<HostInfo>> serviceNameToHostInfos = new ConcurrentHashMap<String, Set<HostInfo>>();
 	private PigeonClient lionPigeonClient;
+
+    private Container container;
+
+    private RemoteInvocationRepository invocationRepository;
+    
+    private ServiceProviderChangeListener providerChangeListener = new InnerServiceProviderChangeListener();
 	
-	public NettyClientManager(){
-		this.heartBeatTask = new HeartBeatTask(this, routerManager);
-		this.reconnectTask = new ReconnectTask(this);
-		this.clientCache = new ClientCache(this, this.heartBeatTask, this.reconnectTask);
+	public NettyClientManager(RemoteInvocationRepository invocationRepository){
+		this.invocationRepository = invocationRepository;
+		this.clusterConfigure = new ClusterConfigure();
+		this.routerManager = new RouteManager(clusterConfigure);
+        this.heartBeatTask = new HeartBeatTask(this, routerManager, clusterConfigure);
+		this.reconnectTask = new ReconnectTask(this, clusterConfigure);
+		this.clientCache = new ClientCache(this, heartBeatTask, reconnectTask, clusterConfigure);
+        this.clusterConfigure.addListener(this.clientCache);
+        this.clusterConfigure.addListener(this.heartBeatTask);
+        this.clusterConfigure.addListener(this.reconnectTask);
 		CycThreadPool.getPool().execute(this.heartBeatTask);
 		CycThreadPool.getPool().execute(this.reconnectTask);
-		ClusterConfigure.getInstance().addListener(this.clientCache);
-		ClusterConfigure.getInstance().addListener(this.heartBeatTask);
-		ClusterConfigure.getInstance().addListener(this.reconnectTask);
 		TelnetCommandState.getInstance().setClientManager(this);
 		TelnetCommandWeight.getInstance().setRoute(this.routerManager);
 		//register requestor monitor to jmx server
@@ -112,31 +132,7 @@ public class NettyClientManager implements ClientManager{
 		this.bossExecutor = Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Client-BossExecutor"));
 		this.workerExecutor = Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Client-WorkerExecutor"));
 	
-		LionNotifier.addListener(new ServiceProviderChangeListener() {
-			
-			@Override
-			public void providerAdded(ServiceProviderChangeEvent event) {
-				String group = serviceNameToGroup.get(event.getServiceName());
-				if(group == null) {
-					logger.error("can not map serviceName=" + event.getServiceName() + " to group");
-					return;
-				}
-				logger.info("add " + event.getHost() + ":" + event.getPort() + " to " + event.getServiceName());
-				registeClient(event.getServiceName(), group, event.getHost() + ":" + event.getPort(), event.getWeight());
-			}
-			
-			@Override
-			public void providerRemoved(ServiceProviderChangeEvent event) {
-				Set<HostInfo> hostInfoSet = serviceNameToHostInfos.get(event.getServiceName());
-				if(hostInfoSet != null) {
-					hostInfoSet.remove(new HostInfo(event.getHost(), event.getPort(), event.getWeight()));
-				}
-			}
-			
-			@Override
-			public void hostWeightChanged(ServiceProviderChangeEvent event) {
-			}
-		});
+		LionNotifier.addListener(providerChangeListener);
 		
 		initLionPigeonClient();
 		
@@ -228,7 +224,7 @@ public class NettyClientManager implements ClientManager{
 	}
 
 	public synchronized void registeClient(String serviceName,String group,String connect,int weight) {
-		ClusterConfigure.getInstance().addConnect(new ConnectMetaData(serviceName,connect,weight));
+		this.clusterConfigure.addConnect(new ConnectMetaData(serviceName,connect,weight));
 		this.routerManager.registerWeight(serviceName,group,connect, weight);
 		
 		//TODO: 暂不支持一个serviceName对应多个group
@@ -299,63 +295,21 @@ public class NettyClientManager implements ClientManager{
             if (this.invoker != null) {
 			    this.invoker.invokeReponse(response);
             }
-            RemoteInvocationRepository.INSTANCE.receiveResponse(response);
+            invocationRepository.receiveResponse(response);
 		}
 		
 	}
 
-	/**
-	 * @param invoker the invoker to set
-	 */
-	public void setInvoker(Invoker invoker) {
-		this.invoker = invoker;
-	}
-
-	/**
-	 * @return the clientCache
-	 */
-	public ClientCache getClientCache() {
-		return clientCache;
-	}
-
-	/**
-	 * @return the heartTask
-	 */
-	public HeartBeatTask getHeartTask() {
-		return heartBeatTask;
-	}
-	
-	public ReconnectTask getReconnectTask() {
-		return reconnectTask;
-	}
-
-	/**
-	 * @return the clientResponseThreadPool
-	 */
-	public DPSFThreadPool getClientResponseThreadPool() {
-		return clientResponseThreadPool;
-	}
-
-	/**
-	 * @return the bossExecutor
-	 */
-	public Executor getBossExecutor() {
-		return bossExecutor;
-	}
-
-	/**
-	 * @return the workerExecutor
-	 */
-	public Executor getWorkerExecutor() {
-		return workerExecutor;
-	}
-
-	/**
-	 * @param clientResponseThreadPool the clientResponseThreadPool to set
-	 */
-	public void setClientResponseThreadPool(DPSFThreadPool clientResponseThreadPool) {
-		this.clientResponseThreadPool = clientResponseThreadPool;
-	}
+    @Override
+    public void destroy() throws Exception {
+        if (clusterConfigure instanceof Disposable) {
+            ((Disposable) clusterConfigure).destroy();
+        }
+        if (routerManager instanceof Disposable) {
+            ((Disposable) routerManager).destroy();
+        }
+        LionNotifier.removeListener(providerChangeListener);
+    }
 
 	/**
 	 * 用Lion从ZK中获取serviceName对应的服务地址，并注册这些服务地址
@@ -419,5 +373,88 @@ public class NettyClientManager implements ClientManager{
 	public RouteManager getRouterManager() {
 		return routerManager;
 	}
+
+    @Override
+    public void setContainer(Container container) {
+        this.container = container;
+    }
+
+    /**
+     * @param invoker the invoker to set
+     */
+    public void setInvoker(Invoker invoker) {
+        this.invoker = invoker;
+    }
+
+    /**
+     * @return the clientCache
+     */
+    public ClientCache getClientCache() {
+        return clientCache;
+    }
+
+    /**
+     * @return the heartTask
+     */
+    public HeartBeatTask getHeartTask() {
+        return heartBeatTask;
+    }
+    
+    public ReconnectTask getReconnectTask() {
+        return reconnectTask;
+    }
+
+    /**
+     * @return the clientResponseThreadPool
+     */
+    public DPSFThreadPool getClientResponseThreadPool() {
+        return clientResponseThreadPool;
+    }
+
+    /**
+     * @return the bossExecutor
+     */
+    public Executor getBossExecutor() {
+        return bossExecutor;
+    }
+
+    /**
+     * @return the workerExecutor
+     */
+    public Executor getWorkerExecutor() {
+        return workerExecutor;
+    }
+
+    /**
+     * @param clientResponseThreadPool the clientResponseThreadPool to set
+     */
+    public void setClientResponseThreadPool(DPSFThreadPool clientResponseThreadPool) {
+        this.clientResponseThreadPool = clientResponseThreadPool;
+    }
 	
+    class InnerServiceProviderChangeListener implements ServiceProviderChangeListener {
+        @Override
+        public void providerAdded(ServiceProviderChangeEvent event) {
+            String group = serviceNameToGroup.get(event.getServiceName());
+            if(group == null) {
+                logger.error("can not map serviceName=" + event.getServiceName() + " to group");
+                return;
+            }
+            logger.info("add " + event.getHost() + ":" + event.getPort() + " to " + event.getServiceName());
+            registeClient(event.getServiceName(), group, event.getHost() + ":" + event.getPort(), event.getWeight());
+        }
+        
+        @Override
+        public void providerRemoved(ServiceProviderChangeEvent event) {
+            Set<HostInfo> hostInfoSet = serviceNameToHostInfos.get(event.getServiceName());
+            if(hostInfoSet != null) {
+                hostInfoSet.remove(new HostInfo(event.getHost(), event.getPort(), event.getWeight()));
+            }
+        }
+        
+        @Override
+        public void hostWeightChanged(ServiceProviderChangeEvent event) {
+        }
+    }
+    
 }

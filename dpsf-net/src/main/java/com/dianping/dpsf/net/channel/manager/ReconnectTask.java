@@ -27,6 +27,7 @@ import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.net.channel.config.ClusterConfigure;
 import com.dianping.dpsf.net.channel.config.ClusterListener;
+import com.dianping.dpsf.net.channel.config.Configure;
 import com.dianping.dpsf.net.channel.config.ConnectMetaData;
 import com.dianping.dpsf.net.channel.netty.client.NettyClient;
 
@@ -43,8 +44,11 @@ public class ReconnectTask implements Runnable, ClusterListener {
 	
 	private ConcurrentMap<String,Client> closedClients = new ConcurrentHashMap<String,Client>();
 
-	public ReconnectTask(ClientManager clientManager) {
+    private final Configure clusterConfigure;
+
+	public ReconnectTask(ClientManager clientManager, Configure clusterConfigure) {
 		this.clientManager = clientManager;
+        this.clusterConfigure = clusterConfigure;
 	}
 
 	@Override
@@ -66,7 +70,7 @@ public class ReconnectTask implements Runnable, ClusterListener {
 					}
 					if(client.isConnected()) {
 						//加回去时active设置为true
-						ClusterConfigure.getInstance().addConnect(connect,client);
+					    clusterConfigure.addConnect(connect,client);
 						this.closedClients.remove(connect);
 					}
 				}

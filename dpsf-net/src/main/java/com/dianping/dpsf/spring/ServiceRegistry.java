@@ -9,19 +9,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
-import com.dianping.dpsf.process.filter.InvocationProcessFilter;
 import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ChannelException;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import com.dianping.dpsf.DPSFLog;
+import com.dianping.dpsf.PigeonBootStrap;
+import com.dianping.dpsf.PigeonBootStrap.Container;
 import com.dianping.dpsf.exception.ServiceException;
+import com.dianping.dpsf.invoke.RemoteInvocationHandlerFactory;
+import com.dianping.dpsf.net.channel.Server;
 import com.dianping.dpsf.net.channel.netty.server.NettyServer;
 import com.dianping.dpsf.repository.ServiceRepository;
+import com.dianping.dpsf.spi.InvocationProcessFilter;
 
 /**
  * <p>
@@ -35,7 +34,7 @@ import com.dianping.dpsf.repository.ServiceRepository;
  * @version 1.0
  * @created 2010-8-26 上午10:43:19
  */
-public class ServiceRegistry implements ApplicationContextAware {
+public class ServiceRegistry {
 
 	private static Logger logger = DPSFLog.getLogger();
 
@@ -53,15 +52,13 @@ public class ServiceRegistry implements ApplicationContextAware {
 
 	public static boolean isInit = false;
 
-	private String itemName;
-
-	private ConfigurableApplicationContext applicationContext;
-
 	private int corePoolSize = 200;
 	private int maxPoolSize = 2000;
 	private int workQueueSize = 300;
     private Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>> customizedInvocationFilters;
 	private boolean enableEngine = true;
+    private Container       container;
+    private Server          server;
 
 	public ServiceRegistry() {
 
@@ -77,8 +74,6 @@ public class ServiceRegistry implements ApplicationContextAware {
 					logger.warn("can't init pigeon-engine:" + e.toString());
 				}
 			}
-		} else if ("ws".equals(this.serviceType.trim().toLowerCase())) {
-			initWSService();
 		} else {
 			throw new RuntimeException("serviceType is error:" + this.serviceType);
 		}
@@ -95,12 +90,13 @@ public class ServiceRegistry implements ApplicationContextAware {
 
 	private void initDPService() throws Exception {
 		isInit = true;
-        PigeonBootStrap.setupServer();
+        initializeServerComponents();
 		this.sr = new ServiceRepository();
-		com.dianping.dpsf.net.channel.Server server = new NettyServer(port, corePoolSize, maxPoolSize, workQueueSize,
+		this.server = new NettyServer(port, corePoolSize, maxPoolSize, workQueueSize,
                 this.sr, RemoteInvocationHandlerFactory.createProcessHandler(customizedInvocationFilters));
 		try {
 			server.start();
+			container.registerComponent(server);
 		} catch (ChannelException e) {
 			if (this.port != 21111) {
 				throw e;
@@ -118,6 +114,11 @@ public class ServiceRegistry implements ApplicationContextAware {
 		}
 	}
 
+    private void initializeServerComponents() {
+        PigeonBootStrap.setupServer();
+        container = PigeonBootStrap.getContainer();
+    }
+
 	private void initEngine() throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Class<?> wsClazz = Class.forName("com.dianping.pigeon.engine.jetty.JettyInit");
 		Method[] ms = wsClazz.getDeclaredMethods();
@@ -128,17 +129,6 @@ public class ServiceRegistry implements ApplicationContextAware {
 				break;
 			}
 		}
-	}
-
-	private void initWSService() throws Exception {
-		Class<?> wsClazz = Class.forName("com.dianping.dpsf.spring.WSInit");
-		Method[] ms = wsClazz.getDeclaredMethods();
-		for (Method m : ms) {
-			if (m.getName().equals("init")) {
-				m.invoke(null, new Object[] { this.itemName, this.applicationContext, this.services, this.port });
-			}
-		}
-		logger.info("Jetty Server starting......");
 	}
 
 	/**
@@ -187,19 +177,6 @@ public class ServiceRegistry implements ApplicationContextAware {
 	 */
 	public void setPublish(boolean publish) {
 		this.publish = publish;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
-	 */
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
-		if ("ws".equals(this.serviceType.trim().toLowerCase())) {
-			this.applicationContext = (ConfigurableApplicationContext) applicationContext;
-		}
 	}
 
 	/**
@@ -280,5 +257,11 @@ public class ServiceRegistry implements ApplicationContextAware {
 
     public void setCustomizedInvocationFilters(Map<InvocationProcessFilter.ProcessPhase, List<InvocationProcessFilter>> customizedInvocationFilters) {
         this.customizedInvocationFilters = customizedInvocationFilters;
+    }
+    
+    public void destroy() {
+        if (this.server != null) {
+            this.server.stop();
+        }
     }
 }
