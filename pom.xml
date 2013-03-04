@@ -10,7 +10,7 @@
 	<groupId>com.dianping.dpsf</groupId>
 	<artifactId>dpsf-all</artifactId>
 	<packaging>pom</packaging>
-	<version>1.8.0</version>
+	<version>1.9.0</version>
 	<name>arch-pigeon</name>
 	<organization>
         	<name>dianping</name>
@@ -18,17 +18,25 @@
 	</organization>
 	<inceptionYear>2010.08</inceptionYear>
 	<properties>
-		<dpsf-all.version>1.8.0</dpsf-all.version>
+		<dpsf-all.version>1.9.0</dpsf-all.version>
 		<dpsf-net.aid>dpsf-net</dpsf-net.aid>
 		<dpsf-net.version>${dpsf-all.version}</dpsf-net.version>
 		<dpsf-net.name>dpsf-net v${dpsf-all.version}</dpsf-net.name>
 		<dpsf-tool.aid>dpsf-tool</dpsf-tool.aid>
 		<dpsf-tool.version>${dpsf-all.version}</dpsf-tool.version>
 		<dpsf-tool.name>dpsf-tool v${dpsf-all.version}</dpsf-tool.name>
+		<dpsf-test-client.aid>dpsf-test-client</dpsf-test-client.aid>
+		<dpsf-test-client.version>${dpsf-all.version}</dpsf-test-client.version>
+		<dpsf-test-client.name>dpsf-test-client v${dpsf-all.version}</dpsf-test-client.name>
+		<dpsf-test-server.aid>dpsf-test-server</dpsf-test-server.aid>
+		<dpsf-test-server.version>${dpsf-all.version}</dpsf-test-server.version>
+		<dpsf-test-server.name>dpsf-test-server v${dpsf-all.version}</dpsf-test-server.name>
 	</properties>
 	<modules>
 		<module>dpsf-net</module>
 		<module>dpsf-tool</module>
+		<module>dpsf-test-client</module>
+		<module>dpsf-test-server</module>
 	</modules>
 	<description>dpsf</description>
 	<developers>
