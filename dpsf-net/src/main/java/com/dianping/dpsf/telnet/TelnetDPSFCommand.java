@@ -3,6 +3,7 @@
  */
 package com.dianping.dpsf.telnet;
 
+import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.thread.ExeThreadPool;
 
 /**    
@@ -20,7 +21,7 @@ public class TelnetDPSFCommand extends TelnetCommand{
 	
 	
 	public TelnetDPSFCommand(){
-		super(new ExeThreadPool("Server-TelnetDPSFExecutor",1,10));
+		super(new ExeThreadPool(Constants.THREADNAME_TELNET_SYSTEM_PROCESSOR,1,10));
 	}
 	
 	public void registerState(TelnetCommandExecutor executor){

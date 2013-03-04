@@ -41,6 +41,7 @@ public class ContextUtil {
     private static Method getTokenMethod = null;
 
     private static Method getExtensionMethod = null;
+    private static Method getExtensionsMethod = null;
     private static Method addExtensionMethod = null;
 
     private static boolean flag = false;
@@ -77,6 +78,9 @@ public class ContextUtil {
 
             getExtensionMethod = contextClass.getDeclaredMethod("getExtension", new Class[]{String.class});
             getExtensionMethod.setAccessible(true);
+            
+            getExtensionsMethod = contextClass.getDeclaredMethod("getExtension", new Class[]{});
+            getExtensionsMethod.setAccessible(true);
 
             addExtensionMethod = contextClass.getDeclaredMethod("addExtension", new Class[]{String.class, Object.class});
             addExtensionMethod.setAccessible(true);
@@ -189,6 +193,17 @@ public class ContextUtil {
         if (flag && context != null) {
             try {
                 return (T) getExtensionMethod.invoke(context, new Object[]{key});
+            } catch (Exception e) {
+                throw new NetException(e);
+            }
+        }
+        return null;
+    }
+    
+    public static <T> T getContextValues(Object context) {
+        if (flag && context != null) {
+            try {
+                return (T) getExtensionsMethod.invoke(context, new Object[]{});
             } catch (Exception e) {
                 throw new NetException(e);
             }

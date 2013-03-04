@@ -41,6 +41,7 @@ public class RemoteCallStatInvokeFilter extends InvocationInvokeFilter {
 
         RpcStatsPool.flowIn(request, client.getAddress());
         try {
+        	
             DPSFResponse result = handler.handle(invocationContext);
             clientServiceStat.countService(request.getServiceName());
             return result;
@@ -53,7 +54,7 @@ public class RemoteCallStatInvokeFilter extends InvocationInvokeFilter {
             throw e;
         }
     }
-
+    
     public void setClientServiceStat(ServiceStat clientServiceStat) {
         this.clientServiceStat = clientServiceStat;
     }

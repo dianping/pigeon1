@@ -10,6 +10,7 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
+import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.Disposable;
 import com.dianping.dpsf.net.channel.Server;
@@ -50,8 +51,8 @@ public class NettyServer implements Server, Disposable {
 		this.port = port;
 		this.bootstrap = new ServerBootstrap(
                 new NioServerSocketChannelFactory(
-                		Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Server-BossExecutor")),
-                		Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Server-WorkerExecutor"))));
+                		Executors.newCachedThreadPool(new DefaultThreadFactory(Constants.THREADNAME_SERVER_NETTY_BOSS_EXECUTOR)),
+                		Executors.newCachedThreadPool(new DefaultThreadFactory(Constants.THREADNAME_SERVER_NETTY_WORKER_EXECUTOR))));
 		this.bootstrap.setPipelineFactory(new DPServerChannelPipelineFactory(channelGroup, new RequestProcessor(sr, invocationHandler,this.port,corePoolSize,maxPoolSize,workQueueSize)));
 	}
 	

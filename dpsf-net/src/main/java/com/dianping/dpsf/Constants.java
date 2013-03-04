@@ -81,5 +81,18 @@ public class Constants {
     public static final String CONFIG_CLUSTER_CLUSTER = "cluster";
     public static final String CONFIG_CLUSTER_RETRY = "retry";
     public static final String CONFIG_CLUSTER_TIMEOUT_RETRY = "timeout-retry";
-
+    
+    public static final String THREADNAME_CLIENT_PRESPONSE_PROCESSOR = "Pigeon-Client-Response-Processor";
+    public static final String THREADNAME_SERVER_REQUEST_PROCESSOR = "Pigeon-Server-Request-Processor";
+    public static final String THREADNAME_TELNET_SYSTEM_PROCESSOR = "Pigeon-Telnet-System-Processor";
+    public static final String THREADNAME_TELNET_SERVICE_PROCESSOR = "Pigeon-Telnet-Service-Processor";
+    public static final String THREADNAME_CLIENT_NETTY_BOSS_EXECUTOR = "Pigeon-Client-Netty-Boss-Executor";
+    public static final String THREADNAME_CLIENT_NETTY_WORKER_EXECUTOR = "Pigeon-Client-Netty-Worker-Executor";
+    public static final String THREADNAME_SERVER_NETTY_BOSS_EXECUTOR = "Pigeon-Server-Netty-Boss-Executor";
+    public static final String THREADNAME_SERVER_NETTY_WORKER_EXECUTOR = "Pigeon-Server-Netty-Worker-Executor";
+    
+    public static final String CONTEXT_FUTURE = "Context-Future";
+    public static final String CONTEXT_SERVER_COST = "Context-Server-Cost";
+    public static final String CONTEXT_REQUEST_SIZE = "Context-Request-Size";
+    public static final String CONTEXT_RESPONSE_SIZE = "Context-Response-Size";
 }

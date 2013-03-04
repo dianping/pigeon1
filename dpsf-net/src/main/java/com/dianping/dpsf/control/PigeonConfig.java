@@ -71,8 +71,8 @@ public class PigeonConfig {
 	private static final int DEFAULT_WRITE_BUFFER_HIGH_WATER = 35 * 1024 * 1024;
     private static final int DEFAULT_WRITE_BUFFER_LOW_WATER = 25 * 1024 * 1024;
     private static final boolean DEFAULT_WRITE_BUFF_LIMIT = false;
-    private static final Boolean DEFAULT_PIGEON_USE_NEW_INVOKE = false;
-    private static final Boolean DEFAULT_PIGEON_USE_NEW_PROCESS = false;
+    private static final Boolean DEFAULT_PIGEON_USE_NEW_INVOKE = true;
+    private static final Boolean DEFAULT_PIGEON_USE_NEW_PROCESS = true;
 
 	private PigeonConfig() {
 		checkHawkAndLionStatus();

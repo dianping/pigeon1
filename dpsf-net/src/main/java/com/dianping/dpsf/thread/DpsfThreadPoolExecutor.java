@@ -1,12 +1,13 @@
 package com.dianping.dpsf.thread;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DpsfThreadPoolExecutor extends ThreadPoolExecutor{
+public class DPSFThreadPoolExecutor extends ThreadPoolExecutor{
 
 	AtomicInteger executingThreadCount = new AtomicInteger(0);
 	AtomicInteger waitingThreadCount = new AtomicInteger(0);
@@ -17,10 +18,17 @@ public class DpsfThreadPoolExecutor extends ThreadPoolExecutor{
 	AtomicInteger destoryThreadCount = new AtomicInteger(0);
 	AtomicInteger createThreadCount = new AtomicInteger(0);
 
-	public DpsfThreadPoolExecutor(int corePoolSize, int maximumPoolSize,
+	public DPSFThreadPoolExecutor(int corePoolSize, int maximumPoolSize,
 			long keepAliveTime, TimeUnit unit, ThreadFactory threadFactory) {
+		this(corePoolSize, maximumPoolSize, keepAliveTime, unit,
+				threadFactory,new AbortPolicy());
+	}
+	
+	public DPSFThreadPoolExecutor(int corePoolSize, int maximumPoolSize,
+			long keepAliveTime, TimeUnit unit, ThreadFactory threadFactory,
+			RejectedExecutionHandler handler) {
 		super(corePoolSize, maximumPoolSize, keepAliveTime, unit,
-				new TestLinkedBlockingQueue<Runnable>(10000), threadFactory);
+				new TestLinkedBlockingQueue<Runnable>(10000), threadFactory,handler);
 		TestLinkedBlockingQueue<Runnable> workQueue = (TestLinkedBlockingQueue<Runnable>) getQueue();
 		workQueue.setPool(this);
 		allowCoreThreadTimeOut(true);
@@ -47,7 +55,7 @@ public class DpsfThreadPoolExecutor extends ThreadPoolExecutor{
 		 */
 		private static final long serialVersionUID = -1998262332006293935L;
 
-		private DpsfThreadPoolExecutor pool;
+		private DPSFThreadPoolExecutor pool;
 
 		public TestLinkedBlockingQueue(int capacity) {
 			super(capacity);
@@ -83,7 +91,7 @@ public class DpsfThreadPoolExecutor extends ThreadPoolExecutor{
 			return res;
 		}
 
-		public void setPool(DpsfThreadPoolExecutor pool) {
+		public void setPool(DPSFThreadPoolExecutor pool) {
 			this.pool = pool;
 		}
 

@@ -4,6 +4,7 @@
 package com.dianping.dpsf.telnet;
 
 
+import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.thread.ExeThreadPool;
 
 /**    
@@ -20,7 +21,7 @@ import com.dianping.dpsf.thread.ExeThreadPool;
 public class TelnetServiceCommand extends TelnetCommand{
 	
 	public TelnetServiceCommand(){
-		super(new ExeThreadPool("Server-TelnetServiceExecutor",1,10));
+		super(new ExeThreadPool(Constants.THREADNAME_TELNET_SERVICE_PROCESSOR,1,10));
 	}
 	
 	public Object register(String cmd,TelnetCommandInfo info){

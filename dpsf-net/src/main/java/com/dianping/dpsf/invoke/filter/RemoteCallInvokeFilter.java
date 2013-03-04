@@ -55,7 +55,7 @@ public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
         DPSFRequest request = invocationContext.getRequest();
         DPSFMetaData metaData = invocationContext.getMetaData();
         String callMethod = metaData.getCallMethod();
-        transferContextValueToRequest(invocationContext, request);
+        
         if (Constants.CALL_SYNC.equalsIgnoreCase(callMethod)) {
             CallbackFuture future = new CallbackFuture();
             sendRequest(client, request, future);
@@ -67,6 +67,7 @@ public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
             CallbackFuture future = new ServiceFutureImpl(metaData.getTimeout());
             sendRequest(client, request, future);
             ServiceFutureFactory.setFuture((ServiceFuture) future);
+            invocationContext.putTransientContextValue(Constants.CONTEXT_FUTURE, future);
             return NO_RETURN_RESPONSE;
         } else if (Constants.CALL_ONEWAY.equalsIgnoreCase(callMethod)) {
             sendRequest(client, request, null);
@@ -92,19 +93,6 @@ public class RemoteCallInvokeFilter extends InvocationInvokeFilter {
         }
     }
 
-    private void transferContextValueToRequest(final InvocationInvokeContext invocationContext, final DPSFRequest request) {
-        DPSFMetaData metaData = invocationContext.getMetaData();
-        Client client = invocationContext.getClient();
-        Object contextHolder = ContextUtil.createContext(metaData.getServiceName(), invocationContext.getMethod().getName(),
-        		client.getHost(), client.getPort());
-        Map<String,Serializable> contextValues = invocationContext.getContextValues();
-        if (contextValues != null) {
-            for (Map.Entry<String, Serializable> entry : contextValues.entrySet()) {
-                ContextUtil.putContextValue(contextHolder, entry.getKey(), entry.getValue());
-            }
-        }
-        request.setContext(contextHolder);
-    }
 
     static class NoReturnResponse implements DPSFResponse {
         /**

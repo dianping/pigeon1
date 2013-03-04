@@ -11,6 +11,9 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
+
+import com.dianping.dpsf.control.PigeonConfig;
 
 /**    
   * <p>    
@@ -36,35 +39,29 @@ public class DPSFThreadPool {
 	}
 	
 	protected DPSFThreadPool(String poolName,int corePoolSize,int maximumPoolSize){
-		this.name = poolName;
-		this.factory = new DefaultThreadFactory(poolName);
-		this.executor = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,
-												 20L, TimeUnit.SECONDS,
-								                 new SynchronousQueue<Runnable>(),
-								                 this.factory
-								                 );
+		
+		this(poolName,corePoolSize,maximumPoolSize,new SynchronousQueue<Runnable>());
 	}
 	
 	protected DPSFThreadPool(String poolName,int corePoolSize,int maximumPoolSize,
 			BlockingQueue<Runnable> workQueue){
-		this.name = poolName;
-		this.factory = new DefaultThreadFactory(poolName);
-		this.executor = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,
-												 20L, TimeUnit.SECONDS,
-												 workQueue,
-								                 this.factory
-								                 );
+		this(poolName,corePoolSize,maximumPoolSize,workQueue,new AbortPolicy());
 	}
 	
 	public DPSFThreadPool(String poolName, int corePoolSize, int maximumPoolSize, BlockingQueue<Runnable> workQueue,
 			RejectedExecutionHandler handler) {
 		this.name = poolName;
-		this.factory = new DefaultThreadFactory(poolName);
-		this.executor = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,
-												 20L, TimeUnit.SECONDS,
-												 workQueue,
-								                 this.factory,
-								                 handler);
+		this.factory = new DefaultThreadFactory(this.name);
+		if(PigeonConfig.isUseNewInvokeLogic()) {
+			this.executor = new DPSFThreadPoolExecutor(corePoolSize, maximumPoolSize,
+					60, TimeUnit.SECONDS, this.factory,handler);
+		}else{
+			this.executor = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,
+					 20L, TimeUnit.SECONDS,
+					 workQueue,
+	                 this.factory,
+	                 handler);
+		}
 	}
 
 	public void execute(Runnable run){

@@ -74,7 +74,7 @@ public class RequestProcessor {
         this.invocationHandler = invocationHandler;
         this.port = port;
 		this.serverChannels = new DefaultChannelGroup("Server-Channels");
-		this.threadPool = new ExeThreadPool("Server-RequestProcessor-" + this.port, corePoolSize, maxPoolSize,
+		this.threadPool = new ExeThreadPool(Constants.THREADNAME_SERVER_REQUEST_PROCESSOR + "-" + this.port, corePoolSize, maxPoolSize,
                 new LinkedBlockingQueue<Runnable>(workQueueSize));
 		
 		this.contexts = new ConcurrentHashMap<DPSFRequest,RequestContext>();

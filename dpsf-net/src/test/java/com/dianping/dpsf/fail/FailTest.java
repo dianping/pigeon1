@@ -53,8 +53,15 @@ public class FailTest {
 	@Test
 	public void testSuccess(){
 		int p = 5;
+		
 		Assert.isTrue(p+1==fail.testSuccess(new TestParameter(p)).getResult());
 		Assert.isTrue(p+2==fail.testSuccess(new TestParameter(p+1)).getResult());
+//		try{
+//			Thread.sleep(500000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	@Test

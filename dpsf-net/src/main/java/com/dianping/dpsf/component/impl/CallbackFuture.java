@@ -9,12 +9,15 @@ import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.RequestError;
 import com.dianping.dpsf.component.DPSFCallback;
 import com.dianping.dpsf.component.DPSFFuture;
+import com.dianping.dpsf.component.DPSFLifeCycleListener;
 import com.dianping.dpsf.component.DPSFRequest;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.exception.DPSFException;
 import com.dianping.dpsf.exception.NetException;
 import com.dianping.dpsf.exception.NetTimeoutException;
 import com.dianping.dpsf.exception.ServiceException;
+import com.dianping.dpsf.invoke.lifecycle.DPSFRequestLifeCycle;
+import com.dianping.dpsf.invoke.lifecycle.DPSFRequestLifeCycle.DPSFEvent;
 import com.dianping.dpsf.net.channel.Client;
 import com.dianping.dpsf.protocol.DefaultResponse;
 import com.dianping.dpsf.stat.RpcStatsPool;
@@ -22,6 +25,8 @@ import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ChannelFuture;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @created 2010-8-20 上午11:53:40
  */
-public class CallbackFuture implements DPSFCallback, DPSFFuture {
+public class CallbackFuture implements DPSFCallback, DPSFFuture, DPSFLifeCycleListener{
 
     protected static Logger logger = DPSFLog.getLogger();
 
@@ -53,6 +58,8 @@ public class CallbackFuture implements DPSFCallback, DPSFFuture {
     private DPSFRequest request;
 
     private Client client;
+    
+    private List<DPSFRequestLifeCycle> lifeCycles = new ArrayList<DPSFRequestLifeCycle>();
 
     /* (non-Javadoc)
       * @see java.lang.Runnable#run()
@@ -77,7 +84,7 @@ public class CallbackFuture implements DPSFCallback, DPSFFuture {
       */
     public void callback(DPSFResponse response) {
         this.response = response;
-
+        lifeCycle(DPSFEvent.ResponseReturn,response);
     }
 
     /* (non-Javadoc)
@@ -109,6 +116,8 @@ public class CallbackFuture implements DPSFCallback, DPSFFuture {
                     NetTimeoutException netTimeoutException = new NetTimeoutException(sb.toString());
 
 //					Cat.getProducer().logError(netTimeoutException);
+                    
+                    lifeCycle(DPSFEvent.GetTimeout,response);
                     throw netTimeoutException;
                 } else {
                     this.wait(timeoutMillis_);
@@ -141,7 +150,7 @@ public class CallbackFuture implements DPSFCallback, DPSFFuture {
                     StringBuffer sb = new StringBuffer();
                     sb.append(cause.getMessage()).append("\r\n");
                     sb.append("Remote Service Exception Info *************\r\n")
-                            .append(" token:").append(ContextUtil.getToken(this.response.getContext())).append("\r\n")
+//                            .append(" token:").append(ContextUtil.getToken(this.response.getContext())).append("\r\n")
                             .append(" seq:").append(request.getSequence())
                             .append(" callType:").append(request.getCallType()).append("\r\n serviceName:")
                             .append(request.getServiceName()).append(" methodName:").append(request.getMethodName())
@@ -164,10 +173,18 @@ public class CallbackFuture implements DPSFCallback, DPSFFuture {
 //			if(response!=null){
 //			Cat.getProducer().logEvent("PigeonCall", "Response", Message.SUCCESS, Stringizers.forJson().from(this.response.getReturn(), CatConstants.MAX_LENGTH,CatConstants.MAX_ITEM_LENGTH));
 //			}
+            
+            lifeCycle(DPSFEvent.GetResult,response);
             return this.response;
         }
     }
 
+    private void lifeCycle(DPSFEvent event,DPSFResponse response){
+    	for(DPSFRequestLifeCycle lifeCycle : lifeCycles){
+    		lifeCycle.lifeCycle(event,response);
+    	}
+    }
+    
     /* (non-Javadoc)
       * @see com.dianping.dpsf.net.component.DPSFFuture#get(long, java.util.concurrent.TimeUnit)
       */
@@ -252,5 +269,10 @@ public class CallbackFuture implements DPSFCallback, DPSFFuture {
     public DPSFRequest getRequest() {
         return this.request;
     }
+
+	@Override
+	public void addRequestLifeCycle(DPSFRequestLifeCycle lifeCycle) {
+		this.lifeCycles.add(lifeCycle);
+	}
 
 }

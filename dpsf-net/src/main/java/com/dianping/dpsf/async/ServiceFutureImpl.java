@@ -12,7 +12,6 @@ import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.impl.CallbackFuture;
 import com.dianping.dpsf.exception.DPSFException;
-import com.dianping.dpsf.exception.ServiceException;
 
 /**    
  * <p>    

@@ -42,7 +42,7 @@ public class RemoteInvocationRepositoryImpl implements RemoteInvocationRepositor
 
     private ServiceStat                             clientServiceStat           = ServiceStat.getClientServiceStat();
 
-    private ExeThreadPool                           callbackExecutor            = new ExeThreadPool("DPSF-Callback-Executor");
+//    private ExeThreadPool                           callbackExecutor            = new ExeThreadPool("DPSF-Callback-Executor");
 
     private Runnable                                invocationTimeoutCheck      = new InvocationTimeoutCheck();
 
@@ -66,7 +66,8 @@ public class RemoteInvocationRepositoryImpl implements RemoteInvocationRepositor
                         RpcStatsPool.flowOut(request, client.getAddress());
                     }
                     callback.callback(response);
-                    callbackExecutor.execute(callback);
+                    callback.run();
+//                    callbackExecutor.execute(callback);
                 }
                 clientServiceStat.timeService(request.getServiceName(), request.getCreateMillisTime());
             } finally {

@@ -28,6 +28,7 @@ import com.dianping.dpsf.invoke.filter.ClusterDelegateInvokeFilter;
 import com.dianping.dpsf.invoke.filter.ContextPrepareInvokeFilter;
 import com.dianping.dpsf.invoke.filter.GatewayInvokeFilter;
 import com.dianping.dpsf.invoke.filter.MockInvokeFilter;
+import com.dianping.dpsf.invoke.filter.PerformanceInvokeFilter;
 import com.dianping.dpsf.invoke.filter.RemoteCallInvokeFilter;
 import com.dianping.dpsf.invoke.filter.RemoteCallMonitorInvokeFilter;
 import com.dianping.dpsf.invoke.filter.RemoteCallStatInvokeFilter;
@@ -42,6 +43,7 @@ import com.dianping.dpsf.process.filter.EchoProcessFilter;
 import com.dianping.dpsf.process.filter.ExceptionProcessFilter;
 import com.dianping.dpsf.process.filter.HeartbeatProcessFilter;
 import com.dianping.dpsf.process.filter.MonitorProcessFilter;
+import com.dianping.dpsf.process.filter.PerformanceProcessFilter;
 import com.dianping.dpsf.process.filter.WriteResponseProcessFilter;
 import com.dianping.dpsf.spi.InvocationInvokeFilter.InvokePhase;
 import com.dianping.dpsf.spi.InvocationProcessFilter.ProcessPhase;
@@ -89,12 +91,17 @@ public class PigeonBootStrap {
         RemoteInvocationRepository invocationRepository = container.getComponentByType(RemoteInvocationRepository.class);
         
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Finalize, new GatewayInvokeFilter());
+        
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Finalize, new PerformanceInvokeFilter());
+        
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Error_Handle, new MockInvokeFilter());
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Before_Cluster, new ServiceCallMonitorInvokeFilter());
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Cluster, new ClusterDelegateInvokeFilter());
-        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Before_Call, new ContextPrepareInvokeFilter());
+        
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Before_Call, new RemoteCallMonitorInvokeFilter());
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Before_Call, new RemoteCallStatInvokeFilter());
+        
+        RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Call, new ContextPrepareInvokeFilter());
         RemoteInvocationHandlerFactory.registerInternalInvokeFilter(InvokePhase.Call, new RemoteCallInvokeFilter(invocationRepository));
 
         ClusterDelegateInvokeFilter.registerCluster(new FailfastClusterInvokeFilter(clientManager));
@@ -119,10 +126,11 @@ public class PigeonBootStrap {
     private static void setupInvocationProcessFilters() {
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Write, new MonitorProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Write, new WriteResponseProcessFilter());
+        RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new HeartbeatProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new ContextTransferProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new ExceptionProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Execute, new EchoProcessFilter());
-        RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Execute, new HeartbeatProcessFilter());
+        RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Execute, new PerformanceProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Execute, new BusinessProcessFilter());
     }
     

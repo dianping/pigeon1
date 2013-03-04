@@ -126,11 +126,11 @@ public class NettyClientManager implements ClientManager, ContainerAware, Dispos
 		DpsfRequestorMonitor.getInstance().setClientManager(this);
 		ManagementContext.getInstance().registerMBean(DpsfRequestorMonitor.getInstance());
 		//TODO [v1.7.0, danson.liu]暂时使用CallerRunsPolicy策略, 1.7.0版中对dpsf中所有线程池进行统一规划
-		this.clientResponseThreadPool = new ExeThreadPool("Client-ResponseProcessor", 20, 600,
+		this.clientResponseThreadPool = new ExeThreadPool(Constants.THREADNAME_CLIENT_PRESPONSE_PROCESSOR, 20, 600,
 				new LinkedBlockingQueue<Runnable>(50), new CallerRunsPolicy());	
 		ThreadRenamingRunnable.setThreadNameDeterminer(ThreadNameDeterminer.CURRENT);	//Disable thread renaming of Netty
-		this.bossExecutor = Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Client-BossExecutor"));
-		this.workerExecutor = Executors.newCachedThreadPool(new DefaultThreadFactory("Netty-Client-WorkerExecutor"));
+		this.bossExecutor = Executors.newCachedThreadPool(new DefaultThreadFactory(Constants.THREADNAME_CLIENT_NETTY_BOSS_EXECUTOR));
+		this.workerExecutor = Executors.newCachedThreadPool(new DefaultThreadFactory(Constants.THREADNAME_CLIENT_NETTY_WORKER_EXECUTOR));
 	
 		LionNotifier.addListener(providerChangeListener);
 		
