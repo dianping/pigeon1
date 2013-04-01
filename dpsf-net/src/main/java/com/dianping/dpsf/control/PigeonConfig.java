@@ -178,7 +178,7 @@ public class PigeonConfig {
             try {
                 isUseNewInvoke = ConfigCache.getInstance().getBooleanProperty(LION_PIGEON_USE_NEW_INVOKE);
             } catch (Exception e) {
-                logLionError(LION_PIGEON_USE_NEW_INVOKE);
+//                logLionError(LION_PIGEON_USE_NEW_INVOKE);
             }
         }
         return isUseNewInvoke != null ? isUseNewInvoke : DEFAULT_PIGEON_USE_NEW_INVOKE;
@@ -190,7 +190,7 @@ public class PigeonConfig {
             try {
                 isUseNewProcess = ConfigCache.getInstance().getBooleanProperty(LION_PIGEON_USE_NEW_PROCESS);
             } catch (Exception e) {
-                logLionError(LION_PIGEON_USE_NEW_PROCESS);
+//                logLionError(LION_PIGEON_USE_NEW_PROCESS);
             }
         }
         return isUseNewProcess != null ? isUseNewProcess : DEFAULT_PIGEON_USE_NEW_PROCESS;

@@ -13,9 +13,11 @@
 package com.dianping.dpsf.invoke.filter;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.dianping.dpsf.Constants;
 import com.dianping.dpsf.ContextUtil;
+import com.dianping.dpsf.DPSFLog;
 import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationInvokeContext;
 import com.dianping.dpsf.component.impl.CallbackFuture;
@@ -28,7 +30,8 @@ import com.dianping.dpsf.spi.InvocationInvokeFilter;
  *
  */
 public class PerformanceInvokeFilter extends InvocationInvokeFilter {
-
+	
+	private AtomicLong callCount = new AtomicLong(0);
 
     @Override
     public DPSFResponse invoke(RemoteInvocationHandler handler, InvocationInvokeContext invocationContext) throws Throwable {
@@ -45,16 +48,17 @@ public class PerformanceInvokeFilter extends InvocationInvokeFilter {
         if(Constants.CALL_SYNC.equalsIgnoreCase(invocationContext.getMetaData().getCallMethod())){
         	
         	Object ctx = result.getContext();
-        	Integer cost = null;
+        	Long cost = null;
         	if(ctx instanceof Map){
         		Map ctx_ = (Map)ctx;
-        		cost = Integer.parseInt(String.valueOf(((Map)ctx).get(Constants.CONTEXT_SERVER_COST)));
+        		cost = Long.parseLong(String.valueOf(((Map)ctx).get(Constants.CONTEXT_SERVER_COST)));
         	}else{
         		cost = ContextUtil.getContextValue(ctx, Constants.CONTEXT_SERVER_COST);
         	}
+        	if(cost != null && callCount.getAndIncrement()%3000 == 0){
+        		DPSFLog.getLogger().info(System.currentTimeMillis() - start - cost + " >>>>>>>>>>>>>>>>>>Sync<<<<<<<<<<<<<<<<<<");
+        	}
         	
-        	System.out.println(System.currentTimeMillis() - start + ">>>>>>>>>>>>>>>>>>1");
-			System.out.println(cost + ">>>>>>>>>>>>>>>>>>1");
         }
         return result;
     }
@@ -75,20 +79,20 @@ public class PerformanceInvokeFilter extends InvocationInvokeFilter {
 				
 				DPSFResponse response = (DPSFResponse)param;
 				
-				Integer cost = null;
+				Long cost = null;
 				if(response != null){
 					Object ctx = response.getContext();
 					if(ctx instanceof Map){
 		        		Map ctx_ = (Map)ctx;
-		        		cost = Integer.parseInt(String.valueOf(((Map)ctx).get(Constants.CONTEXT_SERVER_COST)));
+		        		cost = Long.parseLong(String.valueOf(((Map)ctx).get(Constants.CONTEXT_SERVER_COST)));
 		        	}else{
 		        		cost = ContextUtil.getContextValue(ctx, Constants.CONTEXT_SERVER_COST);
 		        	}
 				}
 				
-				
-				System.out.println(System.currentTimeMillis() - startTimestamp + ">>>>>>>>>>>>>>>>>>1");
-				System.out.println(cost + ">>>>>>>>>>>>>>>>>>1");
+				if(cost != null && callCount.getAndIncrement()%3000 == 0){
+	        		DPSFLog.getLogger().info(System.currentTimeMillis() - startTimestamp - cost + " >>>>>>>>>>>>>>>>>>Future<<<<<<<<<<<<<<<<<<");
+	        	}
 			}
 		}
     	

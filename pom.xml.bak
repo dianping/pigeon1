@@ -57,11 +57,6 @@
 				<version>${dpsf-net.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>${dpsf-test-server.aid}</artifactId>
-				<version>${dpsf-test-server.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>com.dianping.hawk</groupId>
 				<artifactId>hawk-client</artifactId>
 				<version>0.6.5</version>

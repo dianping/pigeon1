@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.dianping.dpsf.component.DPSFResponse;
 import com.dianping.dpsf.component.InvocationProcessContext;
 import com.dianping.dpsf.control.PigeonConfig;
 import com.dianping.dpsf.invoke.RemoteInvocationHandler;
@@ -99,12 +100,24 @@ public class RequestProcessor {
                 @Override
                 public void run() {
                     try {
+                    	putThread(request, Thread.currentThread());
+                    	
                         InvocationProcessContext invocationContext = new InvocationProcessContextImpl(request, channel, serviceRepository);
-                        invocationHandler.handle(invocationContext);
+                        
+                        DPSFResponse response = invocationHandler.handle(invocationContext);
+                        if (request.getCallType() != Constants.CALLTYPE_NOREPLY && (request.getMessageType() != Constants.MESSAGE_TYPE_HEART || PigeonConfig.isHeartBeatResponse())) {
+                            channel.write(response);
+                        }
+                        
                     } catch (Throwable t) {
                         logger.error("Process request failed with invocation handler, you should never be here.", t);
+                        
+                        channel.write(ResponseFactory.createFailResponse(request, t));
                     } finally{
                     	listener.executorCompleted(request);
+                    	
+                    	ContextUtil.clearContext();
+                        ContextUtil.clearLocalContext();
                     }
                 }
             };

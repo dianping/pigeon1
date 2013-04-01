@@ -70,7 +70,7 @@ public class ContextTransferProcessFilter extends InvocationProcessFilter {
         
         Map<String,Serializable> contextValues = processContext.getContextValues();
         if(contextHolder == null){
-        	response.setContext(contextValues);
+//        	response.setContext(contextValues);
         }else{
         	 if (contextValues != null) {
                  for (Map.Entry<String, Serializable> entry : contextValues.entrySet()) {

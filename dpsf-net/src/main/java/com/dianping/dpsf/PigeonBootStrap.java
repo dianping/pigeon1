@@ -125,7 +125,7 @@ public class PigeonBootStrap {
 
     private static void setupInvocationProcessFilters() {
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Write, new MonitorProcessFilter());
-        RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Write, new WriteResponseProcessFilter());
+//        RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Write, new WriteResponseProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new HeartbeatProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new ContextTransferProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new ExceptionProcessFilter());

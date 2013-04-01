@@ -60,20 +60,21 @@ public class MonitorProcessFilter extends InvocationProcessFilter {
             monitorSupport.catLogError(cat, e);
         }
         try {
-            handler.handle(invocationContext);
+            return handler.handle(invocationContext);
         } catch (RuntimeException e) {
             monitorSupport.catLogError(cat, e);
             if (transaction != null) transaction.setStatus(e);
+            throw e;
         } finally {
             try {
                 if (transaction != null) transaction.complete();
             } catch (Exception e) {
                 monitorSupport.logCatError(e);
+                throw e;
             }
             //service异常与后续的异常的打印先后关系不是很重要
             monitorSupport.catLogError(cat, invocationContext.getServiceError());
         }
-        return null;
     }
 
 }

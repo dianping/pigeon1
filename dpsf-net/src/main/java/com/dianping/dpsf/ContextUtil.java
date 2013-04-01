@@ -7,6 +7,7 @@ import com.dianping.dpsf.exception.NetException;
 import org.apache.log4j.Logger;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class ContextUtil {
 
     public static final String TRAC_ORDER = "tracker_order";
 
+    private static Constructor contextConstructor = null;
     private static Method createContextMethod = null;
     private static Method setContextMethod = null;
     private static Method clearContextMethod = null;
@@ -54,6 +56,8 @@ public class ContextUtil {
         try {
             Class contextHolderClass = Class.forName("com.dianping.avatar.tracker.ExecutionContextHolder");
             Class contextClass = Class.forName("com.dianping.avatar.tracker.TrackerContext");
+            
+            contextConstructor = contextClass.getConstructor(new Class[0]);
 
             createContextMethod = contextHolderClass.getDeclaredMethod("createRemoteTrackerContext", new Class[]{String.class});
             createContextMethod.setAccessible(true);
@@ -94,11 +98,18 @@ public class ContextUtil {
     public static Object createContext(String serviceName,
                                        String methodName, String host, int port) {
         if (flag) {
+        	Object context = null;
             StringBuffer sb = new StringBuffer();
             sb.append(serviceName).append(".").append(methodName)
                     .append("@").append(host).append(":").append(port);
             try {
-                return createContextMethod.invoke(null, new Object[]{sb.toString()});
+                context = createContextMethod.invoke(null, new Object[]{sb.toString()});
+                
+                if(context == null){
+                	context = contextConstructor.newInstance(defObjs);
+                }
+                setContext(context);
+                return context;
             } catch (Exception e) {
                 throw new NetException(e);
             }
