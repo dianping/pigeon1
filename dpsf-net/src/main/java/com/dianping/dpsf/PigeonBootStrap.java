@@ -176,7 +176,7 @@ public class PigeonBootStrap {
         }
         
         public <T> T getRequiredComponentByName(String name) {
-            T component = getComponentByName(name);
+            T component = (T)getComponentByName(name);
             if (component == null) {
                 throw new IllegalStateException("Component[name=" + name + "] is required, but not found.");
             }

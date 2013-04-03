@@ -10,7 +10,7 @@
 	<groupId>com.dianping.dpsf</groupId>
 	<artifactId>dpsf-all</artifactId>
 	<packaging>pom</packaging>
-	<version>1.9.0</version>
+	<version>1.9.0-SNAPSHOT</version>
 	<name>arch-pigeon</name>
 	<organization>
         	<name>dianping</name>
@@ -18,7 +18,7 @@
 	</organization>
 	<inceptionYear>2010.08</inceptionYear>
 	<properties>
-		<dpsf-all.version>1.9.0</dpsf-all.version>
+		<dpsf-all.version>1.9.0-SNAPSHOT</dpsf-all.version>
 		<dpsf-net.aid>dpsf-net</dpsf-net.aid>
 		<dpsf-net.version>${dpsf-all.version}</dpsf-net.version>
 		<dpsf-net.name>dpsf-net v${dpsf-all.version}</dpsf-net.name>
