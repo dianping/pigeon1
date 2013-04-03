@@ -73,7 +73,7 @@ public class ServiceWarpCallback implements DPSFCallback {
                         .append(request.getServiceName()).append(" methodName:").append(request.getMethodName())
                         .append("\r\n host:").append(client.getHost()).append(":").append(client.getPort());
                 response.setReturn(new DPSFException(request.getServiceName(), client.getHost() + ":" + client.getPort(),
-                        sb.toString(), (Exception) response.getReturn()));
+                        sb.toString(), (Throwable) response.getReturn()));
             }
             try {
                 if (response.getMessageType() == Constants.MESSAGE_TYPE_SERVICE) {

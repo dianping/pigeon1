@@ -29,7 +29,6 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
 			</map>
 		</property>
 	</bean>
-	<context:annotation-config />
 	<bean id="failImpl" class="com.dianping.dpsf.fail.FailImpl">
 
 	</bean>

@@ -142,19 +142,20 @@ public class CallbackFuture implements DPSFCallback, DPSFFuture, DPSFLifeCycleLi
                 if (response.getMessageType() == Constants.MESSAGE_TYPE_SERVICE_EXCEPTION
                         || response.getMessageType() == Constants.MESSAGE_TYPE_EXCEPTION) {
                     Throwable cause = null;
-                    if (response instanceof DefaultResponse) {
+                    if (response instanceof DefaultResponse && response.getReturn() != null) {
                         cause = (Throwable) response.getReturn();
                     } else {
                         cause = new DPSFException(response.getCause());
                     }
                     StringBuffer sb = new StringBuffer();
                     sb.append(cause.getMessage()).append("\r\n");
-                    sb.append("Remote Service Exception Info *************\r\n")
+                    sb.append("*********************Remote Service Exception Info:::")
+                    		.append("  host:").append(client.getHost()).append(":").append(client.getPort())
+                    		.append("*****************\r\n")
 //                            .append(" token:").append(ContextUtil.getToken(this.response.getContext())).append("\r\n")
                             .append(" seq:").append(request.getSequence())
                             .append(" callType:").append(request.getCallType()).append("\r\n serviceName:")
                             .append(request.getServiceName()).append(" methodName:").append(request.getMethodName())
-                            .append("\r\n host:").append(client.getHost()).append(":").append(client.getPort())
                             .append("\r\n timeout:" + request.getTimeout());
                     Field field;
                     try {

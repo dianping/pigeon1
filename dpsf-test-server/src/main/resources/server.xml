@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+xmlns:amq="http://activemq.apache.org/schema/core" xmlns:avatar="http://www.dianping.com/schema/avatar"
+xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<!-- 服务端配置 -->
+	<bean id="ServiceRegistry1" class="com.dianping.dpsf.spring.ServiceRegistry" init-method="init" lazy-init="false">
+		<property name="port" value="20002"/>
+		<property name="services">
+			<map>
+				<entry key="http://service.dianping.com/pigeontest/testService" value-ref="testService"/>
+				<entry key="http://service.dianping.com/pigeontest/testFailOverService" value-ref="testFailOverService"/>
+				<entry key="http://service.dianping.com/pigeontest/testLionService" value-ref="testLionService1"/>
+				<entry key="http://service.dianping.com/pigeontest/testOOMService" value-ref="testOOMService"/>
+			</map>
+		</property>
+	</bean>
+	<!--bean id="ServiceRegistry2" class="com.dianping.dpsf.spring.ServiceRegistry" init-method="init" lazy-init="false">
+		<property name="port" value="20003"/>
+		<property name="services">
+			<map>
+				<entry key="http://service.dianping.com/pigeontest/testService" value-ref="testService"/>
+				<entry key="http://service.dianping.com/pigeontest/testFailOverService" value-ref="testFailOverService"/>
+				<entry key="http://service.dianping.com/pigeontest/testLionService" value-ref="testLionService2"/>
+				<entry key="http://service.dianping.com/pigeontest/testOOMService" value-ref="testOOMService"/>
+			</map>
+		</property>
+	</bean-->
+	
+	<bean id="testService" class="com.dianping.test.server.remote.TestServiceImpl">
+	</bean>
+	
+	<bean id="testOOMService" class="com.dianping.test.server.remote.TestOOMServiceImpl">
+	</bean>
+	
+	<bean id="testLionService1" class="com.dianping.test.server.remote.TestLionServiceImpl">
+		<property name="instanceName" value="instance1"/>
+	</bean>
+	
+	<bean id="testLionService2" class="com.dianping.test.server.remote.TestLionServiceImpl">
+		<property name="instanceName" value="instance2"/>
+	</bean>
+	
+	<bean id="testFailOverService" class="com.dianping.test.server.remote.TestFailOverServiceImpl">
+		<property name="sleepTime" value="3000"/>
+	</bean>
+	
+</beans>

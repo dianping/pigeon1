@@ -125,7 +125,7 @@ public class PigeonBootStrap {
 
     private static void setupInvocationProcessFilters() {
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Write, new MonitorProcessFilter());
-        RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Write, new WriteResponseProcessFilter());
+//        RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Write, new WriteResponseProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new HeartbeatProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new ContextTransferProcessFilter());
         RemoteInvocationHandlerFactory.registerInternalProcessFilter(ProcessPhase.Before_Execute, new ExceptionProcessFilter());
@@ -176,7 +176,7 @@ public class PigeonBootStrap {
         }
         
         public <T> T getRequiredComponentByName(String name) {
-            T component = getComponentByName(name);
+            T component = (T)getComponentByName(name);
             if (component == null) {
                 throw new IllegalStateException("Component[name=" + name + "] is required, but not found.");
             }

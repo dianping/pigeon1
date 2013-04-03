@@ -238,7 +238,7 @@ public class RequestExecutor implements Runnable {
         return response;
     }
 
-    private DPSFResponse doFailResponse(Exception e) {
+    public DPSFResponse doFailResponse(Exception e) {
         logger.error(e.getMessage(), e);
         if (this.request.getCallType() == Constants.CALLTYPE_REPLY) {
             return ResponseFactory.createFailResponse(this.request, e);
